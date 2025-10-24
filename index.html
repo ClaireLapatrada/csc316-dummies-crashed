@@ -40,7 +40,7 @@
                 <!-- Legend items will be dynamically generated -->
             </div>
         </div>
-
+    
         <!-- Timeline -->
         <div class="timeline-container">
             <div class="timeline-line"></div>
@@ -51,6 +51,24 @@
                     <div class="marker-label" id="current-year">2007</div>
                 </div>
                 <input type="range" id="year-slider" min="2006" max="2023" value="2007" class="year-slider">
+        </div>
+        <!-- Filter tiles -->
+        <div class="filter-bar" id="filter-bar">
+            <div class="tile-group" data-group="severity">
+                <span class="tile-label">Severity</span>
+                <button class="tile active" data-value="all">All</button>
+                <button class="tile" data-value="nonfatal">Non-fatal</button>
+                <button class="tile" data-value="fatal">Fatal</button>
+            </div>
+
+            <div class="tile-group" data-group="tod">
+                <span class="tile-label">Time</span>
+                <button class="tile active" data-value="all">All Day</button>
+                <button class="tile" data-value="Night">Night</button>
+                <button class="tile" data-value="Morning">Morning</button>
+                <button class="tile" data-value="Afternoon">Afternoon</button>
+                <button class="tile" data-value="Evening">Evening</button>
+            </div>
         </div>
     </div>
 
