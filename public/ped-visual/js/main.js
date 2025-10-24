@@ -18,20 +18,34 @@ loadData();
  * pedCond              -- if entry represents pedestrian, pedestrian condition (i.e. ability impaired, fatigue, inattentive etc.)
  */
 
+
+function classifySeverity(acclass){
+  const s = String(acclass || '').toLowerCase().replace(/\s+/g,' ').trim();
+  if (s.includes('non-fatal')) return 'nonfatal';
+  if (s.includes('fatal'))     return 'fatal';
+  return 'nonfatal';
+}
+
 function loadData() {
     d3.csv("data/collisions.csv", d => {
         if (d.PEDESTRIAN == "Yes") {        // only keep rows where a pedestrian was involved in a collision 
             return {
-                index: +d.OBJECTID,         
-                accNum: +d.ACCNUM,          
-                date: d.DATE,               
-                time: d.TIME,               
-                manoeuver: d.MANOEUVER,     
-                drivAct: d.DRIVACT,         
-                drivCond: d.DRIVCOND,       
-                pedType: d.PEDTYPE,         
-                pedAct: d.PEDACT,          
-                pedCond: d.PEDCOND   
+            index: +d.OBJECTID,
+            accNum: +d.ACCNUM,
+            date: d.DATE,
+            time: d.TIME,
+            manoeuver: d.MANOEUVRE,
+            drivAct: d.DRIVACT,
+            drivCond: d.DRIVCOND,
+            pedType: d.PEDTYPE,
+            pedAct: d.PEDACT,
+            pedCond: d.PEDCOND,
+            acclass: d.ACCLASS,
+            injury: d.INJURY,
+            light: d.LIGHT,
+            accLoc: d.ACCLOC,
+            timeBand: timeBandFromNUM(d.TIME),
+            severity: classifySeverity(d.ACCLASS)
             };
         }
     }).then(data => {

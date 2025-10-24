@@ -16,7 +16,57 @@ function nextPage() {
         updateNavigationButton();
     } else {
         console.log('Switching to EMPTY PAGE');
+        // Show alternate page (embed main visual)
         showEmptyPage();
+        function showEmptyPage() {
+        console.log('=== SHOWING ALT PAGE: MAIN VISUAL IFRAME ===');
+
+        // cache originals once
+        if (!window.originalMainContent) {
+            window.originalMainContent = document.querySelector('main').innerHTML;
+            window.originalHeaderContent = document.querySelector('header').innerHTML;
+            window.originalFooterContent = document.querySelector('footer').innerHTML;
+        }
+
+        // header
+        document.querySelector('header').innerHTML = `
+            <div class="py-4 text-center">
+            <h1 class="fw-bold mb-2" style="color: white;">Pedestrian Action View</h1>
+            <p class="fs-5 mb-0" style="color: rgba(255,255,255,0.8);">
+                Cumulative collisions by pedestrian action (2006–2023)
+            </p>
+            </div>
+        `;
+
+        // main: iframe to the imported app
+        document.querySelector('main').innerHTML = `
+            <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                <div style="position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 24px rgba(0,0,0,0.25);">
+                    <iframe
+                    id="mainVisualFrame"
+                    src="public/ped-visual/index.html"
+                    title="Pedestrian Action Visual"
+                    style="width:100%; height: calc(100vh - 220px); border: 0; display:block; background:transparent;">
+                    </iframe>
+                </div>
+                </div>
+            </div>
+            </div>
+        `;
+
+        // footer
+        document.querySelector('footer').innerHTML = `
+            <div class="py-3 text-center">
+            <small style="color: rgba(255,255,255,0.5);">Created with D3.js • 2025 • Combined Visuals</small>
+            </div>
+        `;
+
+        // keep nav button present
+        createNavigationButton();
+        console.log("Alt page displayed successfully (iframe).");
+        }
         updateNavigationButton();
     }
 }

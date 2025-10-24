@@ -6,6 +6,17 @@
  * @param  displayData      -- the data which will be displayed; set equal to transformations made onto data
  */
 
+
+function timeBandFromNUM(t){
+  const n = +t; if (!Number.isFinite(n)) return undefined;
+  const h = Math.floor(n/100) % 24;
+  if (h < 6) return "Night";
+  if (h < 12) return "Morning";
+  if (h < 18) return "Afternoon";
+  return "Evening";
+}
+
+
 class BarChart {
     constructor(parentElement, data) {
         this.parentElement = parentElement;
@@ -15,6 +26,10 @@ class BarChart {
         this.laneDividersCreated = false;
         this.isPlaying = false;
         this.playInterval = null;
+        this.filterState = {
+        severity: 'all',   // 'all' | 'fatal' | 'nonfatal'
+        tod: 'all'         // 'all' | Night | Morning | Afternoon | Evening
+        };
     }
 
     /*
@@ -33,6 +48,7 @@ class BarChart {
         
         // Set up play button
         vis.setupPlayButton();
+        this.bindTileFilters();
 
         // Margins and dimensions
 		vis.margin = {top: 5, right: 5, bottom: 5, left: 5};
@@ -148,32 +164,44 @@ class BarChart {
     /*
      * Process data with cumulative accumulation up to current year
      */
-    processData() {
-        let vis = this;
-        
-        // Filter data from 2006 up to current year (cumulative)
-        vis.displayData = vis.data.filter(d => {
-            // Parse date string like "1/1/2006 10:00:00 AM" to extract year
-            const dateStr = d.date;
-            const yearMatch = dateStr.match(/\/(\d{4})\s/);
-            const year = yearMatch ? parseInt(yearMatch[1]) : new Date(dateStr).getFullYear();
-            return year >= 2006 && year <= vis.currentYear;
+    processData(){
+        const vis = this;
+
+        const parseMDY = d3.timeParse("%m/%d/%Y");
+        const getYear = s => {
+            const d = parseMDY(s) || new Date(s);
+            return Number.isFinite(d?.getTime()) ? d.getFullYear() : undefined;
+        };
+
+        // cumulative slice
+        let rows = vis.data.filter(d => {
+            const y = getYear(d.date);
+            return y && y >= 2006 && y <= vis.currentYear;
         });
 
-        // Aggregate counts per pedestrian action (cumulative)
+        // severity
+        if (vis.filterState.severity === 'fatal') {
+            rows = rows.filter(d => d.severity === 'fatal');
+        } else if (vis.filterState.severity === 'nonfatal') {
+            rows = rows.filter(d => d.severity === 'nonfatal');
+        }
+
+        // time of day
+        if (vis.filterState.tod !== 'all'){
+            rows = rows.filter(d => d.timeBand === vis.filterState.tod);
+        }
+
+        // aggregate by pedAct
         vis.counts = Array.from(
-            d3.rollup(
-                vis.displayData,
-                v => v.length,
-                d => d.pedAct
-            ),
+            d3.rollup(rows, v => v.length, d => d.pedAct),
             ([pedAct, count]) => ({ pedAct, count })
         );
 
-        // Sort by count (descending) and take top 10
-        vis.counts.sort((a, b) => b.count - a.count);
-        vis.counts = vis.counts.slice(0, 10); // Always show top 10
+        vis.counts.sort((a,b)=>b.count-a.count);
+        vis.counts = vis.counts.slice(0,10);
     }
+
+
 
     /*
      * Set up year slider functionality
@@ -430,6 +458,30 @@ class BarChart {
             .text("🚶‍♀️"); // Walking person emoji
 
         emojiIcons.exit().remove();
+    }
+
+    bindTileFilters(){
+    const vis = this;
+    const bar = document.getElementById('filter-bar');
+    if (!bar) return;
+
+    bar.addEventListener('click', (e)=>{
+        const btn = e.target.closest('.tile');
+        if (!btn) return;
+        const groupEl = btn.closest('.tile-group');
+        const group = groupEl?.getAttribute('data-group');
+        const value = btn.getAttribute('data-value');
+        if (!group || !value) return;
+
+        // single-select per group: toggle active
+        groupEl.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (group === 'severity') vis.filterState.severity = value;
+        if (group === 'tod') vis.filterState.tod = value;
+
+        vis.processData(); vis.updateVis(); vis.createLegend();
+    });
     }
 
 }
