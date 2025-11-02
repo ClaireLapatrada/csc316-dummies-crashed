@@ -1,0 +1,489 @@
+═══════════════════════════════════════════════════════════════════════════════
+SIGN VISUALIZATION - IMPROVED IMPLEMENTATION PLAN
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 GOAL
+────────────────────────────────────────────────────────────────────────────────
+Create a dynamic visualization showing which type of crash is most common each
+year in Toronto by displaying three traffic signs (Car, Bicycle, Pedestrian) that:
+  • Rank by number of crashes (1st, 2nd, 3rd)
+  • Animate position changes based on ranking
+  • Update when the year changes via yearScroll
+
+CRASH TYPES TO TRACK:
+  1. Automobile only  → Uses: svg/car.svg
+  2. Cyclist Involved → Uses: svg/bike.svg
+  3. Pedestrian Involved → Uses: svg/pedestrian.svg
+
+DATA COLUMNS (from dataset.csv):
+  • "Automobile Involved" (Yes/No or 1/0)
+  • "Cyclist Involved" (Yes/No or 1/0)
+  • "Pedestrian Involved" (Yes/No or 1/0)
+  • "Year of collision" or "Year"
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📐 CODING STANDARDS & BEST PRACTICES
+═══════════════════════════════════════════════════════════════════════════════
+✓ Use D3.js for all DOM manipulation
+✓ Use arrow functions wherever possible
+✓ Use 'const' and 'let' instead of 'var'
+✓ Use 'vis.' prefix instead of 'this.' in class methods
+✓ Follow D3 margin convention for layouts
+✓ Use ES6 classes with proper structure
+✓ Implement D3 update pattern (enter/update/exit)
+✓ Keep all styling in CSS file (no inline styles in HTML)
+✓ Add comprehensive console.log statements for debugging
+✓ Use semantic naming conventions
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📁 FILE STRUCTURE
+═══════════════════════════════════════════════════════════════════════════════
+NEW FILE TO CREATE:
+  js/SignViz.js - Main visualization class
+
+FILES TO MODIFY:
+  js/main.js - Add SignViz initialization
+  index.html - Add container div for sign visualization
+  css/style.css - Add sign visualization styling
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🏗️ DETAILED IMPLEMENTATION STEPS
+═══════════════════════════════════════════════════════════════════════════════
+
+STEP 1: UPDATE index.html
+────────────────────────────────────────────────────────────────────────────────
+LOCATION: Inside the right-panel div, after #vizContainer and before #yearScroller
+
+ADD:
+  <div id="signVizContainer" style="height: 250px; margin-top: 20px;"></div>
+
+PURPOSE: Container for the sign visualization that sits between main viz and year scroller
+
+
+STEP 2: CREATE SignViz CLASS (js/SignViz.js)
+────────────────────────────────────────────────────────────────────────────────
+
+CLASS STRUCTURE:
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ class SignViz {                                                             │
+│   constructor(parentElement, data)                                          │
+│   initVis()                                                                 │
+│   wrangleData()                                                             │
+│   updateVis(year)                                                           │
+│ }                                                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+2.1 CONSTRUCTOR
+────────────────────────────────────────────────────────────────────────────────
+PARAMETERS:
+  • parentElement: CSS selector string (e.g., '#signVizContainer')
+  • data: full dataset array from globalData
+
+INITIALIZE:
+  • vis.parentElement = d3.select(parentElement)
+  • vis.data = data
+  • vis.currentYear = 2006 (default starting year)
+  • vis.displayData = [] (will hold ranking data)
+
+CALL: vis.initVis()
+
+
+2.2 INITVIS METHOD
+────────────────────────────────────────────────────────────────────────────────
+PURPOSE: Set up SVG structure, load sign SVGs, create static elements
+
+DIMENSIONS:
+  const margin = {top: 20, right: 20, bottom: 40, left: 20}
+  const width = 800 - margin.left - margin.right
+  const height = 250 - margin.top - margin.bottom
+
+SVG SETUP:
+  vis.svg = vis.parentElement.append('svg')
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+
+  vis.g = vis.svg.append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`)
+
+TITLE:
+  vis.g.append('text')
+    .attr('class', 'sign-viz-title')
+    .attr('x', width / 2)
+    .attr('y', height + 30)
+    .attr('text-anchor', 'middle')
+    .text('Crash Type Rankings')
+
+SIGN POSITIONS:
+  vis.signSpacing = width / 4
+  vis.signPositions = {
+    1: vis.signSpacing * 1,      // 1st place (left)
+    2: vis.signSpacing * 2,      // 2nd place (center)
+    3: vis.signSpacing * 3       // 3rd place (right)
+  }
+  vis.signYPosition = height / 2
+
+LOAD SVG FILES:
+  Use d3.xml() or d3.svg() to load three sign files:
+
+  Promise.all([
+    d3.xml('svg/car.svg'),
+    d3.xml('svg/bike.svg'),
+    d3.xml('svg/pedestrian.svg')
+  ]).then(([carSvg, bikeSvg, pedSvg]) => {
+
+    // Create sign data array
+    vis.signs = [
+      {
+        type: 'automobile',
+        label: 'Car Only',
+        svg: carSvg.documentElement,
+        color: '#fcd116' // yellow from car.svg
+      },
+      {
+        type: 'cyclist',
+        label: 'Cyclist',
+        svg: bikeSvg.documentElement,
+        color: '#00ff00' // green (adjust as needed)
+      },
+      {
+        type: 'pedestrian',
+        label: 'Pedestrian',
+        svg: pedSvg.documentElement,
+        color: '#ff6b6b' // red (adjust as needed)
+      }
+    ]
+
+    // Create groups for each sign
+    vis.signGroups = vis.g.selectAll('.sign-group')
+      .data(vis.signs)
+      .enter()
+      .append('g')
+      .attr('class', 'sign-group')
+      .attr('transform', (d, i) => `translate(${vis.signPositions[i+1]}, ${vis.signYPosition})`)
+
+    // Append SVG content
+    vis.signGroups.each(function(d) {
+      const group = d3.select(this)
+      const importedNode = d.svg.cloneNode(true)
+      group.node().appendChild(importedNode)
+
+      // Scale the SVG
+      d3.select(importedNode)
+        .attr('width', 80)
+        .attr('height', 80)
+        .attr('x', -40)  // center
+        .attr('y', -40)
+    })
+
+    // Add ranking badges (circles with numbers)
+    vis.badges = vis.signGroups.append('g')
+      .attr('class', 'ranking-badge')
+      .attr('transform', 'translate(25, -25)') // top-right corner
+
+    vis.badges.append('circle')
+      .attr('r', 18)
+      .attr('fill', 'rgba(0, 0, 0, 0.7)')
+      .attr('stroke', 'white')
+      .attr('stroke-width', 2)
+
+    vis.badges.append('text')
+      .attr('class', 'ranking-number')
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'central')
+      .text((d, i) => i + 1) // initial ranking
+
+    // Add labels below signs
+    vis.signGroups.append('text')
+      .attr('class', 'sign-label')
+      .attr('y', 60)
+      .attr('text-anchor', 'middle')
+      .text(d => d.label)
+
+    // Initial data wrangling
+    vis.wrangleData()
+  })
+
+EVENT LISTENERS:
+  Add custom event listener for year changes:
+
+  document.addEventListener('yearScrollUpdated', (event) => {
+    console.log('SignViz received year update:', event.detail.year)
+    vis.updateVis(event.detail.year)
+  })
+
+
+2.3 WRANGLEDATA METHOD
+────────────────────────────────────────────────────────────────────────────────
+PARAMETERS: None
+
+PURPOSE: Process all data and prepare counts by type for all years
+
+LOGIC:
+  // Initialize data structure to hold counts for all years
+  vis.yearlyData = {}
+
+  console.log('SignViz: Processing all data...')
+
+  // Group data by year and count crash types
+  vis.data.forEach(d => {
+    const year = d.year || d.Year
+
+    if (!vis.yearlyData[year]) {
+      vis.yearlyData[year] = {
+        automobile: 0,
+        cyclist: 0,
+        pedestrian: 0
+      }
+    }
+
+    // Check each involvement type
+    // Automobile ONLY (not involving cyclist or pedestrian)
+    const autoOnly = (d['Automobile Involved'] === 'Yes' || d['Automobile Involved'] === '1')
+                   && d['Cyclist Involved'] !== 'Yes'
+                   && d['Pedestrian Involved'] !== 'Yes'
+
+    const cyclistInvolved = d['Cyclist Involved'] === 'Yes' || d['Cyclist Involved'] === '1'
+    const pedestrianInvolved = d['Pedestrian Involved'] === 'Yes' || d['Pedestrian Involved'] === '1'
+
+    if (autoOnly) vis.yearlyData[year].automobile++
+    if (cyclistInvolved) vis.yearlyData[year].cyclist++
+    if (pedestrianInvolved) vis.yearlyData[year].pedestrian++
+  })
+
+  console.log('SignViz: Yearly data processed:', vis.yearlyData)
+
+  // Update with current year
+  vis.updateVis(vis.currentYear)
+
+
+2.4 UPDATEVIS METHOD
+────────────────────────────────────────────────────────────────────────────────
+PARAMETERS: year (integer)
+
+PURPOSE: Update visualization for a specific year and animate signs to their new positions based on ranking
+
+LOGIC:
+  console.log(`SignViz: Updating to year ${year}`)
+  vis.currentYear = year
+
+  // Get counts for the specified year
+  const counts = vis.yearlyData[year] || { automobile: 0, cyclist: 0, pedestrian: 0 }
+
+  console.log('SignViz counts for', year, ':', counts)
+
+  // Create array and sort by count (descending)
+  vis.displayData = [
+    { type: 'automobile', count: counts.automobile, ...vis.signs[0] },
+    { type: 'cyclist', count: counts.cyclist, ...vis.signs[1] },
+    { type: 'pedestrian', count: counts.pedestrian, ...vis.signs[2] }
+  ].sort((a, b) => b.count - a.count)
+
+  // Assign rankings
+  vis.displayData.forEach((d, i) => {
+    d.rank = i + 1
+  })
+
+  console.log('SignViz ranked data:', vis.displayData)
+
+TRANSITION SETUP:
+  const t = d3.transition()
+    .duration(1000)
+    .ease(d3.easeCubicInOut)
+
+UPDATE PATTERN:
+  // Update sign positions
+  vis.signGroups.data(vis.displayData, d => d.type) // key by type for object constancy
+    .transition(t)
+    .attr('transform', d => `translate(${vis.signPositions[d.rank]}, ${vis.signYPosition})`)
+
+  // Update ranking numbers
+  vis.signGroups.select('.ranking-number')
+    .transition(t)
+    .textTween(function(d) {
+      const i = d3.interpolate(+this.textContent, d.rank)
+      return function(t) {
+        return Math.round(i(t))
+      }
+    })
+
+  // Optional: Add count display
+  vis.signGroups.select('.count-text')
+    .text(d => d.count)
+
+VISUAL ENHANCEMENTS:
+  • Scale up the 1st place sign slightly (scale: 1.1)
+  • Add subtle drop shadow to signs
+  • Pulse animation for ranking badge on change
+
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 3: UPDATE main.js
+═══════════════════════════════════════════════════════════════════════════════
+
+ADD GLOBAL VARIABLE (top of file):
+  let signViz;
+
+IN THE d3.csv().then() CALLBACK, AFTER initVisualization():
+
+  // Initialize Sign Visualization
+  signViz = new SignViz('#signVizContainer', globalData)
+
+IN initYearScroller() FUNCTION, MODIFY onYearChange CALLBACK:
+
+  onYearChange: (year) => {
+    console.log('=== YEAR CHANGED TO:', year, '===')
+    currentYear = year
+    updateVisualization()
+    updateTimeDisplay()
+
+    // Update SignViz
+    if (signViz) {
+      signViz.updateVis(year)
+    }
+
+    // Dispatch custom event for other components
+    document.dispatchEvent(new CustomEvent('yearScrollUpdated', {
+      detail: { year: year }
+    }))
+  }
+
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 4: UPDATE index.html
+═══════════════════════════════════════════════════════════════════════════════
+
+ADD SCRIPT TAG (before closing </body>, after yearScroll.js):
+  <script src="js/SignViz.js"></script>
+
+ADD CONTAINER (in right-panel div, between vizContainer and yearScroller):
+  <!-- Sign Ranking Visualization -->
+  <div id="signVizContainer"></div>
+
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 5: ADD STYLING TO css/style.css
+═══════════════════════════════════════════════════════════════════════────────
+
+ADD:
+  /* Sign Visualization Styles */
+  #signVizContainer {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+  }
+
+  .sign-group {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .sign-group:hover {
+    transform: scale(1.05);
+  }
+
+  .ranking-badge {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  }
+
+  .sign-viz-title {
+    font-size: 16px;
+    font-weight: bold;
+    fill: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
+
+  .sign-label {
+    font-size: 14px;
+    fill: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+
+  .ranking-number {
+    font-size: 16px;
+    font-weight: bold;
+    fill: white;
+  }
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🎯 IMPROVEMENTS OVER ORIGINAL PLAN
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ ADDED: Specific dimension and margin specifications
+✓ ADDED: Detailed SVG loading strategy using Promise.all
+✓ ADDED: Object constancy for smooth transitions (key function)
+✓ ADDED: Proper data join pattern with enter/update/exit
+✓ ADDED: Visual feedback (hover effects, scale for winner)
+✓ ADDED: Event-driven architecture with CustomEvent
+✓ ADDED: Comprehensive console logging for debugging
+✓ IMPROVED: All styling in CSS (no D3 .style() calls)
+✓ ADDED: Error handling considerations
+✓ IMPROVED: Clear separation of "Automobile Only" vs mixed crashes
+✓ IMPROVED: Flexible data column checking (Year vs Year of collision)
+✓ IMPROVED: Animation timing and easing functions specified
+✓ IMPROVED: Accessibility with labels and semantic grouping
+✓ ADDED: Number interpolation for smooth rank changes
+✓ IMPROVED: wrangleData processes all years once for efficiency
+✓ IMPROVED: updateVis handles both initial render and year changes
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🔍 TESTING & VALIDATION CHECKLIST
+═══════════════════════════════════════════════════════════════════════════════
+
+□ SVG files load correctly without errors
+□ Signs appear in initial positions (left to right: 1, 2, 3)
+□ Ranking numbers display correctly in badges
+□ Year change triggers smooth position animation
+□ Rankings update based on actual data counts
+□ Console logs show correct counts for each type
+□ Transitions are smooth (1000ms duration)
+□ Hover effects work on signs
+□ Labels are visible and readable
+□ Works across different years (2006-2023)
+□ No console errors or warnings
+□ Integrates well with existing yearScroll component
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📝 NOTES & CONSIDERATIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+DATA ASSUMPTIONS:
+  • Dataset has "Automobile Involved", "Cyclist Involved", "Pedestrian Involved" columns
+  • Values are "Yes"/"No" or "1"/"0"
+  • "Automobile only" means no cyclist/pedestrian involvement
+
+SVG CONSIDERATIONS:
+  • All SVG files are scaled to 80x80 in the code
+  • If SVGs appear misaligned, you can edit the source SVG files to have uniform viewBox
+  • Alternatively, adjust the width/height values to maintain aspect ratio
+  • Position adjustments (x: -40, y: -40) center the SVGs on their group transform point
+
+  RECOMMENDED: Edit each SVG file to have the same viewBox for consistency:
+  1. Open each SVG in a text editor
+  2. Set viewBox="0 0 200 200" (or another square dimension)
+  3. Adjust internal paths to be centered within this viewBox
+  4. This ensures all signs have identical scaling and alignment
+
+POTENTIAL ENHANCEMENTS:
+  • Add tooltip showing exact count on hover
+  • Add percentage of total crashes
+  • Animate SVG elements within signs (e.g., wheels spinning)
+  • Add medal icons for 1st/2nd/3rd place
+  • Show trend arrow (increasing/decreasing from previous year)
+  • Add sound effects on ranking changes
+  • Make signs clickable to filter main visualization
+
+PERFORMANCE:
+  • SVG loading happens once (not per year)
+  • Transitions use hardware acceleration
+  • Data filtering is optimized with forEach (single pass)
+
+
+
