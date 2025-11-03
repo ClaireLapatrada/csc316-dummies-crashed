@@ -1,0 +1,74 @@
+html, body {
+    background: transparent;
+    color: white;
+}
+
+#cardsRow {
+    position: relative;
+}
+
+.category-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-radius: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 200px;
+    color: white;
+}
+
+.category-card .rank {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.category-card .icon {
+    width: 80px;
+    height: 105px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.category-card .count {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.category-card .name {
+    font-size: 1rem;
+    color: #eeeeee;
+}
+
+#yearSlider {
+    width: 100%;
+}
+
+#playBtn {
+    font-weight: bold;
+    font-size: 1.4rem;
+    border: 3px solid black;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    color: white;
+    text-transform: uppercase;
+    transition: background 0.3s, color 0.3s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 10px auto;
+}
+
+#playBtn.go {
+    background-color: #28a745;
+}
+
+#playBtn.stop {
+    background-color: #dc3545;
+}

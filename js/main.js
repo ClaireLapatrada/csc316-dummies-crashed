@@ -1,3 +1,5 @@
+import { YearScroll } from './yearScroll.js';
+
 // Global variables
 let globalData = [];
 let timeBuckets = [];
