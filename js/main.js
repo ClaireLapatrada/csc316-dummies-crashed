@@ -100,7 +100,6 @@ function initTimeSlider() {
     timeSlider.init();
 }
 function handleTimeChange(newTimeIndex) {
-    console.log('=== TIME CHANGED TO INDEX:', newTimeIndex, '===');
     currentTimeIndex = newTimeIndex;
 
     // Update the time object to match the selected bucket
