@@ -1,0 +1,160 @@
+/* ===== Integration theme: match injury-count look ===== */
+
+/* Base */
+html, body {
+  font-family: 'Roboto', sans-serif !important;
+  background: transparent !important;           /* let parent gradient show through */
+  color: rgba(255,255,255,0.85);
+  overflow: hidden;                              /* preserve original behavior */
+}
+
+/* Title */
+.title-section { top: 24px !important; left: 24px !important; }
+.main-title {
+  color: rgba(255,255,255,0.9) !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 700 !important;
+  font-style: normal !important;
+  letter-spacing: .2px;
+}
+.title-line-1, .title-line-3 {
+  font-weight: 400 !important;
+  color: rgba(255,255,255,0.75) !important;
+  text-decoration: none !important;
+}
+.title-line-2 {
+  font-size: 36px !important;
+  line-height: 1.15;
+}
+.title-line-3 a { color: rgba(255,255,255,0.8) !important; text-decoration: underline; }
+
+/* Play button */
+.play-button { right: 24px !important; top: 24px !important; }
+.play-triangle { border-left-color: #fff !important; }
+.play-button.playing .play-triangle,
+.play-button.playing .play-triangle::after { background-color: #fff !important; }
+
+/* Layout paddings to breathe on dark bg */
+.visualization-area { padding: 0 24px !important; margin-top: 120px !important; }
+
+/* Road container → glass on dark */
+.road-container {
+  background: rgba(255,255,255,0.06) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+}
+/* Side “shoulders” to match theme */
+.road-container::before,
+.road-container::after {
+  height: 6px !important;
+  background: rgba(255,255,255,0.10) !important;
+  border: 0 !important;
+}
+
+/* Bars, labels, dividers */
+.bar { rx: 10px !important; ry: 10px !important; }
+.bar-label {
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 700 !important;
+  fill: #fff !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6) !important;
+}
+.emoji-icon { fill: #fff !important; }
+.lane-divider { stroke: rgba(255,255,255,0.6) !important; }
+
+/* Legend → glass card with Roboto + white text */
+.legend-container {
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+}
+.legend-text {
+  font-family: 'Roboto', sans-serif !important;
+  color: rgba(255,255,255,0.85) !important;
+  font-style: normal !important;
+}
+.legend-color { border-radius: 4px !important; }
+
+/* Scrollbar to match */
+.legend-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.35) !important; }
+.legend-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.08) !important; }
+
+/* Timeline + slider in white */
+.timeline-line { background: rgba(255,255,255,0.4) !important; }
+.timeline-label {
+  font-family: 'Roboto', sans-serif !important;
+  color: rgba(255,255,255,0.8) !important;
+  font-style: normal !important;
+}
+.marker-dot { background: #fff !important; }
+.marker-label {
+  font-family: 'Roboto', sans-serif !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  font-style: normal !important;
+}
+.year-slider::-webkit-slider-thumb,
+.year-slider::-moz-range-thumb { background: #fff !important; }
+
+/* Axes/text defaults */
+.axis, .x-axis .tick text, .y-axis .tick text {
+  font-family: 'Roboto', sans-serif !important;
+  fill: rgba(255,255,255,0.8) !important;
+}
+.x-axis .domain, .y-axis .domain,
+.x-axis .tick line, .y-axis .tick line {
+  stroke: rgba(255,255,255,0.3) !important;
+}
+
+/* Filter tiles (if present in this visual) */
+.filter-bar .tile { border-color: #fff !important; color: #fff !important; background: transparent !important; }
+.filter-bar .tile.active { background: #fff !important; color: #4b1e7a !important; }
+
+/* Prevent inherited serif anywhere */
+* { font-family: 'Roboto', sans-serif; }
+
+/* Scoped filter tiles — place in the file that loads last */
+.filter-bar {
+  position: absolute;
+  top: 24px;                
+  right: 90px;              
+  z-index: 11;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-bar .tile-group{
+  display:flex; gap:8px; align-items:center;
+  background: rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.20);
+  border-radius:999px; padding:6px 8px;
+  backdrop-filter: blur(6px);
+}
+.filter-bar .tile-label{
+  font: 700 12px/1 'Roboto', sans-serif;
+  color: rgba(255,255,255,0.75);
+  margin-right:4px;
+}
+.filter-bar .tile{
+  appearance:none; -webkit-appearance:none;
+  font: 500 12px/1 'Roboto', sans-serif;
+  padding:8px 12px; border-radius:999px;
+  border:1px solid #fff; background: transparent;
+  color:#fff; cursor:pointer; transition: all .15s ease;
+}
+.filter-bar .tile:hover{
+  background: rgba(255,255,255,0.12);
+}
+.filter-bar .tile:focus-visible{
+  outline: 2px solid #00ffa6; outline-offset: 2px;
+}
+.filter-bar .tile.active{
+  background:#fff; color:#4b1e7a; border-color:#fff;
+}
+@media (max-width:680px){
+  .filter-bar{ right:20px; left:20px; top:100px; }
+}

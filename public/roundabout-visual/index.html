@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Roundabout-themed radar chart of Toronto crash data">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Roundabout radar — Toronto crash factors (2006–2023)</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700&family=Roboto:100,300,400,500,700" rel="stylesheet" type="text/css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <h1>Roundabout Radar</h1>
+    <h2>Toronto Crash Factors (2006–2023)</h2>
+    <p class="description">
+      A roundabout-themed radar chart visualizing the proportion of various 
+      contributing factors in all Toronto vehicle collisions from 2006 to 2023. 
+      Each "lane" on the roundabout represents a 20% increment.
+    </p>
+
+    <!-- Container for the D3 chart -->
+    <div class="chart-container">
+      <svg id="roundabout-chart" class="roundabout-chart"></svg>
+    </div>
+
+    <!-- Tooltip element, to be controlled by JS -->
+    <div class="tooltip"></div>
+
+    <!-- Libraries -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Visualization modules -->
+    <script src="js/roundaboutChart.js"></script>
+
+    <!-- App bootstrap: load data and render -->
+    <script src="js/main.js"></script>
+</body>
+</html>
