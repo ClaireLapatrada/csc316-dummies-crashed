@@ -41,155 +41,35 @@
         </div>
     </section>
 
-    <!-- Page 2: Year Question -->
+    <!-- Page 2: Pedestrian Visualization -->
     <section class="page" id="page-1" data-page="1">
-        <div class="page-content">
-            <div class="page-overlay">
-                <!-- Side sign on top right - scrollable year container -->
-                <div class="side-sign-container year-scroll-sign">
-                    <img src="imgs/side_sign.png" alt="Year sign" class="side-sign-image">
-                    <div class="side-sign-scroll-content">
-                        <div class="side-sign-year-item" data-year="2006">2006</div>
-                        <div class="side-sign-year-item" data-year="2007">2007</div>
-                        <div class="side-sign-year-item" data-year="2008">2008</div>
-                        <div class="side-sign-year-item" data-year="2009">2009</div>
-                        <div class="side-sign-year-item" data-year="2010">2010</div>
-                        <div class="side-sign-year-item" data-year="2011">2011</div>
-                        <div class="side-sign-year-item" data-year="2012">2012</div>
-                        <div class="side-sign-year-item" data-year="2013">2013</div>
-                        <div class="side-sign-year-item" data-year="2014">2014</div>
-                        <div class="side-sign-year-item" data-year="2015">2015</div>
-                        <div class="side-sign-year-item" data-year="2016">2016</div>
-                        <div class="side-sign-year-item" data-year="2017">2017</div>
-                        <div class="side-sign-year-item" data-year="2018">2018</div>
-                        <div class="side-sign-year-item" data-year="2019">2019</div>
-                        <div class="side-sign-year-item" data-year="2020">2020</div>
-                        <div class="side-sign-year-item" data-year="2021">2021</div>
-                        <div class="side-sign-year-item" data-year="2022">2022</div>
-                        <div class="side-sign-year-item" data-year="2023">2023</div>
-                    </div>
-                    <div class="side-sign-text highway-font" id="yearSignDisplay">2023</div>
-                </div>
-                
-                <div class="question-text">In each year, who's involved in the most accidents?</div>
-                <div class="sign-container">
-                    <div class="warning-signs">
-                        <div class="warning-sign" data-type="pedestrian">
-                            <img src="imgs/pedsign.png" alt="Pedestrian" class="warning-icon">
-                        </div>
-                        <div class="warning-sign" data-type="bicycle">
-                            <img src="imgs/bikesign.png" alt="Bicycle" class="warning-icon">
-                        </div>
-                        <div class="warning-sign" data-type="car">
-                            <img src="imgs/carsign.png" alt="Car" class="warning-icon">
-                        </div>
-                    </div>
-                </div>
+        <div class="page-content viz-page">
+            <!-- Foreground element (trees) -->
+            <img src="imgs/foreground (1).png" alt="Foreground" class="foreground-image">
+            <div class="viz-container-full">
+                <iframe src="public/ped-visual/index.html" class="viz-iframe" title="Pedestrian Collisions Visualization"></iframe>
             </div>
         </div>
     </section>
 
-    <!-- Page 3: Time Question -->
+    <!-- Page 3: Roundabout Visualization -->
     <section class="page" id="page-2" data-page="2">
-        <div class="page-content">
-            <div class="page-overlay">
-                <div class="question-text">At each hour of the day, who's involved in the most accidents?</div>
-                <div class="sign-container">
-                    <div class="road-sign time-sign">
-                        <div class="sign-text highway-font" id="timeSignDisplay">01:00</div>
-                    </div>
-                    <div class="warning-signs">
-                        <div class="warning-sign" data-type="pedestrian">
-                            <img src="imgs/pedsign.png" alt="Pedestrian" class="warning-icon">
-                        </div>
-                        <div class="warning-sign" data-type="bicycle">
-                            <img src="imgs/bikesign.png" alt="Bicycle" class="warning-icon">
-                        </div>
-                        <div class="warning-sign" data-type="car">
-                            <img src="imgs/carsign.png" alt="Car" class="warning-icon">
-                        </div>
-                    </div>
-                </div>
+        <div class="page-content viz-page">
+            <!-- Foreground element (trees) -->
+            <img src="imgs/foreground (1).png" alt="Foreground" class="foreground-image">
+            <div class="viz-container-full">
+                <iframe src="public/roundabout-visual/index.html" class="viz-iframe" title="Roundabout Radar Visualization"></iframe>
             </div>
         </div>
     </section>
 
-    <!-- Page 4: Pedestrian Question with Bar Chart -->
+    <!-- Page 4: Vehicle Injury Visualization -->
     <section class="page" id="page-3" data-page="3">
-        <div class="page-content">
-            <div class="page-overlay">
-                <div class="question-text">What's the most common way pedestrians are involved in collisions?</div>
-                <div class="sign-container">
-                    <div class="road-sign chart-sign">
-                        <div class="sign-text highway-font year-label">2023</div>
-                        <div id="pedestrianChart" class="bar-chart-container"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Page 5: Main Visualization Page -->
-    <section class="page" id="page-4" data-page="4">
-        <div class="page-content main-viz-page">
-            <header class="py-4 text-center">
-                <h1 class="fw-bold mb-2">Accident Injury Analysis</h1>
-                <p class="fs-5 mb-0">
-                    Visualizing accident injuries by time and year in Toronto
-                </p>
-            </header>
-
-            <main class="flex-fill my-4">
-                <div class="container-fluid">
-                    <div class="d-flex gap-4">
-                        <!-- Left Panel - Time Control Only -->
-                        <div class="viz-section left-panel">
-                            <h5 class="mb-3">Time Control</h5>
-                            <div class="align-self-center" id="timeSlider"></div>
-                            <div id="timeDisplay" class="mt-3 text-white">
-                                <p>Current Time: <span id="currentTimeDisplay">6:30 PM</span></p>
-                                <p>Time Period: <span id="timePeriodDisplay">Evening</span></p>
-                            </div>
-                        </div>
-
-                        <div class="viz-section right-panel">
-                            <!-- Visualization Container with Year Scroller -->
-                            <div id="combinedVizContainer" style="position: relative;">
-                                <!-- Main Visualization -->
-                                <div id="vizContainer" style="height: 400px;"></div>
-
-                                <!-- Year Scroller integrated as X-axis -->
-                                <div id="yearScroller" style="height: 100px; margin-top: 10px;"></div>
-                            </div>
-
-                            <!-- Year display -->
-                            <div id="yearDisplay" class="text-center mt-3 text-white">
-                                <p>Selected Year: <span id="currentYearDisplay">2006</span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-
-            <footer class="py-3 text-center mt-auto">
-                <small>Created with D3.js • 2025 • Accident Data Visualization</small>
-            </footer>
-        </div>
-    </section>
-
-    <!-- Page 6: Dashboard/Map View -->
-    <section class="page" id="page-5" data-page="5">
-        <div class="page-content dashboard-page">
-            <img src="imgs/image 10.png" alt="Dashboard" class="dashboard-background">
-            <div class="dashboard-overlay">
-                <div class="dashboard-content">
-                    <div class="infotainment-screen">
-                        <div class="map-container" id="mapContainer">
-                            <!-- Map visualization will go here -->
-                            <div class="map-placeholder">Map Visualization</div>
-                        </div>
-                    </div>
-                </div>
+        <div class="page-content viz-page">
+            <!-- Foreground element (trees) -->
+            <img src="imgs/foreground (1).png" alt="Foreground" class="foreground-image">
+            <div class="viz-container-full">
+                <iframe src="public/vehicle-visual/index.html" class="viz-iframe" title="Vehicle Injury Analysis Visualization"></iframe>
             </div>
         </div>
     </section>

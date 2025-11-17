@@ -9,8 +9,10 @@ body {
     font-style: italic;
     position: fixed;
     width: 100%;
-    background: #EBEADD;
-    background-attachment: fixed;
+    background: #EBEADD !important;
+    background-attachment: fixed !important;
+    background-size: auto !important;
+    background-position: center center !important;
 }
 
 /* Allow scrolling on page container */
@@ -29,6 +31,7 @@ html {
     left: 0;
     width: 100%;
     z-index: 2;
+    background: transparent;
 }
 
 /* Introduction Page Specific Styles */
@@ -38,6 +41,37 @@ html {
 
 .intro-page .page-background {
     opacity: 1;
+}
+
+/* Visualization Pages */
+.viz-page {
+    background: #EBEADD;
+    padding: 0;
+    position: relative;
+}
+
+.viz-container-full {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+    z-index: 10;
+}
+
+.viz-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .title-overlay {
@@ -297,7 +331,7 @@ html {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: transparent;
+    background: #EBEADD;
 }
 
 .page-content {
@@ -334,12 +368,12 @@ html {
 /* Text styling - Times New Roman Italic */
 .question-text {
     font-family: 'Times New Roman', Times, serif;
+    color: #0C7B56;
     font-style: italic;
     font-size: 2.5rem;
-    color: #ffffff;
     text-align: center;
     margin-bottom: 2rem;
-    text-shadow: 2px 2px 4px #0C7B56, 4px 4px 8px rgba(12, 123, 86, 0.5);
+    text-shadow: 1px 1px 2px rgba(12, 123, 86, 0.3);
     z-index: 10;
     position: relative;
     font-weight: normal;
@@ -422,7 +456,7 @@ html {
 
 .chart-sign .year-label {
     font-size: 2rem;
-    color: #fff;
+    color: #0C7B56;
     text-align: center;
     margin-bottom: 1rem;
 }
@@ -539,6 +573,26 @@ html {
 .main-viz-page {
     background: transparent;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 1rem 0;
+}
+
+.main-viz-page header {
+    flex: 0 0 auto;
+    padding: 0.5rem 0;
+}
+
+.main-viz-page main {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+}
+
+.main-viz-page footer {
+    flex: 0 0 auto;
+    padding: 0.5rem 0;
 }
 
 .main-viz-page header,
@@ -552,6 +606,13 @@ html {
 
 .main-viz-page h1 {
     font-weight: bold;
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.main-viz-page header p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
 }
 
 /* Dashboard Page */
@@ -607,7 +668,7 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.5);
+    color: #0C7B56;
     font-family: 'Times New Roman', Times, serif;
     font-style: italic;
     font-size: 1.5rem;
@@ -634,10 +695,10 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.35);
+    background: transparent;
     z-index: 0;
     pointer-events: none;
-    opacity: var(--overlay-opacity, 0);
+    opacity: 0;
     transition: opacity 1.5s ease-in-out;
 }
 
@@ -656,7 +717,7 @@ header {
 
 footer {
     font-size: 0.9rem;
-    color: rgba(255,255,255,0.4);
+    color: #0C7B56;
     margin-top: auto;
     backdrop-filter: blur(8px);
     background-color: rgba(255,255,255,0.02);
@@ -675,7 +736,7 @@ footer {
 }
 
 h1, h5, h6, p {
-    color: rgba(255,255,255,0.8);
+    color: #0C7B56;
     text-shadow: none;
     font-family: 'Times New Roman', Times, serif;
     font-style: italic;
@@ -735,15 +796,15 @@ h1, h5, h6, p {
 
 .tooltip {
     position: absolute;
-    background: rgba(0, 0, 0, 0.95);
-    color: white;
+    background: rgba(255, 255, 255, 0.95);
+    color: #0C7B56;
     padding: 15px 20px;
     border-radius: 12px;
     pointer-events: none;
     font-size: 14px;
     z-index: 1000;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(12, 123, 86, 0.3);
     backdrop-filter: blur(10px);
     opacity: 0;
     transition: opacity 0.3s;
@@ -856,7 +917,27 @@ h1, h5, h6, p {
 
 .viz-section {
     overflow-y: auto;
-    max-height: 80vh;
+    max-height: calc(100vh - 200px);
+}
+
+.left-panel h5 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.left-panel #timeSlider {
+    margin: 0.5rem 0;
+}
+
+.left-panel #timeDisplay {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #0C7B56;
+}
+
+.left-panel #timeDisplay p {
+    margin-bottom: 0.25rem;
+    color: #0C7B56;
 }
 
 /* Responsive adjustments */

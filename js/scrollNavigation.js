@@ -4,7 +4,7 @@
 let currentPageIndex = 0;
 let isScrolling = false;
 let scrollTimeout = null;
-const totalPages = 6;
+const totalPages = 4;
 
 // Initialize scroll navigation
 function initScrollNavigation() {
@@ -110,15 +110,10 @@ function navigateToPage(pageIndex, smooth = true) {
         block: 'start'
     });
 
-    // Update overlay visibility based on page
+    // Update overlay visibility based on page (disabled - all pages use same background)
     const body = document.body;
-    if (pageIndex === 0) {
-        // First page - no overlay
-        body.style.setProperty('--overlay-opacity', '0');
-    } else {
-        // Other pages - show overlay with animation
-        body.style.setProperty('--overlay-opacity', '1');
-    }
+    // Keep overlay transparent for all pages to match first page
+    body.style.setProperty('--overlay-opacity', '0');
 
     // Initialize page-specific content
     initializePageContent(pageIndex);
@@ -132,126 +127,21 @@ function navigateToPage(pageIndex, smooth = true) {
 // Initialize content for specific pages
 function initializePageContent(pageIndex) {
     switch(pageIndex) {
-        case 1: // Year question page
-            updateYearDisplay();
-            // Initialize year question page if available
-            if (window.YearQuestion) {
-                // Make sure data is analyzed
-                if (window.App && typeof window.App.getGlobalData === 'function') {
-                    const data = window.App.getGlobalData();
-                    if (data && data.length > 0 && typeof window.YearQuestion.analyzeYearAccidents === 'function') {
-                        window.YearQuestion.analyzeYearAccidents(data);
-                    }
-                }
-                // Initialize scroll container if not already done
-                const sideSign = document.querySelector('.side-sign-container.year-scroll-sign');
-                if (typeof window.YearQuestion.initYearScrollContainer === 'function' && sideSign && !sideSign.hasAttribute('data-initialized')) {
-                    window.YearQuestion.initYearScrollContainer();
-                    sideSign.setAttribute('data-initialized', 'true');
-                }
-                // Update display
-                if (typeof window.YearQuestion.updateYearAndSigns === 'function') {
-                    const currentYear = window.App && typeof window.App.getCurrentYear === 'function' 
-                        ? window.App.getCurrentYear() 
-                        : 2023;
-                    window.YearQuestion.updateYearAndSigns(currentYear);
-                }
-            }
+        case 1: // Pedestrian visualization page
+            // Visualization loads in iframe, no initialization needed
             break;
-        case 2: // Time question page
-            updateTimeDisplay();
+        case 2: // Roundabout visualization page
+            // Visualization loads in iframe, no initialization needed
             break;
-        case 3: // Pedestrian chart page
-            updatePedestrianChart();
+        case 3: // Vehicle injury visualization page
+            // Visualization loads in iframe, no initialization needed
             break;
-        case 4: // Main visualization page
-            // Check if already initialized
-            const vizContainer = document.getElementById('vizContainer');
-            if (vizContainer && vizContainer.children.length === 0) {
-                if (typeof window.initVisualization === 'function') {
-                    window.initVisualization();
-                }
-                if (typeof window.initYearScroller === 'function') {
-                    window.initYearScroller();
-                }
-                if (typeof window.initTimeSlider === 'function') {
-                    window.initTimeSlider();
-                }
-            }
-            if (typeof window.updateVisualization === 'function') {
-                setTimeout(() => window.updateVisualization(), 200);
-            }
-            break;
-        case 5: // Dashboard page
-            initializeDashboard();
+        default:
+            // No initialization needed for other pages
             break;
     }
 }
 
-// Update year display on page 1
-function updateYearDisplay() {
-    const yearSign = document.getElementById('yearSignDisplay');
-    if (yearSign) {
-        // Wait for App to be available
-        setTimeout(() => {
-            if (window.App && typeof window.App.getCurrentYear === 'function') {
-                const currentYear = window.App.getCurrentYear();
-                yearSign.textContent = currentYear;
-            } else {
-                yearSign.textContent = '2023';
-            }
-        }, 100);
-    }
-}
-
-// Update time display on page 2
-function updateTimeDisplay() {
-    const timeSign = document.getElementById('timeSignDisplay');
-    if (timeSign) {
-        // Wait for App to be available
-        setTimeout(() => {
-            if (window.App && typeof window.App.getTimeBuckets === 'function') {
-                const timeBuckets = window.App.getTimeBuckets();
-                const currentTimeIndex = window.App.getCurrentTimeIndex();
-                if (timeBuckets && timeBuckets[currentTimeIndex]) {
-                    const timeStr = timeBuckets[currentTimeIndex];
-                    // Extract time part (e.g., "6:30 PM" -> "18:30")
-                    const [timePart, period] = timeStr.split(' ');
-                    if (timePart) {
-                        const [hours, minutes] = timePart.split(':');
-                        let hour24 = parseInt(hours);
-                        if (period === 'PM' && hour24 !== 12) hour24 += 12;
-                        if (period === 'AM' && hour24 === 12) hour24 = 0;
-                        timeSign.textContent = `${String(hour24).padStart(2, '0')}:${minutes || '00'}`;
-                    }
-                } else {
-                    timeSign.textContent = '01:00';
-                }
-            } else {
-                timeSign.textContent = '01:00';
-            }
-        }, 100);
-    }
-}
-
-// Update pedestrian chart on page 3
-function updatePedestrianChart() {
-    const chartContainer = document.getElementById('pedestrianChart');
-    if (!chartContainer || !window.App) return;
-
-    // This would integrate with the pedestrian visualization
-    // For now, just ensure the container is ready
-    chartContainer.innerHTML = '<div style="color: white; text-align: center; padding: 2rem;">Pedestrian Collision Chart</div>';
-}
-
-// Initialize dashboard on page 5
-function initializeDashboard() {
-    const mapContainer = document.getElementById('mapContainer');
-    if (mapContainer) {
-        // Dashboard initialization code would go here
-        console.log('Dashboard page initialized');
-    }
-}
 
 // Public API
 window.ScrollNavigation = {

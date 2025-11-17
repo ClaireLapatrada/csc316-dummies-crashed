@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vehicle Injury Analysis (2006-2023)</title>
+
+    <!-- Load Google Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700&family=Roboto:100,300,400,500,700' rel='stylesheet' type='text/css'>
+
+    <!-- Custom CSS code -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="infographic-container">
+        <!-- Title Section -->
+        <div class="title-section">
+            <h1 class="main-title">
+                <span class="title-line-1">Vehicle Injury Analysis</span>
+                <span class="title-line-2">by Vehicle Type (2006-2023)</span>
+            </h1>
+
+            <!-- Description -->
+            <div class="description-section">
+                This visualization shows the number of injuries by vehicle type for different times of day and years. Use the year slider and time control to explore how injuries vary across different vehicle types throughout the day and over the years. Click on any vehicle circle to see detailed injury breakdown information.
+            </div>
+        </div>
+
+        <!-- Main Visualization Area -->
+        <div class="visualization-area">
+            <div class="main-layout">
+                <!-- Left: Time Slider (Clock) -->
+                <div class="left-panel">
+                    <h5 class="control-label">Time</h5>
+                    <div id="timeSlider"></div>
+                    <div id="timeDisplay" class="display-text">
+                        <p>Current Time: <span id="currentTimeDisplay">6:30 PM</span></p>
+                        <p>Time Period: <span id="timePeriodDisplay">Evening</span></p>
+                    </div>
+                </div>
+
+                <!-- Right: Chart and Timeline -->
+                <div class="right-panel">
+                    <!-- Visualization Container (Bar Chart) -->
+                    <div class="viz-container">
+                        <div id="vizContainer"></div>
+                    </div>
+
+                    <!-- Timeline (Year Scroller) -->
+                    <div class="timeline-section">
+                        <h5 class="control-label">Year</h5>
+                        <div id="yearScroller"></div>
+                        <div id="yearDisplay" class="display-text">Selected Year: <span id="currentYearDisplay">2006</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip" class="tooltip"></div>
+
+    <!-- Load JS libraries -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Visualization modules -->
+    <script src="js/vehicleChart.js"></script>
+    <script src="js/yearScroll.js"></script>
+    <script src="js/timeSlider.js"></script>
+
+    <!-- Load data, create visualizations -->
+    <script src="js/main.js"></script>
+</body>
+</html>
+
