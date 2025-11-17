@@ -1,78 +1,303 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accident Injury Visualization</title>
-    <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,300,400italic,700' rel='stylesheet' type='text/css'>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Road Safety Analysis Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700&family=Arial:wght@400;700' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="public/sign-visual/css/style.css">
+    <link rel="stylesheet" href="public/ped-visual/css/styles.css">
+    <link rel="stylesheet" href="public/solution-visual/css/style.css">
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body>
 
-<header class="py-4 text-center">
-    <h1 class="fw-bold mb-2">Accident Injury Analysis</h1>
-    <p class="fs-5 mb-0">
-        Visualizing accident injuries by time and year in Toronto
-    </p>
-</header>
-
-<main class="flex-fill my-4">
-    <div class="container-fluid">
-        <div class="d-flex gap-4">
-            <!-- Left Panel - Time Control Only -->
-            <div class="viz-section left-panel">
-                <h5 class="mb-3">Time Control</h5>
-                <div class="align-self-center" id="timeSlider"></div>
-                <div id="timeDisplay" class="mt-3 text-white">
-                    <p>Current Time: <span id="currentTimeDisplay">6:30 PM</span></p>
-                    <p>Time Period: <span id="timePeriodDisplay">Evening</span></p>
+<!-- Main container that holds everything -->
+<div class="main-container">
+    <!-- SIGN CHART VISUALIZATION (Page 1) -->
+    <div id="signChartPage" class="visualization-page">
+        <div class="container py-5">
+            <div class="row justify-content-center text-center mb-4" id="cardsRow">
+                <div class="col-4 col-md-2 d-flex justify-content-center">
+                    <div class="category-card">
+                        <div class="rank" id="bikeRank">1</div>
+                        <img src="public/sign-visual/svg/bike.svg" class="icon" alt="Bike">
+                        <div class="count" id="bikeCount">0</div>
+                        <div class="name">Bike</div>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 d-flex justify-content-center">
+                    <div class="category-card">
+                        <div class="rank" id="carRank">2</div>
+                        <img src="public/sign-visual/svg/car.svg" class="icon" alt="Car">
+                        <div class="count" id="carCount">0</div>
+                        <div class="name">Car</div>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 d-flex justify-content-center">
+                    <div class="category-card">
+                        <div class="rank" id="pedestrianRank">3</div>
+                        <img src="public/sign-visual/svg/pedestrian.svg" class="icon" alt="Pedestrian">
+                        <div class="count" id="pedestrianCount">0</div>
+                        <div class="name">Pedestrian</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="viz-section right-panel">
-
-                <!-- Visualization Container with Year Scroller -->
-                <div id="combinedVizContainer" style="position: relative;">
-                    <!-- Navigation Button -->
-                    <div id="navButtonContainer" style="position: absolute; top: 10px; right: 10px; z-index: 1000;">
-                        <button id="nextPageBtn" class="btn btn-primary btn-sm"
-                                style="background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); color: white; padding: 8px 16px; border-radius: 20px; backdrop-filter: blur(10px);">
-                            Next Page →
-                        </button>
-                    </div>
-
-                    <!-- Main Visualization -->
-                    <div id="vizContainer" style="height: 400px;"></div>
-
-                    <!-- Year Scroller integrated as X-axis -->
-                    <div id="yearScroller" style="height: 100px; margin-top: 10px;"></div>
-                </div>
-
-                <!-- Year display -->
-                <div id="yearDisplay" class="text-center mt-3 text-white">
-                    <p>Selected Year: <span id="currentYearDisplay">2006</span></p>
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-8" id="yearScrollContainer"></div>
+                <div class="text-center mt-2">
+                    <button class="btn btn-success" id="playBtn">GO</button>
+                    <div id="currentYear" class="mt-2 fw-bold"></div>
                 </div>
             </div>
         </div>
     </div>
-</main>
 
-<footer class="py-3 text-center mt-auto">
-    <small>Created with D3.js • 2025 • Accident Data Visualization</small>
-</footer>
+    <!-- EMPTY VISUAL PAGE (Page 2) -->
+    <div id="emptyVisualPage" class="visualization-page" style="display: none;">
+        <div class="container py-5 text-center">
+            <h1>Empty Visual Page</h1>
+            <p>Next visualization in progress...</p>
+        </div>
+    </div>
 
-<!-- Tooltip -->
-<div id="tooltip" class="tooltip"></div>
+    <!-- PEDESTRIAN VISUALIZATION (Page 3) -->
+    <div id="pedestrianPage" class="visualization-page" style="display: none;">
+        <div class="infographic-container">
+            <!-- Title Section -->
+            <div class="title-section">
+                <h1 class="main-title">
+                    <span class="title-line-1">Cumulative pedestrian-involved collisions</span>
+                    <span class="title-line-2">by pedestrian action</span>
+                    <a href="https://data.torontopolice.on.ca/datasets/0a1ee9d9436546dcbdc0ee9301e45e83_0/explore?location=3.764176%2C-79.381430%2C0.00&showTable=true" target="_blank" class="title-line-3">Toronto Police Data</a>
+                </h1>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+                <!-- Description -->
+                <div class="description-section">
+                    There is no shortage of delays that occur during our daily commutes—no doubt due to construction, poor road infrastructure, limited public transportation options, and traffic collisions, the most quantifiable of all these reasons. Pedestrians make up the second highest number of fatal accidents in Toronto; which is concerning as Toronto is marketed as a walkable city. What conditions could cause this high volume of pedestrian collisions?<br><br>
+
+                    The chart below displays the number of pedestrians involved in Toronto traffic collisions and their actions moments before the collision from 2006 to 2023. Use the filters below to toggle between different collision severities, pedestrian actions, and districts. Use the time slider at the bottom and the buttons on the right to check the number of collisions across different years. Hover over each bar for more detailed information on each pedestrian action.
+                </div>
+            </div>
+
+            <!-- Main Visualization Area -->
+            <div class="visualization-area">
+                <!-- Controls row: filter bar + play/restart buttons -->
+                <div class="controls-row">
+                    <!-- Filter tiles -->
+                    <div class="filter-bar" id="filter-bar">
+                        <!-- View Mode Toggle -->
+                        <div class="tile-group" data-group="view">
+                            <span class="tile-label">View</span>
+                            <button class="tile active" id="view-mode-pedestrian" data-mode="pedestrian" data-value="pedestrian">Pedestrian</button>
+                            <button class="tile" id="view-mode-driver" data-mode="driver" data-value="driver">Driver</button>
+                        </div>
+
+                        <span class="tile-label">Filters</span>
+
+                        <!-- Severity Filter -->
+                        <div class="filter-dropdown-group">
+                            <button class="filter-btn" id="severity-filter-btn">
+                                <i class="fas fa-filter"></i>
+                                <span>Severity</span>
+                            </button>
+                            <div class="filter-checkbox-container" id="severity-checkboxes">
+                            </div>
+                        </div>
+
+                        <!-- Pedestrian Action Filter -->
+                        <div class="filter-dropdown-group">
+                            <button class="filter-btn" id="pedAct-filter-btn">
+                                <i class="fas fa-filter"></i>
+                                <span>Pedestrian Action</span>
+                            </button>
+                            <div class="filter-checkbox-container" id="pedAct-checkboxes">
+                            </div>
+                        </div>
+
+                        <!-- Driver Action Filter -->
+                        <div class="filter-dropdown-group" style="display: none;">
+                            <button class="filter-btn" id="drivAct-filter-btn">
+                                <i class="fas fa-filter"></i>
+                                <span>Driver Action</span>
+                            </button>
+                            <div class="filter-checkbox-container" id="drivAct-checkboxes">
+                            </div>
+                        </div>
+
+                        <!-- Pedestrian Age Filter -->
+                        <div class="filter-dropdown-group">
+                            <button class="filter-btn" id="pedAge-filter-btn">
+                                <i class="fas fa-filter"></i>
+                                <span>Pedestrian Age</span>
+                            </button>
+                            <div class="filter-checkbox-container" id="pedAge-checkboxes"></div>
+                        </div>
+
+                        <!-- Driver Age Filter -->
+                        <div class="filter-dropdown-group" style="display: none;">
+                            <button class="filter-btn" id="drivAge-filter-btn">
+                                <i class="fas fa-filter"></i>
+                                <span>Driver Age</span>
+                            </button>
+                            <div class="filter-checkbox-container" id="drivAge-checkboxes"></div>
+                        </div>
+
+                        <!-- District Filter -->
+                        <div class="filter-dropdown-group">
+                            <button class="filter-btn" id="district-filter-btn">
+                                <i class="fas fa-filter"></i>
+                                <span>District</span>
+                            </button>
+                            <div class="filter-checkbox-container" id="district-checkboxes">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Play and Restart Buttons -->
+                    <div class="control-buttons">
+                        <div class="play-button">
+                            <div class="play-triangle"></div>
+                        </div>
+                        <div class="restart-button">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Road Visualization -->
+                <div class="road-container">
+                    <div id="bar-chart"></div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-label timeline-start">2006</div>
+                    <div class="timeline-label timeline-end">2023</div>
+                    <div class="timeline-marker" id="timeline-marker">
+                        <div class="marker-dot"></div>
+                        <div class="marker-label" id="current-year">2007</div>
+                    </div>
+                    <input type="range" id="year-slider" min="2006" max="2023" value="2007" class="year-slider">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOLUTION MAPS PAGE (Page 4) -->
+    <div id="solutionMapsPage" class="visualization-page" style="display: none;">
+        <header class="d-flex justify-content-center align-items-center">
+            <h1>Toronto Collisions Map - Safety Solutions</h1>
+        </header>
+
+        <!-- Main Container -->
+        <div id="main-container" class="container rounded shadow p-3">
+            <div class="row">
+                <!-- Map Visualization -->
+                <div id="mapDiv" class="col-9 rounded"></div>
+
+                <!-- Options Panel -->
+                <div id="options-panel" class="col-3 rounded shadow-sm p-3">
+                    <div class="options-title mb-3">Options</div>
+
+                    <div class="filter-option mb-2">
+                        <input type="checkbox" id="filter-fatal" checked>
+                        <label for="filter-fatal" class="d-flex align-items-center">
+                            <span class="filter-indicator me-2"></span>
+                            <span class="filter-label me-auto">Fatal</span>
+                            <span class="filter-checkbox fatal"></span>
+                        </label>
+                    </div>
+
+                    <div class="filter-option mb-2">
+                        <input type="checkbox" id="filter-major" checked>
+                        <label for="filter-major" class="d-flex align-items-center">
+                            <span class="filter-indicator me-2"></span>
+                            <span class="filter-label me-auto">Major</span>
+                            <span class="filter-checkbox major"></span>
+                        </label>
+                    </div>
+
+                    <div class="filter-option mb-2">
+                        <input type="checkbox" id="filter-minor" checked>
+                        <label for="filter-minor" class="d-flex align-items-center">
+                            <span class="filter-indicator me-2"></span>
+                            <span class="filter-label me-auto">Minor</span>
+                            <span class="filter-checkbox minor"></span>
+                        </label>
+                    </div>
+
+                    <div class="filter-option mb-2">
+                        <input type="checkbox" id="filter-minimal" checked>
+                        <label for="filter-minimal" class="d-flex align-items-center">
+                            <span class="filter-indicator me-2"></span>
+                            <span class="filter-label me-auto">Minimal</span>
+                            <span class="filter-checkbox minimal"></span>
+                        </label>
+                    </div>
+
+                    <button id="playButton" class="btn btn-primary w-100 mt-3">▶</button>
+
+                    <div class="mt-4">
+                        <h6 class="fw-bold">Top Neighborhoods by Collision Count</h6>
+                        <div id="locationChart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-9">
+                    <div id="timelineDiv" class="rounded"></div>
+                </div>
+                <div class="col-3 d-flex align-items-center justify-content-end">
+                    <button class="btn btn-success me-2" onclick="implementSolutions()">Implement Solutions</button>
+                    <button class="btn btn-outline-secondary" onclick="showPedestrianPage()">Back to Analysis</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Load JS libraries -->
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script src="js/background.js"></script>
-<script src="js/timeSlider.js"></script>
-<script src="js/visual.js"></script>
-<script type="module" src="js/yearScroll.js"></script>
-<script src="js/nextPage.js"></script>
-<script type="module" src="js/main.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+<!-- Load sign chart scripts -->
+<script src="public/sign-visual/js/yearScroll.js"></script>
+<script src="public/sign-visual/js/playButton.js"></script>
+<script src="public/sign-visual/js/signChart.js"></script>
+
+<!-- Load navigation FIRST -->
+<script src="public/sign-visual/js/nextPage.js"></script>
+
+<!-- Load other visualizations -->
+<script src="public/ped-visual/js/barChart.js"></script>
+<script src="public/ped-visual/js/main.js"></script>
+
+<!-- Your Toronto Crash Visualization Solution -->
+<script src="public/solution-visual/js/crashPointsVis.js"></script>
+<script src="public/solution-visual/js/mapVis.js"></script>
+<script src="public/solution-visual/js/timelineVis.js"></script>
+<script src="public/solution-visual/js/locationChart.js"></script>
+<script src="public/solution-visual/js/main.js"></script>
 
 </body>
 </html>
