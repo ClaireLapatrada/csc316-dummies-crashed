@@ -4,7 +4,7 @@
 let currentPageIndex = 0;
 let isScrolling = false;
 let scrollTimeout = null;
-const totalPages = 4;
+const totalPages = 6;
 
 // Initialize scroll navigation
 function initScrollNavigation() {
@@ -134,6 +134,12 @@ function initializePageContent(pageIndex) {
             // Visualization loads in iframe, no initialization needed
             break;
         case 3: // Vehicle injury visualization page
+            // Visualization loads in iframe, no initialization needed
+            break;
+        case 4: // Sign visualization page
+            // Visualization loads in iframe, no initialization needed
+            break;
+        case 5: // Solution visualization page
             // Visualization loads in iframe, no initialization needed
             break;
         default:

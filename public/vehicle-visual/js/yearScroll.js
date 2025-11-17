@@ -12,8 +12,8 @@ class YearScroll {
         this.years = d3.range(startYear, endYear + 1);
         this.currentYear = startYear;
         this.width = width;
-        this.height = 100;
-        this.margin = { left: 50, right: 50, top: 20, bottom: 20 };
+        this.height = 140;
+        this.margin = { left: 60, right: 60, top: 40, bottom: 35 };
     }
 
     init() {
@@ -66,9 +66,9 @@ class YearScroll {
             .append("text")
             .attr("class", "year-label")
             .attr("x", d => this.xScale(d))
-            .attr("y", trackY - 40)
+            .attr("y", trackY - 45)
             .attr("text-anchor", "middle")
-            .attr("font-size", "12px")
+            .attr("font-size", "13px")
             .attr("fill", d => d === this.currentYear ? "#0C7B56" : "#666")
             .attr("font-weight", d => d === this.currentYear ? "bold" : "normal")
             .style("pointer-events", "none")
@@ -145,10 +145,10 @@ class YearScroll {
         // Add instruction text
         this.svg.append("text")
             .attr("x", this.width / 2)
-            .attr("y", this.height - 10)
+            .attr("y", this.height - 15)
             .attr("text-anchor", "middle")
             .attr("fill", "#000")
-            .attr("font-size", "12px")
+            .attr("font-size", "13px")
             .text("Drag the car to select year");
 
         // Drag behavior
