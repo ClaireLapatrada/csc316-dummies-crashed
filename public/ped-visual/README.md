@@ -1,91 +1,11 @@
-# 🚗 Dummies Crashed
+# csc316-a4
 
-## 📊 Project Overview
-**Dummies Crashed** is a data-driven analysis of fatal traffic collisions in Toronto.  
-Our goal is to identify key factors behind these crashes and provide actionable insights to help the city reduce future incidents—such as prioritizing road construction, fixing potholes, or installing speeding cameras.  
-We will also create data visualizations to promote safe driving habits.
+[Assignment linked here for easy access](https://hivelabuoft.github.io/CSC316/homeworks/interactive_viz.html)
 
-## 📂 Data Sources
-We use publicly available traffic collision datasets from the [Toronto Police Service Public Safety Data Portal](https://data.torontopolice.on.ca/), primarily:
-- **Killed and Seriously Injured (KSI) Collisions Dataset** – includes geographical information, road conditions, crash time/date, and demographic details.
-- Other supporting datasets as needed.
+## Description of Visualization
+We can implement a [bar chart race](https://www.youtube.com/watch?v=a3w8I8boc_I) to encode number of fatalities/collisions across time per pedestrian (or driver) action attribute value. If we want to simulate pedestrians being run over in the chart where each bar visually appears to be a lane, we might need to slow down the time progression at each point where a new bar chart attribute value is being introduced. Optionally, we can do this by removing the "race" part of the bar chart race by fixing the bar positions (no bars overtake each other).
 
----
+We need an interactive segment in the visualization too, so we can either (1) make each bar clickable, and when clicked, opens a new visualization (stacked bar chart is probably easiest) or (2) allows us to switch datasets for the bar chart race (i.e. go from representing pedestrian actions to pedestrian condition or driver actions etc.)
 
-## 👥 Team Members
-| Name | Role | Email |
-|------|------|------|
-| **Janna** | Project Manager | janna.lim@mail.utoronto.ca |
-| **Claire** | UI/UX Design, Front-End Development | claire.jaroonjetjumnong@mail.utoronto.ca |
-| **Dechen** | UI/UX Design | de.zangmo@mail.utoronto.ca |
-| **Viktoriia** | TBD | viktoriia.dyrda@mail.utoronto.ca |
-| **Mitchell** | Data Engineer | mitchell.whitten@mail.utoronto.ca |
-| **Sark** | UI/UX Design, Idea Generator | sark.asadourian@mail.utoronto.ca |
-
----
-
-## 🤝 Team Agreement
-
-### Communication
-- **Channels:** Discord & Instagram  
-- **Response Time:** Within 24 hours (preferably 4 hours during business hours, 9am–5pm EST).  
-- **Urgent Matters:** Use `@channel` mentions.  
-- **Meetings:** Thursdays at **2:15pm EST** at **Gerstein Library**.  
-  - Each member gives a 2-minute status update.  
-  - Meeting notes stored in a shared Google Doc.  
-  - Attendance is mandatory (notify team lead 24 hrs in advance if absent).  
-
----
-
-## 💻 Code Guidelines
-- Follow the **Google JavaScript/HTML/CSS Style Guide**.  
-- **Branch naming convention:** `[name]/[feature]`  
-  - Example: `janna/home-page`
-- Add **inline comments** for complex code.  
-- Functions >20 lines must have **detailed docstrings**.  
-- Comment any **workarounds or technical debt**.
-
----
-
-## 🔀 Version Control Workflow
-
-### Main Rules
-- `main` branch is **protected** – no direct commits.
-- Each member merges **their own feature branch** after review.
-- Always create new branches from the **latest main**.
-
-### Creating a Branch
-```bash
-# Ensure you're on main and up to date
-git checkout main
-git pull
-
-# Create a new branch
-git checkout -b name/feature
-```
-
-### Making Changes
-
-Make your edits on your branch.
-
-Pull updates to stay in sync:
-
-```bash
-git pull
-```
-
-Resolve any merge conflicts if needed.
-
-Stage, commit, and push:
-
-```bash
-git add .
-git commit -m "Describe your change"
-git push origin name/feature
-```
-
-### Creating a Pull Request
-
-1. Go to GitHub and click **Compare & pull request**.
-2. Add two reviewers under the **Reviewers** tab.
-3. Notify the team in Discord after opening the pull request.
+## To-do list
+- [ ] 
