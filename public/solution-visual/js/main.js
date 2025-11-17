@@ -311,24 +311,48 @@ function showPedestrianPage() {
     }
 }
 
-// Initialize the solution page when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Ensure the Implement Solutions button is properly connected
-    const implementBtn = document.querySelector('button[onclick="implementSolutions()"]');
-    if (implementBtn) {
-        implementBtn.addEventListener('click', implementSolutions);
+// Simple improvement button - convert existing button
+function addImprovementButton() {
+    const solutionPage = document.getElementById('solutionMapsPage');
+    if (!solutionPage || solutionPage.style.display === 'none') return;
+
+    // Find the button container in the solution page
+    const buttonContainer = solutionPage.querySelector('.col-3.d-flex.align-items-center.justify-content-end');
+    if (!buttonContainer) {
+        console.log('Button container not found');
+        return;
     }
 
-    // Also connect any button with class .improvement-button
-    const improvementBtns = document.querySelectorAll('.improvement-button, .btn-success');
-    improvementBtns.forEach(btn => {
-        if (btn.textContent.includes('Implement') || btn.textContent.includes('Solution')) {
-            btn.addEventListener('click', implementSolutions);
-        }
-    });
+    // Check if we already have the improvement button
+    let improvementBtn = buttonContainer.querySelector('.improvement-button');
+
+    if (!improvementBtn) {
+        // Create improvement button
+        improvementBtn = document.createElement('button');
+        improvementBtn.className = 'btn btn-success improvement-button';
+        improvementBtn.innerHTML = '<i class="fas fa-tools me-2"></i>Implement Solutions';
+        improvementBtn.onclick = implementSolutions;
+
+        // Clear container and add our button
+        buttonContainer.innerHTML = '';
+        buttonContainer.appendChild(improvementBtn);
+
+        console.log('Improvement button created and added');
+    }
+}
+
+// Make sure it's called when solution page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Try immediately
+    setTimeout(addImprovementButton, 100);
+
+    // Also set up an interval to keep checking (for navigation)
+    setInterval(addImprovementButton, 1000);
 });
 
-// Make functions globally available
+window.addImprovementButton = addImprovementButton;
+
+
 window.implementSolutions = implementSolutions;
 window.showPedestrianPage = showPedestrianPage;
 window.highlightHighRiskAreas = highlightHighRiskAreas;

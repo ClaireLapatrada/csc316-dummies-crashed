@@ -169,5 +169,12 @@ body {
     box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
     transition: all 0.3s ease;
 }
+/* Add to your CSS file */
+.improvement-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
 
 

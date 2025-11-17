@@ -133,6 +133,13 @@ function createSimpleEmptyPageButton() {
 
         currentPageIndex = pageIndex;
         updateNavigation();
+
+        // Simple improvement button check - ADD THIS
+        if (targetPageId === 'solution') {
+            setTimeout(() => {
+                addImprovementButton();
+            }, 100);
+        }
     }
 
     function goToNextPage() {
@@ -220,8 +227,3 @@ function showPedestrianPage() {
     }
 }
 
-function implementSolutions() {
-    // Your solution implementation logic here
-    alert('Safety solutions would be implemented here!');
-    // This could trigger animations, show results, etc.
-}
