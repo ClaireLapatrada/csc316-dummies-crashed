@@ -1,8 +1,3 @@
-import {YearScroll} from '../../../js/yearScroll.js';
-import {PlayButton} from './playButton.js';
-
-import {createSolutionVisualization} from './solution.js';
-
 // Global variable to track current page
 if (typeof window.currentSignPage === 'undefined') {
     window.currentSignPage = 0; // 0 = main sign chart, 1 = solution visualization
@@ -76,149 +71,10 @@ function updateCountsAndRanks(year) {
     });
 }
 
-function nextSignPage() {
-    window.currentSignPage = (window.currentSignPage + 1) % 2;
-    console.log('Current sign page after:', window.currentSignPage);
-
-    if (window.currentSignPage === 0) {
-        showSignChartPage();
-    } else if (window.currentSignPage === 1) {
-        showSolutionVisualizationPage();
-    }
-
-    updateSignNavigationButton();
-}
-
-function updateSignNavigationButton() {
-    const btn = document.getElementById('nextSignPageBtn');
-    if (!btn) return;
-
-    if (window.currentSignPage === 0) {
-        btn.textContent = '→ Solution Visual';
-    } else {
-        btn.textContent = '← Back to Sign Chart';
-    }
-}
-
-// Show sign chart page (current visualization)
-function showSignChartPage() {
-
-    const signContainer = document.getElementById('yearScrollContainer');
-    const cardsRow = document.getElementById('cardsRow');
-    const playBtn = document.getElementById('playBtn');
-
-    if (signContainer) signContainer.style.display = 'block';
-    if (cardsRow) cardsRow.style.display = 'flex';
-    if (playBtn) playBtn.style.display = 'block';
-
-    const solutionViz = document.getElementById('solutionVisualization');
-    if (solutionViz) solutionViz.style.display = 'none';
-
-    createSignNavigationButton();
-    console.log('Sign chart page displayed');
-}
-
-// Show solution visualization page
-function showSolutionVisualizationPage() {
-    const signContainer = document.getElementById('yearScrollContainer');
-    const cardsRow = document.getElementById('cardsRow');
-    const playBtn = document.getElementById('playBtn');
-
-    if (signContainer) signContainer.style.display = 'none';
-    if (cardsRow) cardsRow.style.display = 'none';
-    if (playBtn) playBtn.style.display = 'none';
-
-    let solutionViz = document.getElementById('solutionVisualization');
-    if (!solutionViz) {
-        solutionViz = document.createElement('div');
-        solutionViz.id = 'solutionVisualization';
-        solutionViz.style.cssText = `
-            width: 100%;
-            height: 600px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-        `;
-
-        const signContainer = document.getElementById('yearScrollContainer');
-        if (signContainer && signContainer.parentNode) {
-            signContainer.parentNode.insertBefore(solutionViz, signContainer.nextSibling);
-        } else {
-            document.body.appendChild(solutionViz);
-        }
-
-        window.solutionViz = new createSolutionVisualization('#solutionVisualization', 800, 600);
-    } else {
-        solutionViz.style.display = 'flex';
-    }
-
-    createSignNavigationButton();
-    console.log('Solution visualization page displayed');
-}
-
-function createSignNavigationButton() {
-    const existingBtn = document.getElementById('nextSignPageBtn');
-    if (existingBtn) existingBtn.remove();
-
-    const buttonContainer = document.createElement('div');
-    buttonContainer.id = 'signNavButtonContainer';
-    buttonContainer.style.position = 'absolute';
-    buttonContainer.style.top = '20px';
-    buttonContainer.style.right = '20px';
-    buttonContainer.style.zIndex = '1000';
-
-    const nextPageBtn = document.createElement('button');
-    nextPageBtn.id = 'nextSignPageBtn';
-    nextPageBtn.style.cssText = `
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 600;
-        backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        cursor: pointer;
-    `;
-    nextPageBtn.onclick = nextSignPage;
-
-    nextPageBtn.addEventListener('mouseenter', () => {
-        nextPageBtn.style.background = 'rgba(255, 255, 255, 0.25)';
-        nextPageBtn.style.transform = 'translateY(-2px)';
-        nextPageBtn.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.4)';
-    });
-    nextPageBtn.addEventListener('mouseleave', () => {
-        nextPageBtn.style.background = 'rgba(255, 255, 255, 0.15)';
-        nextPageBtn.style.transform = 'translateY(0)';
-        nextPageBtn.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)';
-    });
-
-    buttonContainer.appendChild(nextPageBtn);
-
-    const mainContainer = document.querySelector('main') || document.body;
-    mainContainer.style.position = 'relative';
-    mainContainer.appendChild(buttonContainer);
-
-    updateSignNavigationButton();
-}
-
-function initSignPageNavigation() {
-    console.log('=== INITIALIZING SIGN PAGE NAVIGATION ===');
-    setTimeout(() => {
-        createSignNavigationButton();
-        console.log("Sign page navigation system initialized successfully");
-    }, 1000);
-}
 
 let actualStartYear, actualEndYear;
 
-d3.csv('./data/dataset.csv').then(csvData => {
+d3.csv('public/sign-visual/data/dataset.csv').then(csvData => {
     rawData = csvData;
     const validYears = [...new Set(csvData.map(d => +d['Year of collision']))].filter(year => year >= 2006 && year <= 2023).sort();
     actualStartYear = Math.min(...validYears);
@@ -259,12 +115,8 @@ d3.csv('./data/dataset.csv').then(csvData => {
 
     updateCountsAndRanks(signScroll.getCurrentYear());
 
-    initSignPageNavigation();
 
 }).catch(err => {
     console.error('Error loading CSV:', err);
 });
 
-window.nextSignPage = nextSignPage;
-window.showSignChartPage = showSignChartPage;
-window.showSolutionVisualizationPage = showSolutionVisualizationPage;

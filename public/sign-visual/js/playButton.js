@@ -1,6 +1,6 @@
-import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
 
-export class PlayButton {
+
+class PlayButton {
     /**
      * @param {string} selector - CSS selector for the button element
      * @param {YearScroll} yearScroll - Instance of YearScroll
@@ -62,3 +62,5 @@ export class PlayButton {
         this.button.classList.add('go');
     }
 }
+window.PlayButton = PlayButton;
+
