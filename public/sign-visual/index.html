@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Number of deaths across categories yearly (2006-2023)</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700&family=Roboto:100,300,400,500,700' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="container py-5">
+    <!-- Title Section -->
+    <div class="title-section">
+        <h1 class="main-title">
+            <span class="title-line-1">Fatal Collisions by Category</span>
+            <span class="title-line-2">(2006-2023)</span>
+        </h1>
+    </div>
+
+    <div class="row justify-content-center text-center mb-4" id="cardsRow">
+        <div class="col-4 col-md-2 d-flex justify-content-center">
+            <div class="category-card">
+                <div class="rank" id="bikeRank">1</div>
+                <img src="./svg/bike.svg" class="icon" alt="Bike">
+                <div class="count" id="bikeCount">0</div>
+                <div class="name">Bike</div>
+            </div>
+        </div>
+        <div class="col-4 col-md-2 d-flex justify-content-center">
+            <div class="category-card">
+                <div class="rank" id="carRank">2</div>
+                <img src="./svg/car.svg" class="icon" alt="Car">
+                <div class="count" id="carCount">0</div>
+                <div class="name">Car</div>
+            </div>
+        </div>
+        <div class="col-4 col-md-2 d-flex justify-content-center">
+            <div class="category-card">
+                <div class="rank" id="pedestrianRank">3</div>
+                <img src="./svg/pedestrian.svg" class="icon" alt="Pedestrian">
+                <div class="count" id="pedestrianCount">0</div>
+                <div class="name">Pedestrian</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8" id="yearScrollContainer"></div>
+        <div class="text-center mt-2">
+            <button class="btn btn-success" id="playBtn">GO</button>
+            <div id="currentYear" class="mt-2 fw-bold"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script type="module" src="js/playButton.js"></script>
+<script type="module" src="js/yearScroll.js"></script>
+<script type="module" src="js/signChart.js"></script>
+
+
+</body>
+</html>
