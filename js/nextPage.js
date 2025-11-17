@@ -63,8 +63,7 @@ function nextPage() {
             </div>
         `;
 
-        // keep nav button present
-        createNavigationButton();
+        // Navigation button disabled
         console.log("Alt page displayed successfully (iframe).");
         }
         updateNavigationButton();
@@ -154,8 +153,7 @@ function showMainPage() {
             if (typeof window.initTimeSlider === 'function') {
                 window.initTimeSlider();
             }
-            // Re-add the navigation button
-            createNavigationButton();
+            // Navigation button disabled
             console.log('Main page restored successfully');
         }, 100);
     } else {
@@ -165,74 +163,24 @@ function showMainPage() {
 
 // create and initialize navigation button
 function createNavigationButton() {
-    // Remove existing button if it exists
+    // Navigation button disabled - using scroll navigation instead
+    // Remove any existing button if it exists
     const existingBtn = document.getElementById('nextPageBtn');
     if (existingBtn) {
         existingBtn.remove();
     }
-
-    console.log('Creating navigation button...');
-
-    // create button container
-    const buttonContainer = document.createElement('div');
-    buttonContainer.id = 'navButtonContainer';
-    buttonContainer.style.position = 'fixed';
-    buttonContainer.style.top = '20px';
-    buttonContainer.style.right = '20px';
-    buttonContainer.style.zIndex = '9999';
-
-    // create the button
-    const nextPageBtn = document.createElement('button');
-    nextPageBtn.id = 'nextPageBtn';
-    nextPageBtn.className = 'btn btn-primary';
-    nextPageBtn.textContent = 'Next Page →';
-    nextPageBtn.style.cssText = `
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 25px;
-        font-size: 16px;
-        font-weight: 600;
-        backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        cursor: pointer;
-    `;
-
-    // Add hover effects
-    nextPageBtn.addEventListener('mouseenter', function() {
-        this.style.background = 'rgba(255, 255, 255, 0.25)';
-        this.style.transform = 'translateY(-3px)';
-        this.style.boxShadow = '0 6px 25px rgba(0, 0, 0, 0.4)';
-    });
-
-    nextPageBtn.addEventListener('mouseleave', function() {
-        this.style.background = 'rgba(255, 255, 255, 0.15)';
-        this.style.transform = 'translateY(0)';
-        this.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
-    });
-
-    // add click event
-    nextPageBtn.onclick = nextPage;
-
-    // Append button to contaner
-    buttonContainer.appendChild(nextPageBtn);
-
-    // Add to body
-    document.body.appendChild(buttonContainer);
-    console.log("Navigation button created and added successfully");
+    const existingContainer = document.getElementById('navButtonContainer');
+    if (existingContainer) {
+        existingContainer.remove();
+    }
+    return; // Exit early - button creation disabled
 }
 
 // initialize page navigation system
 function initPageNavigation() {
     console.log('=== INITIALIZING PAGE NAVIGATION ===');
-
-    // Wait a bit for the DOM to be fully ready
-    setTimeout(() => {
-        createNavigationButton();
-        console.log("Page navigation system initialized successfully");
-    }, 100);
+    // Navigation button disabled - using scroll navigation instead
+    // No button creation needed
 }
 
 window.nextPage = nextPage;

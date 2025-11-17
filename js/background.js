@@ -10,7 +10,11 @@ let currentColors = gradients.evening;
 const body = d3.select("body");
 
 function initBackground() {
-    animateGradientShift();
+    // Set solid background color to match first page
+    body.style("background", "#EBEADD");
+    body.style("background-size", "auto");
+    // Disable gradient animation
+    // animateGradientShift();
 }
 
 // Get gradient by hour
@@ -32,20 +36,12 @@ function animateGradientShift() {
     step();
 }
 
-// update gradient with smooth transition
+// update gradient with smooth transition (disabled - using solid color)
 function updateGradient(newColors) {
-    const interpolate = currentColors.map((c, i) => d3.interpolateRgb(c, newColors[i]));
-    let t = 0;
-    const step = () => {
-        t += 0.02;
-        if(t > 1) t = 1;
-        const interpolated = interpolate.map(f => f(t));
-        body.style("background", `linear-gradient(120deg, ${interpolated.join(", ")})`)
-            .style("background-size", "400% 400%");
-        if(t < 1) requestAnimationFrame(step);
-        else currentColors = newColors;
-    };
-    step();
+    // Keep solid background color
+    body.style("background", "#EBEADD");
+    body.style("background-size", "auto");
+    currentColors = newColors;
 }
 
 window.Background = {

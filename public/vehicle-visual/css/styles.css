@@ -1,0 +1,266 @@
+/* Global & Font Setup */
+body {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    background-color: #EBEADD; /* Match main page background */
+    color: #333;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.infographic-container {
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Title Section */
+.title-section {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin: 10px 40px 10px 40px;
+    z-index: 10;
+}
+
+.main-title {
+    color: #0C7B56; /* Match main page color */
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.title-line-1 {
+    display: block;
+}
+
+.title-line-2 {
+    display: block;
+    font-size: 1.2rem;
+}
+
+.description-section {
+    color: #000; /* Black for non-title text */
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    margin-top: 0.5rem;
+    max-width: 800px;
+}
+
+/* Visualization Area */
+.visualization-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0 40px 20px 40px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.main-layout {
+    display: flex;
+    gap: 25px;
+    width: 100%;
+    align-items: flex-start;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.left-panel {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 280px;
+    max-width: 280px;
+}
+
+.right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.timeline-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.control-label {
+    color: #0C7B56;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.display-text {
+    color: #000;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.display-text p {
+    margin: 5px 0;
+}
+
+/* Visualization Container */
+.viz-container {
+    width: 100%;
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+#vizContainer {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#vizContainer svg {
+    display: block;
+    margin: 0 auto;
+}
+
+/* Tooltip styling */
+.tooltip {
+    position: absolute;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    border-radius: 4px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 1000;
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px;
+    max-width: 300px;
+}
+
+.tooltip.show {
+    opacity: 1;
+}
+
+.injury-breakdown-tooltip {
+    padding: 20px;
+}
+
+.injury-breakdown h3 {
+    margin-top: 0;
+    color: #0C7B56;
+    font-family: 'Playfair Display', serif;
+}
+
+.injury-stats {
+    margin: 15px 0;
+}
+
+.injury-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.injury-label {
+    font-weight: 400;
+}
+
+.injury-count {
+    font-weight: 700;
+    color: #0C7B56;
+}
+
+.sample-records {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sample-records h4 {
+    margin-top: 0;
+    font-size: 14px;
+    color: #0C7B56;
+}
+
+.record {
+    font-size: 11px;
+    margin: 5px 0;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.click-note {
+    margin-top: 10px;
+    font-size: 11px;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.highlight-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    color: white;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.highlight-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Axis and grid styling */
+.axis text {
+    fill: #000;
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+}
+
+.axis path,
+.axis line {
+    stroke: #000;
+    stroke-width: 1;
+}
+
+.grid-line {
+    stroke: rgba(0, 0, 0, 0.1);
+}
+
+/* Legend styling */
+.legend text {
+    fill: #000;
+    font-family: 'Roboto', sans-serif;
+    font-size: 11px;
+}
+

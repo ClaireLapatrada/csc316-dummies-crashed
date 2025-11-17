@@ -48,14 +48,26 @@ document.addEventListener('DOMContentLoaded', function() {
         // find initial time index based on starting time
         currentTimeIndex = findClosestTimeIndex(time);
 
-        // initialize components
+        // initialize background (always needed)
         initBackground();
-        initVisualization();
-        initYearScroller();
-        initTimeSlider();
-        initPageNavigation()
-        updateTimeDisplay();
-        updateVisualization();
+        
+        // Only initialize visualization components when on page 4
+        // They will be initialized by scrollNavigation when navigating to that page
+        // For now, just set up the data structures
+        window.initVisualization = initVisualization;
+        window.initYearScroller = initYearScroller;
+        window.initTimeSlider = initTimeSlider;
+        window.updateVisualization = updateVisualization;
+        
+        // Initialize page navigation (if it exists)
+        if (typeof initPageNavigation === 'function') {
+            initPageNavigation();
+        }
+        
+        // Initialize year question page after data loads
+        if (window.YearQuestion && typeof window.YearQuestion.analyzeYearAccidents === 'function') {
+            window.YearQuestion.analyzeYearAccidents(globalData);
+        }
 
     }).catch(function(error) {
         console.error("Error loading the CSV file:", error);
@@ -197,6 +209,18 @@ window.App = {
     getCurrentTimeIndex: () => currentTimeIndex,
     getCurrentTime: () => time,
     getCurrentYear: () => currentYear,
+    // Internal method to set year without triggering callbacks
+    _setCurrentYearInternal: (year) => {
+        currentYear = year;
+    },
+    // Public method to set year and update displays
+    setCurrentYear: (year) => {
+        currentYear = year;
+        // Update year question display if on that page
+        if (window.YearQuestion && typeof window.YearQuestion.updateYearAndSigns === 'function') {
+            window.YearQuestion.updateYearAndSigns(year, false); // false = don't update App state again
+        }
+    },
     handleTimeChange: handleTimeChange,
 
 };

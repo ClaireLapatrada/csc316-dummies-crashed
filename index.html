@@ -5,62 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accident Injury Visualization</title>
     <link href='https://fonts.googleapis.com/css?family=Roboto:100,400,300,400italic,700' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-<header class="py-4 text-center">
-    <h1 class="fw-bold mb-2">Accident Injury Analysis</h1>
-    <p class="fs-5 mb-0">
-        Visualizing accident injuries by time and year in Toronto
-    </p>
-</header>
-
-<main class="flex-fill my-4">
-    <div class="container-fluid">
-        <div class="d-flex gap-4">
-            <!-- Left Panel - Time Control Only -->
-            <div class="viz-section left-panel">
-                <h5 class="mb-3">Time Control</h5>
-                <div class="align-self-center" id="timeSlider"></div>
-                <div id="timeDisplay" class="mt-3 text-white">
-                    <p>Current Time: <span id="currentTimeDisplay">6:30 PM</span></p>
-                    <p>Time Period: <span id="timePeriodDisplay">Evening</span></p>
+<!-- Page Container with Scroll Snap -->
+<div id="pageContainer" class="page-container">
+    <!-- Page 1: Introduction -->
+    <section class="page" id="page-0" data-page="0">
+        <div class="page-content intro-page">
+            <div class="page-overlay">
+                <!-- Title Text Overlay -->
+                <div class="title-overlay">
+                    <h1 class="main-title-text">Traffic Collisions in Toronto</h1>
+                    <h2 class="subtitle-text">from 1960-2025</h2>
                 </div>
-            </div>
-
-            <div class="viz-section right-panel">
-
-                <!-- Visualization Container with Year Scroller -->
-                <div id="combinedVizContainer" style="position: relative;">
-                    <!-- Navigation Button -->
-                    <div id="navButtonContainer" style="position: absolute; top: 10px; right: 10px; z-index: 1000;">
-                        <button id="nextPageBtn" class="btn btn-primary btn-sm"
-                                style="background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); color: white; padding: 8px 16px; border-radius: 20px; backdrop-filter: blur(10px);">
-                            Next Page →
-                        </button>
-                    </div>
-
-                    <!-- Main Visualization -->
-                    <div id="vizContainer" style="height: 400px;"></div>
-
-                    <!-- Year Scroller integrated as X-axis -->
-                    <div id="yearScroller" style="height: 100px; margin-top: 10px;"></div>
+                
+                <!-- Sign on the right -->
+                <div class="sign-container-right">
+                    <img src="imgs/dummies_sign.png" alt="Road sign" class="dummies-sign-image">
                 </div>
-
-                <!-- Year display -->
-                <div id="yearDisplay" class="text-center mt-3 text-white">
-                    <p>Selected Year: <span id="currentYearDisplay">2006</span></p>
+                
+                <!-- Foreground element -->
+                <img src="imgs/foreground (1).png" alt="Foreground" class="foreground-image">
+                
+                <!-- Cars positioned on the road -->
+                <div class="cars-container">
+                    <img src="imgs/small_car.png" alt="Small car" class="car car-small">
+                    <img src="imgs/med_car.png" alt="Medium car" class="car car-medium">
+                    <img src="imgs/big_car.png" alt="Big car" class="car car-big">
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </section>
 
-<footer class="py-3 text-center mt-auto">
-    <small>Created with D3.js • 2025 • Accident Data Visualization</small>
-</footer>
+    <!-- Page 2: Pedestrian Visualization -->
+    <section class="page" id="page-1" data-page="1">
+        <div class="page-content viz-page">
+            <!-- Foreground element (trees) -->
+            <img src="imgs/foreground (1).png" alt="Foreground" class="foreground-image">
+            <div class="viz-container-full">
+                <iframe src="public/ped-visual/index.html" class="viz-iframe" title="Pedestrian Collisions Visualization"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 3: Roundabout Visualization -->
+    <section class="page" id="page-2" data-page="2">
+        <div class="page-content viz-page">
+            <!-- Foreground element (trees) -->
+            <img src="imgs/foreground (1).png" alt="Foreground" class="foreground-image">
+            <div class="viz-container-full">
+                <iframe src="public/roundabout-visual/index.html" class="viz-iframe" title="Roundabout Radar Visualization"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 4: Vehicle Injury Visualization -->
+    <section class="page" id="page-3" data-page="3">
+        <div class="page-content viz-page">
+            <!-- Foreground element (trees) -->
+            <img src="imgs/foreground (1).png" alt="Foreground" class="foreground-image">
+            <div class="viz-container-full">
+                <iframe src="public/vehicle-visual/index.html" class="viz-iframe" title="Vehicle Injury Analysis Visualization"></iframe>
+            </div>
+        </div>
+    </section>
+</div>
 
 <!-- Tooltip -->
 <div id="tooltip" class="tooltip"></div>
@@ -68,11 +81,13 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="js/background.js"></script>
+<script src="js/scrollNavigation.js"></script>
 <script src="js/timeSlider.js"></script>
 <script src="js/visual.js"></script>
 <script src="js/yearScroll.js"></script>
 <script src="js/nextPage.js"></script>
 <script src="js/main.js"></script>
+<script src="js/yearQuestion.js"></script>
 
 </body>
 </html>

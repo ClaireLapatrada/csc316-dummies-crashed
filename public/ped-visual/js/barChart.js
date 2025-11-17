@@ -461,7 +461,7 @@ class BarChart {
             .style('font-family', 'Playfair Display, serif')
             .style('font-size', '24px')
             .style('font-weight', '700')
-            .style('color', '#C75B4A')
+            .style('color', '#0C7B56')
             .style('margin-bottom', '10px')
             .style('padding-right', '30px')
             .text(highlight.title);
@@ -1379,7 +1379,7 @@ class BarChart {
                 
                 // Highlight the bar
                 d3.select(this)
-                    .attr("stroke", "#f3d8d4ff")
+                    .attr("stroke", "#0C7B56")
                     .attr("stroke-width", 2);
             })
             .on("mouseout", function() {
