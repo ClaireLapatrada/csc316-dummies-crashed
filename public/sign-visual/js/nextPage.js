@@ -1,6 +1,6 @@
-// Enhanced navigation between all pages - SEPARATE NAVIGATION LOGIC
-function createSimpleEmptyPageButton() {
-    // Cache DOM elements upfront
+// Enhanced navigation system for all pages
+function setupPageNavigation() {
+    // Cache DOM elements
     const pages = {
         sign: document.getElementById('signChartPage'),
         empty: document.getElementById('emptyVisualPage'),
@@ -8,222 +8,203 @@ function createSimpleEmptyPageButton() {
         solution: document.getElementById('solutionMapsPage')
     };
 
-    // Create button container
-    const buttonContainer = document.createElement('div');
-    buttonContainer.id = 'pageNavContainer';
-    buttonContainer.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        display: flex;
-        gap: 10px;
-    `;
-
-    // Create navigation buttons
-    const prevButton = document.createElement('button');
-    prevButton.id = 'prevPageButton';
-    prevButton.innerHTML = '← Previous';
-    prevButton.style.cssText = `
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 600;
-        backdrop-filter: blur(10px);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: system-ui, -apple-system, sans-serif;
-    `;
-
-    const nextButton = document.createElement('button');
-    nextButton.id = 'nextPageButton';
-    nextButton.innerHTML = 'Next →';
-    nextButton.style.cssText = `
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 600;
-        backdrop-filter: blur(10px);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: system-ui, -apple-system, sans-serif;
-    `;
-
-    // Page indicator
-    const pageIndicator = document.createElement('div');
-    pageIndicator.id = 'pageIndicator';
-    pageIndicator.style.cssText = `
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        padding: 10px 15px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 600;
-        backdrop-filter: blur(10px);
-        font-family: system-ui, -apple-system, sans-serif;
-    `;
-
-    // Add hover effects
-    [prevButton, nextButton].forEach(button => {
-        button.addEventListener('mouseenter', () => {
-            button.style.background = 'rgba(255, 255, 255, 0.25)';
-            button.style.transform = 'translateY(-2px)';
-        }, { passive: true });
-
-        button.addEventListener('mouseleave', () => {
-            button.style.background = 'rgba(255, 255, 255, 0.15)';
-            button.style.transform = 'translateY(0)';
-        }, { passive: true });
-    });
-
-    // Page order and navigation
-    const pageOrder = ['sign', 'empty', 'pedestrian', 'solution'];
-    let currentPageIndex = 0;
-
-    function getCurrentPage() {
-        for (let i = 0; i < pageOrder.length; i++) {
-            const pageId = pageOrder[i];
-            const pageElement = pages[pageId];
-            if (pageElement && pageElement.style.display !== 'none') {
-                return { id: pageId, index: i };
-            }
-        }
-        return { id: 'sign', index: 0 }; // Default fallback
+    // Create navigation button container if it doesn't exist
+    let buttonContainer = document.getElementById('pageNavContainer');
+    if (!buttonContainer) {
+        buttonContainer = document.createElement('div');
+        buttonContainer.id = 'pageNavContainer';
+        buttonContainer.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        `;
+        document.body.appendChild(buttonContainer);
     }
 
-    function updateNavigation() {
-        const current = getCurrentPage();
-        currentPageIndex = current.index;
+    // Clear existing buttons
+    buttonContainer.innerHTML = '';
 
-        // Update buttons
-        prevButton.disabled = currentPageIndex === 0;
-        nextButton.disabled = currentPageIndex === pageOrder.length - 1;
+    // Create navigation buttons based on current page
+    const currentPage = getCurrentPage();
 
-        // Update indicator
-        pageIndicator.textContent = `Page ${currentPageIndex + 1} of ${pageOrder.length}`;
-
-        // Update button styles based on state
-        prevButton.style.opacity = prevButton.disabled ? '0.5' : '1';
-        nextButton.style.opacity = nextButton.disabled ? '0.5' : '1';
-        prevButton.style.cursor = prevButton.disabled ? 'not-allowed' : 'pointer';
-        nextButton.style.cursor = nextButton.disabled ? 'not-allowed' : 'pointer';
-    }
-
-    function navigateToPage(pageIndex) {
-        if (pageIndex < 0 || pageIndex >= pageOrder.length) return;
-
-        // Hide all pages
-        Object.values(pages).forEach(page => {
-            if (page) page.style.display = 'none';
-        });
-
-        // Show target page
-        const targetPageId = pageOrder[pageIndex];
-        const targetPage = pages[targetPageId];
-        if (targetPage) {
-            targetPage.style.display = 'block';
-        }
-
-        currentPageIndex = pageIndex;
-        updateNavigation();
-
-        // Simple improvement button check - ADD THIS
-        if (targetPageId === 'solution') {
-            setTimeout(() => {
-                addImprovementButton();
-            }, 100);
-        }
-    }
-
-    function goToNextPage() {
-        if (currentPageIndex < pageOrder.length - 1) {
-            navigateToPage(currentPageIndex + 1);
-        }
-    }
-
-    function goToPreviousPage() {
-        if (currentPageIndex > 0) {
-            navigateToPage(currentPageIndex - 1);
-        }
-    }
-
-    // Set up button event listeners
-    prevButton.addEventListener('click', goToPreviousPage);
-    nextButton.addEventListener('click', goToNextPage);
-
-    // Add elements to container
-    buttonContainer.appendChild(prevButton);
-    buttonContainer.appendChild(pageIndicator);
-    buttonContainer.appendChild(nextButton);
-    document.body.appendChild(buttonContainer);
-
-    // Initialize navigation state
-    updateNavigation();
-
-    // Set up observer to detect page changes from other sources
-    let observer;
-    if (window.MutationObserver) {
-        observer = new MutationObserver(function(mutations) {
-            requestAnimationFrame(() => {
-                for (let mutation of mutations) {
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                        updateNavigation();
-                        break;
-                    }
-                }
-            });
-        });
-
-        // Observe all pages for style changes
-        Object.values(pages).forEach(page => {
-            if (page) {
-                observer.observe(page, {
-                    attributes: true,
-                    attributeFilter: ['style']
-                });
-            }
-        });
+    switch(currentPage) {
+        case 'signChartPage':
+            createNavigationButton('View Map →', 'solutionMapsPage', buttonContainer);
+            break;
+        case 'emptyVisualPage':
+            createNavigationButton('← Previous', 'signChartPage', buttonContainer);
+            createNavigationButton('Next →', 'pedestrianPage', buttonContainer);
+            break;
+        case 'pedestrianPage':
+            createNavigationButton('← Previous', 'emptyVisualPage', buttonContainer);
+            createNavigationButton('View Map →', 'solutionMapsPage', buttonContainer);
+            break;
+        case 'solutionMapsPage':
+            createNavigationButton('← Previous', 'pedestrianPage', buttonContainer);
+            createNavigationButton('Back to Start', 'signChartPage', buttonContainer);
+            break;
     }
 
     // Public API for external navigation
     window.pageNavigation = {
-        goToSignChart: () => navigateToPage(0),
-        goToEmptyPage: () => navigateToPage(1),
-        goToPedestrianPage: () => navigateToPage(2),
-        goToSolutionMapsPage: () => navigateToPage(3),
-        getCurrentPage: () => pageOrder[currentPageIndex],
-        goToNextPage,
-        goToPreviousPage
-    };
-
-    // Cleanup function
-    return function cleanup() {
-        if (observer) observer.disconnect();
-        [prevButton, nextButton].forEach(button => {
-            button.removeEventListener('click', goToNextPage);
-            button.removeEventListener('click', goToPreviousPage);
-        });
+        goToPage: function(pageId) {
+            navigateToPage(pageId);
+        },
+        goToNext: function() {
+            const current = getCurrentPage();
+            const pageOrder = ['signChartPage', 'emptyVisualPage', 'pedestrianPage', 'solutionMapsPage'];
+            const currentIndex = pageOrder.indexOf(current);
+            if (currentIndex < pageOrder.length - 1) {
+                navigateToPage(pageOrder[currentIndex + 1]);
+            }
+        },
+        goToPrevious: function() {
+            const current = getCurrentPage();
+            const pageOrder = ['signChartPage', 'emptyVisualPage', 'pedestrianPage', 'solutionMapsPage'];
+            const currentIndex = pageOrder.indexOf(current);
+            if (currentIndex > 0) {
+                navigateToPage(pageOrder[currentIndex - 1]);
+            }
+        }
     };
 }
 
-// Initialize navigation
-(function initNavigation() {
-    setTimeout(() => {
-        createSimpleEmptyPageButton();
-    }, 100); // Small delay to ensure DOM is ready
-})();
+function createNavigationButton(text, targetPage, container) {
+    const button = document.createElement('button');
+    button.className = 'nav-button';
+    button.innerHTML = text;
+    button.style.cssText = `
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: system-ui, -apple-system, sans-serif;
+    `;
 
-// Make navigation functions available globally for your HTML buttons
-function showPedestrianPage() {
-    if (window.pageNavigation) {
-        window.pageNavigation.goToPedestrianPage();
+    // Add hover effects
+    button.addEventListener('mouseenter', () => {
+        button.style.background = 'rgba(255, 255, 255, 0.25)';
+        button.style.transform = 'translateY(-2px)';
+    });
+
+    button.addEventListener('mouseleave', () => {
+        button.style.background = 'rgba(255, 255, 255, 0.15)';
+        button.style.transform = 'translateY(0)';
+    });
+
+    button.addEventListener('click', () => {
+        navigateToPage(targetPage);
+    });
+
+    container.appendChild(button);
+}
+
+function getCurrentPage() {
+    const pages = ['signChartPage', 'emptyVisualPage', 'pedestrianPage', 'solutionMapsPage'];
+    for (let pageId of pages) {
+        const page = document.getElementById(pageId);
+        if (page && page.style.display !== 'none') {
+            return pageId;
+        }
+    }
+    return 'signChartPage'; // default
+}
+
+function navigateToPage(targetPageId) {
+    // Hide all pages
+    const pages = ['signChartPage', 'emptyVisualPage', 'pedestrianPage', 'solutionMapsPage'];
+    pages.forEach(pageId => {
+        const page = document.getElementById(pageId);
+        if (page) {
+            page.style.display = 'none';
+        }
+    });
+
+    // Show target page
+    const targetPage = document.getElementById(targetPageId);
+    if (targetPage) {
+        targetPage.style.display = 'block';
+
+        // Initialize specific page content if needed
+        if (targetPageId === 'solutionMapsPage') {
+            // The Toronto crash visualization should already be initialized
+            // from your main.js file
+            console.log('Navigated to solution maps page');
+
+            // If the map needs any post-navigation setup, it can be done here
+            setTimeout(() => {
+                // Ensure the map visualization is properly displayed
+                if (typeof myMapVis !== 'undefined' && myMapVis.updateVis) {
+                    myMapVis.updateVis();
+                }
+            }, 100);
+        }
+    }
+
+    // Update navigation buttons
+    setTimeout(setupPageNavigation, 50);
+}
+
+// Initialize navigation when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        setupPageNavigation();
+
+        // Force show the navigation on sign chart page
+        const signPage = document.getElementById('signChartPage');
+        if (signPage && signPage.style.display !== 'none') {
+            setupPageNavigation(); // Call again to ensure buttons are created
+        }
+    }, 1000); // Increased delay to ensure page is fully loaded
+});
+
+// Simple function for HTML buttons
+function showNextPage() {
+    if (window.pageNavigation && window.pageNavigation.goToNext) {
+        window.pageNavigation.goToNext();
     }
 }
 
+function showPreviousPage() {
+    if (window.pageNavigation && window.pageNavigation.goToPrevious) {
+        window.pageNavigation.goToPrevious();
+    }
+}
+
+function showMapPage() {
+    if (window.pageNavigation && window.pageNavigation.goToPage) {
+        window.pageNavigation.goToPage('solutionMapsPage');
+    }
+}
+
+function showSignPage() {
+    if (window.pageNavigation && window.pageNavigation.goToPage) {
+        window.pageNavigation.goToPage('signChartPage');
+    }
+}
+
+// Function to handle the "Implement Safety Solutions" button
+function implementSolutions() {
+    console.log('Safety solutions implementation triggered');
+
+    // Call the existing function from your main.js
+    if (typeof switchToImprovementsView === 'function') {
+        switchToImprovementsView();
+    } else {
+        console.warn('switchToImprovementsView function not found');
+    }
+}
+
+// Force navigation setup on window load as well
+window.addEventListener('load', function() {
+    setTimeout(setupPageNavigation, 1500);
+});

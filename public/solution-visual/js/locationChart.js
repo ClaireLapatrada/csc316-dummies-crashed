@@ -10,14 +10,14 @@ class LocationChart {
     initVis() {
         let vis = this;
 
-        vis.margin = { top: 13, right: 40, bottom: 120, left: 80 };
+        vis.margin = { top: 20, right: 50, bottom: 100, left: 50 };
         vis.width = 280 - vis.margin.left - vis.margin.right;
         vis.height = 280 - vis.margin.top - vis.margin.bottom;
 
         vis.svg = d3.select("#" + vis.parentElement)
             .append("svg")
             .attr("width", vis.width + vis.margin.left + vis.margin.right)
-            .attr("height", vis.height + vis.margin.top + vis.margin.bottom + 30)
+            .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
             .append("g")
             .attr("transform", `translate(${vis.margin.left},${vis.margin.top})`);
 
@@ -25,7 +25,7 @@ class LocationChart {
             .attr("class", "y-axis-label")
             .attr("transform", "rotate(-90)")
             .attr("x", -vis.height / 2)
-            .attr("y", -vis.margin.left + 50)
+            .attr("y", -vis.margin.left + 25)
             .attr("text-anchor", "middle")
             .style("font-size", "10px")
             .style("fill", "#333")
@@ -39,35 +39,23 @@ class LocationChart {
 
         vis.yAxis = vis.svg.append("g");
 
-        vis.svg.append("text")
-            .attr("class", "chart-description")
-            .attr("x", vis.width / 2 - 10)
-            .attr("y", vis.height + 95)
-            .attr("text-anchor", "middle")
-            .style("font-size", "11px")
-            .style("fill", "#555")
-            .text("Hover for a closer look!");
-
-        vis.tooltip = d3.select("body").append("div")
-            .attr("class", "tooltip")
-            .style("position", "absolute")
-            .style("background", "#fff")
-            .style("border", "1px solid #ccc")
-            .style("padding", "6px")
-            .style("border-radius", "4px")
-            .style("pointer-events", "none")
-            .style("opacity", 0);
-
         vis.updateVis();
     }
 
     wrangleData() {
         let vis = this;
 
-        let filtered = vis.data.filter(d =>
-            (!vis.selectedYear || d.Year === vis.selectedYear) &&
-            (vis.activeFilters.length === 0 || vis.activeFilters.includes(d['Accident Classification']))
-        );
+        let filtered = vis.data.filter(d => {
+            // Ensure Year is a number for comparison
+            let crashYear = +d.Year || +d['Year of collision'] || 0;
+            let classification = (d['Accident Classification'] || '').trim();
+            // Filter out entries with no category
+            if (!classification || classification === '') {
+                return false;
+            }
+            return (!vis.selectedYear || crashYear === +vis.selectedYear) &&
+                   (vis.activeFilters.length === 0 || vis.activeFilters.includes(classification));
+        });
 
         let counts = d3.rollups(filtered, v => v.length, d => d['DISTRICT']);
 
@@ -111,17 +99,6 @@ class LocationChart {
             .attr("y", d => vis.y(d[1]))
             .attr("height", d => vis.height - vis.y(d[1]))
             .attr("fill", "#f18f8f")
-            .on("mouseover", function(event, d) {
-                vis.tooltip.transition().duration(200).style("opacity", 0.9);
-                vis.tooltip.html(`<strong>${d[0]}</strong><br/>Collisions: ${d[1]}`)
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 28) + "px");
-                d3.select(this).attr("fill", "#d9534f");
-            })
-            .on("mouseout", function(event, d) {
-                vis.tooltip.transition().duration(300).style("opacity", 0);
-                d3.select(this).attr("fill", "#f18f8f");
-            })
             .merge(bars)
             .transition().duration(300)
             .attr("x", d => vis.x(d[0]))
@@ -163,10 +140,10 @@ class LocationChart {
         vis.svg.selectAll(".avg-label").remove();
         vis.svg.append("text")
             .attr("class", "avg-label")
-            .attr("x", vis.width + 33)
-            .attr("y", vis.y(vis.avgCollisions) + 4)
+            .attr("x", vis.width - 5)
+            .attr("y", vis.y(vis.avgCollisions) - 5)
             .attr("text-anchor", "end")
-            .style("font-size", "11px")
+            .style("font-size", "10px")
             .style("fill", "steelblue")
             .text(`Avg: ${Math.round(vis.avgCollisions)}`);
 

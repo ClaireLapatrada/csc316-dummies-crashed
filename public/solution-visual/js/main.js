@@ -5,12 +5,16 @@
 // init global variables, switches, helper functions
 let myMapVis,
     myTimelineVis,
-    myLocationChart;
+    myLocationChart,
+    myCrashPointsVis,
+    myImprovementsVis;
+let currentView = 'map'; // 'map' or 'improvements'
+let globalCrashData = null; // Store crash data globally for access in view switching
 
 // Load data using promises
 let promises = [
     d3.csv("public/solution-visual/data/dataset.csv"),
-    d3.json("data/Centreline - Version 2 - 4326.geojson")
+    d3.json("public/solution-visual/data/Centreline - Version 2 - 4326.geojson")
 ];
 
 Promise.all(promises)
@@ -20,7 +24,7 @@ Promise.all(promises)
     .catch(function(err) {
         console.log(err);
         // If GeoJSON fails, continue without it
-        d3.csv("data/dataset.csv")
+        d3.csv("public/solution-visual/data/dataset.csv")
             .then(function(csvData) {
                 initMainPage(csvData, null);
             });
@@ -28,6 +32,7 @@ Promise.all(promises)
 
 // initMainPage
 function initMainPage(crashData, geoData) {
+
     let vis = this;
 
     // Parse and clean crash data
@@ -44,6 +49,9 @@ function initMainPage(crashData, geoData) {
         d.LATITUDE >= 43.5 && d.LATITUDE <= 44.0 &&
         d.LONGITUDE >= -79.8 && d.LONGITUDE <= -79.0
     );
+    
+    // Store crash data globally for access in view switching
+    globalCrashData = crashData;
 
     // Find actual year range from data
     let years = crashData.map(d => d.Year).filter(y => y > 0);
@@ -52,25 +60,59 @@ function initMainPage(crashData, geoData) {
 
     // Create visualization instances (don't initialize yet)
     myMapVis = new MapVis('mapDiv', crashData, geoData);
+    myMapVis.currentView = 'map'; // Initialize current view
     myTimelineVis = new TimelineVis('timelineDiv', [minYear, maxYear]);
     myLocationChart = new LocationChart('locationChart', crashData);
 
     // Initialize MapVis first (needed for SVG and projection)
     myMapVis.initVis();
 
+    // Initialize TimelineVis
+    myTimelineVis.initVis();
+
+    // LocationChart is already initialized in constructor
+
     // Create and initialize CrashPointsVis with MapVis's SVG and projection
     myCrashPointsVis = new CrashPointsVis(myMapVis.svg, myMapVis.projection, myMapVis.severityColors);
     myMapVis.crashPointsVis = myCrashPointsVis; // Store reference in MapVis
     myCrashPointsVis.initVis();
 
-    // Initialize TimelineVis
-    myTimelineVis.initVis();
+    // Create and initialize ImprovementsVis with MapVis's SVG and projection
+    myImprovementsVis = new ImprovementsVis(myMapVis.svg, myMapVis.projection, crashData, myTimelineVis);
+    myMapVis.improvementsVis = myImprovementsVis; // Store reference in MapVis
+    myImprovementsVis.initVis();
+    myImprovementsVis.onBackClick = function() {
+        switchToMapView();
+    };
 
     // Connect timeline to map
     myTimelineVis.onYearChange = function(year) {
         myMapVis.setYear(year);
         myLocationChart.setYear(year);
+        // Update improvements when in improvements view (both manual and playing)
+        if (myImprovementsVis && currentView === 'improvements') {
+            myImprovementsVis.wrangleData(globalCrashData, year);
+        }
     };
+    
+    // Connect play/pause to improvements
+    if (myTimelineVis) {
+        let originalPlay = myTimelineVis.play;
+        let originalPause = myTimelineVis.pause;
+        
+        myTimelineVis.play = function() {
+            if (originalPlay) originalPlay.call(this);
+            // Draw factors when play starts
+            if (currentView === 'improvements' && myImprovementsVis) {
+                myImprovementsVis.wrangleData(globalCrashData, myTimelineVis.selectedYear);
+            }
+        };
+        
+        myTimelineVis.pause = function() {
+            if (originalPause) originalPause.call(this);
+            // Don't clear factors on pause, just stop updating
+        };
+    }
 
     // Set initial year
     myTimelineVis.setYear(minYear);
@@ -82,6 +124,158 @@ function initMainPage(crashData, geoData) {
 
     // Set up scroll listener
     setupScrollListener();
+
+    // Set up improvements view button
+    setupImprovementsView();
+}
+
+function switchToImprovementsView() {
+    currentView = 'improvements';
+    
+    // Update MapVis with current view state
+    if (myMapVis) {
+        myMapVis.currentView = 'improvements';
+    }
+    
+    // Hide crash points
+    if (myCrashPointsVis) {
+        myCrashPointsVis.svg.selectAll(".crash-point").style("display", "none");
+    }
+    
+    // Hide LocationChart container
+    d3.select("#options-panel").select(".mt-4").style("display", "none");
+    
+    // Hide severity filters and buttons
+    d3.selectAll(".filter-option")
+        .filter(function() {
+            let inputId = d3.select(this).select("input").attr("id");
+            return inputId && inputId.startsWith("filter-");
+        })
+        .style("display", "none");
+    d3.select("#playButton").style("display", "none");
+    d3.select("#improvementsButton").style("display", "none");
+    
+    // Show improvement circles and create UI
+    if (myImprovementsVis) {
+        myImprovementsVis.show();
+        myImprovementsVis.createFactorFilters();
+        myImprovementsVis.createBackButton();
+        // Draw factors for current year
+        myImprovementsVis.wrangleData(globalCrashData, myTimelineVis.selectedYear);
+    }
+}
+
+function switchToMapView() {
+    currentView = 'map';
+    
+    // Update MapVis with current view state
+    if (myMapVis) {
+        myMapVis.currentView = 'map';
+    }
+    
+    // Show crash points
+    if (myCrashPointsVis) {
+        myCrashPointsVis.svg.selectAll(".crash-point").style("display", "block");
+    }
+    
+    // Show LocationChart container
+    d3.select("#options-panel").select(".mt-4").style("display", "block");
+    
+    // Hide improvement circles
+    if (myImprovementsVis) {
+        myImprovementsVis.hide();
+        myImprovementsVis.removeFactorFilters();
+    }
+    
+    // Restore severity filters - they should already be in the DOM, just hidden
+    // The removeFactorFilters() method should have restored the original title
+    // The severity filter checkboxes are in the HTML, so they'll be visible again
+    d3.selectAll(".filter-option")
+        .filter(function() {
+            let inputId = d3.select(this).select("input").attr("id");
+            return inputId && inputId.startsWith("filter-");
+        })
+        .style("display", "block");
+    d3.select("#playButton").style("display", "block");
+    d3.select("#improvementsButton").style("display", "block");
+}
+
+function setupImprovementsView() {
+    d3.select("#improvementsButton").on("click", function() {
+        switchToImprovementsView();
+    });
+    
+    // Set up play button handler
+    d3.select("#playButton").on("click", function() {
+        if (myTimelineVis) {
+            if (myTimelineVis.isPlaying) {
+                myTimelineVis.pause();
+                this.textContent = "▶";
+            } else {
+                myTimelineVis.play();
+                this.textContent = "⏸";
+            }
+        }
+    });
+    
+    // Set up info button handler
+    d3.select("#infoButton").on("click", function() {
+        showInfoModal();
+    });
+}
+
+function showInfoModal() {
+    // Remove existing modal if any
+    d3.select("#info-modal").remove();
+    
+    // Create modal
+    let modal = d3.select("body")
+        .append("div")
+        .attr("id", "info-modal")
+        .style("position", "fixed")
+        .style("top", "0")
+        .style("left", "0")
+        .style("width", "100%")
+        .style("height", "100%")
+        .style("background-color", "rgba(0, 0, 0, 0.7)")
+        .style("z-index", "2000")
+        .style("display", "flex")
+        .style("align-items", "center")
+        .style("justify-content", "center")
+        .on("click", function() {
+            modal.remove();
+        });
+    
+    let modalContent = modal.append("div")
+        .style("background-color", "white")
+        .style("padding", "30px")
+        .style("border-radius", "12px")
+        .style("max-width", "600px")
+        .style("max-height", "80vh")
+        .style("overflow-y", "auto")
+        .style("position", "relative")
+        .on("click", function(event) {
+            event.stopPropagation();
+        });
+    
+    modalContent.append("button")
+        .style("position", "absolute")
+        .style("top", "10px")
+        .style("right", "10px")
+        .style("background", "none")
+        .style("border", "none")
+        .style("font-size", "24px")
+        .style("cursor", "pointer")
+        .text("×")
+        .on("click", function() {
+            modal.remove();
+        });
+    
+    modalContent.append("p")
+        .style("font-family", "Overpass, sans-serif")
+        .style("margin-bottom", "15px")
+        .style("line-height", "1.6")
+        .html("This visualization maps traffic collision patterns across Toronto neighborhoods, revealing where and why accidents occur. The severity map uses color intensity to highlight accident hotspots, while the improvements view shows factors that could be improved with simple road interventions.<br/><br/>Use the play button to animate changes year-by-year, revealing temporal trends in collision patterns and the effectiveness of safety measures over time.<br/><br/>Crash data: <a href='https://data.torontopolice.on.ca/datasets/TorontoPS::traffic-collisions-open-data-asr-t-tbl-001/about' target='_blank' style='color: #0066cc; text-decoration: underline;'>https://data.torontopolice.on.ca/datasets/TorontoPS::traffic-collisions-open-data-asr-t-tbl-001/about</a><br/>Map: <a href='https://open.toronto.ca/dataset/toronto-centreline-tcl/' target='_blank' style='color: #0066cc; text-decoration: underline;'>https://open.toronto.ca/dataset/toronto-centreline-tcl/</a>");
 }
 
 function setupFilters() {
@@ -147,212 +341,3 @@ function updateYearFromScroll() {
     }
 }
 
-// Comprehensive solution implementation function
-function implementSolutions() {
-    console.log('Implementing safety solutions...');
-
-    // Get the map container
-    const mapDiv = document.getElementById('mapDiv');
-    if (!mapDiv) {
-        console.error('Map container not found');
-        return;
-    }
-
-    // Remove any existing overlay first
-    const existingOverlay = mapDiv.querySelector('.implementation-overlay');
-    if (existingOverlay) {
-        existingOverlay.remove();
-    }
-
-    // Create implementation overlay
-    const implementationOverlay = document.createElement('div');
-    implementationOverlay.className = 'implementation-overlay';
-    implementationOverlay.style.cssText = `
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(76, 175, 80, 0.15);
-        border: 3px solid #4CAF50;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        pointer-events: none;
-        backdrop-filter: blur(2px);
-    `;
-
-    implementationOverlay.innerHTML = `
-        <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.3); max-width: 400px; text-align: center;">
-            <div style="color: #4CAF50; font-size: 48px; margin-bottom: 15px;">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h4 style="color: #4CAF50; margin-bottom: 15px; font-weight: bold;">Safety Solutions Implemented!</h4>
-            <div style="text-align: left; color: #555; line-height: 1.5;">
-                <p style="margin-bottom: 8px;"><i class="fas fa-crosswalk me-2"></i><strong>Enhanced Crosswalks:</strong> Raised pedestrian crossings with better lighting</p>
-                <p style="margin-bottom: 8px;"><i class="fas fa-traffic-light me-2"></i><strong>Smart Traffic Signals:</strong> Longer pedestrian crossing times</p>
-                <p style="margin-bottom: 8px;"><i class="fas fa-car-side me-2"></i><strong>Speed Reduction:</strong> Traffic calming measures in high-risk areas</p>
-                <p style="margin-bottom: 0;"><i class="fas fa-lightbulb me-2"></i><strong>Improved Lighting:</strong> Better street lighting in collision-prone zones</p>
-            </div>
-            <button class="btn btn-success mt-3" onclick="this.parentElement.parentElement.remove()" style="pointer-events: auto;">
-                <i class="fas fa-times me-2"></i>Close
-            </button>
-        </div>
-    `;
-
-    // Ensure map container has relative positioning
-    mapDiv.style.position = 'relative';
-    mapDiv.appendChild(implementationOverlay);
-
-    // Visual enhancements on the map
-    if (window.myMapVis && window.myMapVis.svg) {
-        highlightHighRiskAreas();
-    }
-
-    // Show success message in console
-    console.log('Safety solutions implemented successfully!');
-}
-
-// Function to highlight high-risk areas on the map
-function highlightHighRiskAreas() {
-    if (!window.myMapVis || !window.myMapVis.svg) return;
-
-    const svg = window.myMapVis.svg;
-
-    // Remove any existing highlights
-    svg.selectAll('.safety-highlight').remove();
-
-    // Add pulsing circles to represent implemented solutions
-    const highlights = [
-        { name: "Downtown Core", x: 400, y: 300, radius: 60 },
-        { name: "North York Center", x: 500, y: 200, radius: 45 },
-        { name: "Scarborough Cross", x: 600, y: 400, radius: 50 },
-        { name: "Etobicoke Hub", x: 250, y: 350, radius: 40 }
-    ];
-
-    highlights.forEach(area => {
-        const highlightGroup = svg.append('g')
-            .attr('class', 'safety-highlight')
-            .attr('transform', `translate(${area.x}, ${area.y})`);
-
-        // Pulsing effect circle
-        highlightGroup.append('circle')
-            .attr('r', area.radius)
-            .attr('fill', 'rgba(76, 175, 80, 0.2)')
-            .attr('stroke', '#4CAF50')
-            .attr('stroke-width', 2)
-            .attr('stroke-dasharray', '5,5')
-            .style('animation', 'pulse 2s infinite');
-
-        // Solution icon
-        highlightGroup.append('text')
-            .attr('text-anchor', 'middle')
-            .attr('dy', '0.3em')
-            .attr('font-size', '20px')
-            .attr('fill', '#4CAF50')
-            .html('⚙️');
-
-        // Area label
-        highlightGroup.append('text')
-            .attr('text-anchor', 'middle')
-            .attr('dy', `${area.radius + 20}px`)
-            .attr('font-size', '12px')
-            .attr('fill', '#4CAF50')
-            .attr('font-weight', 'bold')
-            .text(area.name);
-    });
-
-    // Add CSS animation for pulsing effect
-    if (!document.querySelector('#safety-animations')) {
-        const style = document.createElement('style');
-        style.id = 'safety-animations';
-        style.textContent = `
-            @keyframes pulse {
-                0% { transform: scale(1); opacity: 0.7; }
-                50% { transform: scale(1.05); opacity: 0.9; }
-                100% { transform: scale(1); opacity: 0.7; }
-            }
-            .safety-highlight {
-                animation: pulse 2s infinite;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-}
-
-// Enhanced back to analysis function
-function showPedestrianPage() {
-    // Remove any implementation overlays
-    const mapDiv = document.getElementById('mapDiv');
-    if (mapDiv) {
-        const overlay = mapDiv.querySelector('.implementation-overlay');
-        if (overlay) overlay.remove();
-
-        // Remove safety highlights
-        if (window.myMapVis && window.myMapVis.svg) {
-            window.myMapVis.svg.selectAll('.safety-highlight').remove();
-        }
-    }
-
-    // Navigate to pedestrian page
-    if (window.pageNavigation && typeof window.pageNavigation.goToPedestrianPage === 'function') {
-        window.pageNavigation.goToPedestrianPage();
-    } else {
-        // Fallback navigation
-        document.querySelectorAll('.visualization-page').forEach(page => {
-            page.style.display = 'none';
-        });
-        const pedestrianPage = document.getElementById('pedestrianPage');
-        if (pedestrianPage) {
-            pedestrianPage.style.display = 'block';
-        }
-    }
-}
-
-// Simple improvement button - convert existing button
-function addImprovementButton() {
-    const solutionPage = document.getElementById('solutionMapsPage');
-    if (!solutionPage || solutionPage.style.display === 'none') return;
-
-    // Find the button container in the solution page
-    const buttonContainer = solutionPage.querySelector('.col-3.d-flex.align-items-center.justify-content-end');
-    if (!buttonContainer) {
-        console.log('Button container not found');
-        return;
-    }
-
-    // Check if we already have the improvement button
-    let improvementBtn = buttonContainer.querySelector('.improvement-button');
-
-    if (!improvementBtn) {
-        // Create improvement button
-        improvementBtn = document.createElement('button');
-        improvementBtn.className = 'btn btn-success improvement-button';
-        improvementBtn.innerHTML = '<i class="fas fa-tools me-2"></i>Implement Solutions';
-        improvementBtn.onclick = implementSolutions;
-
-        // Clear container and add our button
-        buttonContainer.innerHTML = '';
-        buttonContainer.appendChild(improvementBtn);
-
-        console.log('Improvement button created and added');
-    }
-}
-
-// Make sure it's called when solution page loads
-document.addEventListener('DOMContentLoaded', function() {
-    // Try immediately
-    setTimeout(addImprovementButton, 100);
-
-    // Also set up an interval to keep checking (for navigation)
-    setInterval(addImprovementButton, 1000);
-});
-
-window.addImprovementButton = addImprovementButton;
-
-
-window.implementSolutions = implementSolutions;
-window.showPedestrianPage = showPedestrianPage;
-window.highlightHighRiskAreas = highlightHighRiskAreas;

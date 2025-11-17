@@ -31,10 +31,13 @@ class MapVis {
         vis.height = 560 - vis.margin.top - vis.margin.bottom;
 
         // init drawing area
-        vis.svg = d3.select("#" + vis.parentElement)
+        vis.svgElement = d3.select("#" + vis.parentElement)
             .append("svg")
             .attr("width", vis.width + vis.margin.left + vis.margin.right)
             .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
+            .style("cursor", "grab");
+        
+        vis.svg = vis.svgElement
             .append("g")
             .attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
 
@@ -86,7 +89,7 @@ class MapVis {
         vis.mapBackground = vis.svg.append("rect")
             .attr("width", vis.width)
             .attr("height", vis.height)
-            .attr("fill", "#ffffff")
+            .attr("fill", "#f5f5f5")
             .attr("rx", 12);
 
         // Create projection centered on Toronto (always create it for labels)
@@ -164,6 +167,11 @@ class MapVis {
                     vis.crashPointsVis.updateCoordinates(vis.projection);
                 }
                 
+                // Update improvement circles coordinates if improvements view is active
+                if (vis.improvementsVis) {
+                    vis.improvementsVis.updateCoordinates(vis.projection);
+                }
+                
                 // Update neighborhood labels
                 let labels = vis.svg.selectAll(".neighborhood-label");
                 if (!labels.empty()) {
@@ -206,6 +214,8 @@ class MapVis {
                     // Check if this is a drag (mousedown) or zoom (wheel)
                     if (event.sourceEvent && event.sourceEvent.type === "mousedown") {
                         isDragging = true;
+                        // Change cursor to move when dragging
+                        vis.svgElement.style("cursor", "move");
                         // Store the initial center when drag starts
                         initialCenter = vis.projection.center();
                         // Store the starting point in geographic coordinates
@@ -240,10 +250,12 @@ class MapVis {
                 })
                 .on("end", function(event) {
                     isDragging = false;
+                    // Change cursor back to grab when not dragging
+                    vis.svgElement.style("cursor", "grab");
                 });
             
             // Apply zoom behavior to the SVG (handles both scroll zoom and drag pan)
-            vis.svg.call(vis.zoom);
+            vis.svgElement.call(vis.zoom);
         }
 
         vis.wrangleData();
@@ -356,7 +368,8 @@ class MapVis {
         let vis = this;
 
         // Update crash points using CrashPointsVis (follows initVis -> wrangleData -> updateVis pattern)
-        if (vis.crashPointsVis) {
+        // Only update crashpoints if we're in map view, not in improvements view
+        if (vis.crashPointsVis && vis.currentView === 'map') {
             vis.crashPointsVis.wrangleData(vis.clusteredData);
         }
         

@@ -13,17 +13,18 @@ class TimelineVis {
 
         vis.isPlaying = false;
         vis.playInterval = null;
-
-        vis.initVis()
     }
 
     initVis() {
         let vis = this;
 
-        vis.margin = {top: 0, right: 0, bottom: 40, left: 0};
+        vis.margin = {top: 0, right: 20, bottom: 40, left: 0};
         vis.width = 831 - vis.margin.left - vis.margin.right;
         // Use a positive inner height so content isn't clipped
         vis.height = 27;
+
+        // Equal padding on both sides for year scale
+        vis.padding = 20;
 
         // init drawing area
         vis.svg = d3.select("#" + vis.parentElement)
@@ -33,10 +34,10 @@ class TimelineVis {
             .append("g")
             .attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
 
-        // Year scale
+        // Year scale - equal padding on both sides
         vis.yearScale = d3.scaleTime()
             .domain([new Date(vis.yearRange[0], 0, 1), new Date(vis.yearRange[1], 0, 1)])
-            .range([35, vis.width]);
+            .range([vis.padding, vis.width - vis.padding]);
 
         // Create slider track
         vis.track = vis.svg.append("rect")
@@ -46,8 +47,7 @@ class TimelineVis {
             .attr("width", vis.width)
             .attr("height", vis.height)
             .attr("rx", 7)
-            .attr("fill", "#fff")
-            .style("filter", "drop-shadow(0px 4px 1px rgba(0,0,0,0.25))");
+            .attr("fill", "#fff");
 
         // Create dashed line
         vis.line = vis.svg.append("line")
@@ -64,6 +64,7 @@ class TimelineVis {
         let initialX = vis.yearScale(new Date(vis.selectedYear, 0, 1));
         vis.handle = vis.svg.append("g")
             .attr("class", "timeline-handle")
+            .style("cursor", "grab")
             .attr("transform", `translate(${initialX}, ${vis.height / 2})`);
 
         vis.handle.append("polygon")
@@ -71,9 +72,9 @@ class TimelineVis {
             .attr("fill", "#ec6b68")
             .attr("transform", "rotate(90)");
 
-        // Year labels - dynamically generate based on year range
+        // Year labels - dynamically generate based on year range (show every year from 2006 to 2023)
         vis.years = [];
-        for (let y = vis.yearRange[0]; y <= vis.yearRange[1]; y += 2) {
+        for (let y = vis.yearRange[0]; y <= vis.yearRange[1]; y += 1) {
             vis.years.push(y);
         }
         
@@ -89,15 +90,17 @@ class TimelineVis {
             .attr("font-weight", 800)
             .attr("font-size", "16px")
             .attr("fill", "#000")
-            .text(d => d);
+            .text(d => String(d).slice(-2)); // Show last 2 digits (03, 04, etc.)
 
         // Drag functionality
         vis.drag = d3.drag()
             .on("start", function(event) {
                 d3.select(this).raise();
+                // Change cursor to grabbing when dragging
+                d3.select(this).style("cursor", "grabbing");
             })
             .on("drag", function(event) {
-                let x = Math.max(13, Math.min(vis.width - 13, event.x));
+                let x = Math.max(vis.padding, Math.min(vis.width - vis.padding, event.x));
                 vis.handle.attr("transform", `translate(${x}, ${vis.height / 2})`);
                 
                 // Calculate year from position
@@ -108,6 +111,10 @@ class TimelineVis {
                         vis.onYearChange(year);
                     }
                 }
+            })
+            .on("end", function(event) {
+                // Change cursor back to grab when not dragging
+                d3.select(this).style("cursor", "grab");
             });
 
         vis.handle.call(vis.drag);
@@ -119,6 +126,11 @@ class TimelineVis {
             } else {
                 vis.play();
                 d3.select(this).text("⏸");
+            }
+            // Update improvements play button if it exists
+            let improvementsPlayButton = d3.select("#improvementsPlayButton");
+            if (!improvementsPlayButton.empty()) {
+                improvementsPlayButton.text(vis.isPlaying ? "⏸" : "▶");
             }
         });
 
@@ -156,12 +168,22 @@ class TimelineVis {
     play() {
         let vis = this;
         vis.isPlaying = true;
+        
+        // Update play button text
+        d3.select("#playButton").text("⏸");
+        let improvementsPlayButton = d3.select("#improvementsPlayButton");
+        if (!improvementsPlayButton.empty()) {
+            improvementsPlayButton.text("⏸");
+        }
 
         vis.playInterval = d3.interval(() => {
             let nextYear = vis.selectedYear + 1;
             if (nextYear > vis.yearRange[1]) {
                 vis.pause();
                 d3.select("#playButton").text("▶");
+                if (!improvementsPlayButton.empty()) {
+                    improvementsPlayButton.text("▶");
+                }
             } else {
                 vis.animateToYear(nextYear);
             }
@@ -174,6 +196,13 @@ class TimelineVis {
         if (vis.playInterval) {
             vis.playInterval.stop();
             vis.playInterval = null;
+        }
+        
+        // Update play button text
+        d3.select("#playButton").text("▶");
+        let improvementsPlayButton = d3.select("#improvementsPlayButton");
+        if (!improvementsPlayButton.empty()) {
+            improvementsPlayButton.text("▶");
         }
     }
 }
