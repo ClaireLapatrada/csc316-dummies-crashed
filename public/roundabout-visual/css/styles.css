@@ -1,0 +1,124 @@
+/* --- Global & Font Setup --- */
+body {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  background-color: #f0f2f5; /* Light grey background */
+  color: #333;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* --- Typography (for elements to be added in main.js) --- */
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 2.5rem;
+  text-align: center;
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 1.2rem;
+  text-align: center;
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+p {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 0.9rem;
+  max-width: 650px;
+  margin: 1rem auto;
+  line-height: 1.6;
+  text-align: center;
+  color: #444;
+}
+
+/* --- Chart Container (for elements to be added in main.js) --- */
+.chart-container {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 900px; /* Max width of the chart container */
+  box-sizing: border-box;
+}
+
+/* --- SVG & Chart Styles (for roundaboutChart.js) --- */
+.roundabout-chart {
+  /* This class will be on the SVG element */
+  display: block;
+  margin: 0 auto;
+}
+
+/* --- Roundabout Visuals --- */
+.roundabout-road {
+  fill: #444444; /* Asphalt */
+  stroke: #666666; /* Outer curb */
+  stroke-width: 3px;
+}
+
+.roundabout-island {
+  fill: #2a4f2a; /* Dark green grass */
+  stroke: #555555; /* Inner curb */
+  stroke-width: 2px;
+}
+
+.lane-divider {
+  fill: none;
+  stroke: white;
+  stroke-width: 2px;
+  stroke-dasharray: 10, 10;
+  opacity: 0.8;
+}
+
+/* --- Radar Chart Elements --- */
+.axis-spoke {
+  stroke: white;
+  stroke-width: 1px;
+  opacity: 0.3;
+}
+
+.axis-label {
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  fill: #111;
+  text-anchor: middle;
+  /* Prevent text from being unselectable */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.data-area {
+  fill-opacity: 0.7;
+  stroke-width: 2.5px;
+}
+
+/* --- Tooltip --- */
+.tooltip {
+  position: absolute;
+  text-align: center;
+  padding: 8px 12px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 1000;
+}
