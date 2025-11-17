@@ -134,10 +134,8 @@ function navigateToPage(targetPageId) {
     if (targetPage) {
         targetPage.style.display = 'block';
 
-        // Initialize specific page content if needed
         if (targetPageId === 'solutionMapsPage') {
-            // The Toronto crash visualization should already be initialized
-            // from your main.js file
+
             console.log('Navigated to solution maps page');
 
             // If the map needs any post-navigation setup, it can be done here
@@ -167,44 +165,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1000); // Increased delay to ensure page is fully loaded
 });
 
-// Simple function for HTML buttons
-function showNextPage() {
-    if (window.pageNavigation && window.pageNavigation.goToNext) {
-        window.pageNavigation.goToNext();
-    }
-}
 
-function showPreviousPage() {
-    if (window.pageNavigation && window.pageNavigation.goToPrevious) {
-        window.pageNavigation.goToPrevious();
-    }
-}
 
-function showMapPage() {
-    if (window.pageNavigation && window.pageNavigation.goToPage) {
-        window.pageNavigation.goToPage('solutionMapsPage');
-    }
-}
-
-function showSignPage() {
-    if (window.pageNavigation && window.pageNavigation.goToPage) {
-        window.pageNavigation.goToPage('signChartPage');
-    }
-}
-
-// Function to handle the "Implement Safety Solutions" button
-function implementSolutions() {
-    console.log('Safety solutions implementation triggered');
-
-    // Call the existing function from your main.js
-    if (typeof switchToImprovementsView === 'function') {
-        switchToImprovementsView();
-    } else {
-        console.warn('switchToImprovementsView function not found');
-    }
-}
-
-// Force navigation setup on window load as well
 window.addEventListener('load', function() {
     setTimeout(setupPageNavigation, 1500);
 });
