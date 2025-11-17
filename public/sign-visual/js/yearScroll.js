@@ -1,6 +1,4 @@
-import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
-
-export class YearScroll {
+class YearScroll {
     constructor(containerSelector, {
         startYear = 2006,
         endYear = 2023,
@@ -16,6 +14,7 @@ export class YearScroll {
         this.width = width;
         this.height = 140;
         this.margin = { left: 60, right: 60, top: 30, bottom: 30 };
+        this.isPlaying = false;
     }
 
     init() {
@@ -168,4 +167,17 @@ export class YearScroll {
     getCurrentYear() {
         return this.currentYear;
     }
+
+    // Add method to check if playing
+    isPlaying() {
+        return this.isPlaying;
+    }
+
+    // Add method to set playing state
+    setPlaying(playing) {
+        this.isPlaying = playing;
+    }
 }
+
+
+window.YearScroll = YearScroll;
