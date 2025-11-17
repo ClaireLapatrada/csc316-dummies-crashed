@@ -53,6 +53,9 @@ function parseRow(d){
   const time = get(d, 'TIME', 'Time', 'Time of Collision');
   const pedInv = yes(d, 'PEDESTRIAN', 'Pedestrian Involved');
   const cycInv = yes(d, 'CYCLIST', 'Cyclist Involved');
+  // involved age
+  const invAgeRaw = get(d, 'INVAGE', 'Involved Age', 'AGE');
+  const invAge = Number.parseInt(invAgeRaw, 10);
 
   return {
     accNum: +get(d, 'ACCNUM', 'Accident Number'),
@@ -69,7 +72,8 @@ function parseRow(d){
     redlight: yes(d, 'REDLIGHT', 'Red Light Related'),
     alcohol: yes(d, 'ALCOHOL', 'Alcohol Related'),
     pedInv,
-    cycInv
+    cycInv,
+    invAge: Number.isFinite(invAge) ? invAge : undefined
   };
 }
 
@@ -100,47 +104,76 @@ function loadData(){
     };
     const rows206_23 = data.filter(within);
 
-    // --- Aggregate Data ---
-    // Axes definitions → proportions in [0,1]
-    const atIntersection = prop(rows206_23, d => /intersection/i.test(d.accLoc || ''));
-    const speeding = prop(rows206_23, d => d.speeding);
-    const aggdistr = prop(rows206_23, d => d.aggdistr);
-    const alcohol = prop(rows206_23, d => d.alcohol);
-    const night = prop(rows206_23, d => String(d.light||'').toLowerCase().includes('dark'));
-    const poorWeather = prop(rows206_23, d => {
-      const vis = String(d.visibility||'').toLowerCase();
-      const surf = String(d.surface||'').toLowerCase();
-      const badVis = vis && !/clear/.test(vis);
-      const badSurf = /(wet|snow|slush|ice|loose|mud|sand|gravel)/.test(surf);
-      return badVis || badSurf;
-    });
-    const pedInvolved = prop(rows206_23, d => d.pedInv);
-    const cycInvolved = prop(rows206_23, d => d.cycInv);
+    // --- Series builders ---
+    function buildFactorSeries(rows){
+      const atIntersection = prop(rows, d => /intersection/i.test(d.accLoc || ''));
+      const speeding = prop(rows, d => d.speeding);
+      const aggdistr = prop(rows, d => d.aggdistr);
+      const alcohol = prop(rows, d => d.alcohol);
+      const night = prop(rows, d => String(d.light||'').toLowerCase().includes('dark'));
+      const poorWeather = prop(rows, d => {
+        const vis = String(d.visibility||'').toLowerCase();
+        const surf = String(d.surface||'').toLowerCase();
+        const badVis = vis && !/clear/.test(vis);
+        const badSurf = /(wet|snow|slush|ice|loose|mud|sand|gravel)/.test(surf);
+        return badVis || badSurf;
+      });
+      const pedInvolved = prop(rows, d => d.pedInv);
+      const cycInvolved = prop(rows, d => d.cycInv);
 
-    // --- Format for Chart ---
-    const series = [{
-      name: 'All collisions (2006–2023)',
-      color: '#d95f02', // Changed color for better road visibility
-      axes: [
-        { axis: 'At Intersection', value: atIntersection },
-        { axis: 'Speeding Related', value: speeding },
-        { axis: 'Aggressive/Distracted', value: aggdistr },
-        { axis: 'Alcohol Related', value: alcohol },
-        { axis: 'Night-time', value: night },
-        { axis: 'Poor Weather', value: poorWeather },
-        { axis: 'Pedestrian Involved', value: pedInvolved },
-        { axis: 'Cyclist Involved', value: cycInvolved }
-      ]
-    }];
+      return [{
+        name: 'All collisions (2006–2023) — Factors',
+        color: '#d95f02',
+        axes: [
+          { axis: 'At Intersection', value: atIntersection },
+          { axis: 'Speeding Related', value: speeding },
+          { axis: 'Aggressive/Distracted', value: aggdistr },
+          { axis: 'Alcohol Related', value: alcohol },
+          { axis: 'Night-time', value: night },
+          { axis: 'Poor Weather', value: poorWeather },
+          { axis: 'Pedestrian Involved', value: pedInvolved },
+          { axis: 'Cyclist Involved', value: cycInvolved }
+        ]
+      }];
+    }
+
+    function buildAgeSeries(rows){
+      const buckets = [
+        { label: 'Age 0–20',  test: a => a >= 0 && a < 20 },
+        { label: 'Age 20–40', test: a => a >= 20 && a < 40 },
+        { label: 'Age 40–60', test: a => a >= 40 && a < 60 },
+        { label: 'Age 60–80', test: a => a >= 60 && a < 80 },
+        { label: 'Age 80+',   test: a => a >= 80 }
+      ];
+      const axes = buckets.map(b => ({
+        axis: b.label,
+        value: prop(rows, r => Number.isFinite(r.invAge) && b.test(r.invAge))
+      }));
+      return [{ name: 'All collisions (2006–2023) — Ages', color: '#1b9e77', axes }];
+    }
+
+    const factorSeries = buildFactorSeries(rows206_23);
+    const ageSeries = buildAgeSeries(rows206_23);
 
     // --- Mount chart ---
     // This assumes roundaboutChart.js defines a class 'RoundaboutChart'
     // It will be drawn in the <svg id="roundabout-chart"> element.
-    new RoundaboutChart('#roundabout-chart', series, {
+    const chart = new RoundaboutChart('#roundabout-chart', factorSeries, {
       levels: 5,           // This will create the 5 lanes
       roadWidth: 80,       // Example: width of the road area
-      islandRadius: 70     // Example: radius of the central island
+      islandRadius: 70,    // Example: radius of the central island
+      totalCollisions: rows206_23.length
     });
+
+    // dataset toggle events
+    const radios = document.querySelectorAll('input[name="dataset"]');
+    radios.forEach(r => r.addEventListener('change', e => {
+      if (e.target.value === 'ages') {
+        chart.update(ageSeries, { totalCollisions: rows206_23.length });
+      } else {
+        chart.update(factorSeries, { totalCollisions: rows206_23.length });
+      }
+    }));
     
   }).catch(error => {
     console.error('Error loading or parsing data:', error);

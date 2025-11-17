@@ -35,6 +35,7 @@ class RoundaboutChart {
       labelFactor: 1.15, // How far out to place labels
       margin: { top: 60, right: 60, bottom: 60, left: 60 },
       curve: d3.curveLinearClosed, // Smooth curve for the data path
+      totalCollisions: null, // Total number of collisions for converting percentages
       ...options // User options (from main.js) will override defaults
     };
     
@@ -70,8 +71,8 @@ class RoundaboutChart {
    */
   _layout() {
     // Calculate chart dimensions inside margins
-    this.chartWidth = this.width - this.opts.margin.left - this.opts.margin.right;
-    this.chartHeight = this.height - this.opts.margin.top - this.opts.margin.bottom;
+    this.chartWidth = this.width * 0.85 - this.opts.margin.left - this.opts.margin.right + 100;
+    this.chartHeight = this.height * 0.85 - this.opts.margin.top - this.opts.margin.bottom;
     
     // Center of the chart
     this.centerX = this.chartWidth / 2;
@@ -129,6 +130,81 @@ class RoundaboutChart {
       .attr('class', 'lane-divider')
       .attr('r', d => this.rScale(d / this.opts.levels)) // r at 20%, 40%, 60%, 80%
       .attr('fill', 'none');
+
+    // --- 2b. Draw Level Labels ---
+    // Add labels for each level - either counts or percentages
+    const allLevels = d3.range(1, this.opts.levels + 1); // [1, 2, 3, 4, 5]
+    const formatNumber = d3.format(',');
+    const formatPercent = d3.format('.0%');
+    
+    // Function to get label text - use counts if available, otherwise percentages
+    const getLabelText = (level) => {
+      const proportion = level / this.opts.levels;
+      if (this.opts.totalCollisions) {
+        return formatNumber(Math.round(proportion * this.opts.totalCollisions));
+      }
+      return formatPercent(proportion);
+    };
+    
+    // Top labels (positive y-axis)
+    this.g.selectAll('.level-label-top')
+      .data(allLevels)
+      .enter()
+      .append('text')
+      .attr('class', 'level-label')
+      .attr('x', 0)
+      .attr('y', d => -this.rScale(d / this.opts.levels))
+      .attr('dy', '0.35em')
+      .text(d => getLabelText(d))
+      .style('font-size', '10px')
+      .style('fill', '#ffffff')
+      .style('font-weight', '500')
+      .style('text-anchor', 'middle');
+    
+    // Bottom labels (negative y-axis)
+    this.g.selectAll('.level-label-bottom')
+      .data(allLevels)
+      .enter()
+      .append('text')
+      .attr('class', 'level-label')
+      .attr('x', 0)
+      .attr('y', d => this.rScale(d / this.opts.levels))
+      .attr('dy', '0.35em')
+      .text(d => getLabelText(d))
+      .style('font-size', '10px')
+      .style('fill', '#ffffff')
+      .style('font-weight', '500')
+      .style('text-anchor', 'middle');
+    
+    // Right labels (positive x-axis)
+    this.g.selectAll('.level-label-right')
+      .data(allLevels)
+      .enter()
+      .append('text')
+      .attr('class', 'level-label')
+      .attr('x', d => this.rScale(d / this.opts.levels))
+      .attr('y', 0)
+      .attr('dy', '0.35em')
+      .text(d => getLabelText(d))
+      .style('font-size', '10px')
+      .style('fill', '#ffffff')
+      .style('font-weight', '500')
+      .style('text-anchor', 'middle');
+    
+    // Left labels (negative x-axis)
+    this.g.selectAll('.level-label-left')
+      .data(allLevels)
+      .enter()
+      .append('text')
+      .attr('class', 'level-label')
+      .attr('x', d => -this.rScale(d / this.opts.levels))
+      .attr('y', 0)
+      .attr('dy', '0.35em')
+      .text(d => getLabelText(d))
+      .style('font-size', '10px')
+      .style('fill', '#ffffff')
+      .style('font-weight', '500')
+      .style('text-anchor', 'middle');
       
     // --- 3. Draw the Axis Spokes ---
     this.g.selectAll('.axis-spoke')
@@ -151,39 +227,84 @@ class RoundaboutChart {
       .attr('y', (d, i) => this.rScale(1.05) * Math.sin(this.angleSlice * i + this.angleOffset))
       .attr('dy', '0.35em') // Vertical alignment
       .text(d => d)
-      .call(this.wrapText, 100); // Wrap long labels (optional, good practice)
+      .call(this.wrapText, 100); // Wrap long labels
 
     // --- 5. Draw the Data Series ---
     
-    // d3.lineRadial is perfect for this
     const radarLine = d3.lineRadial()
       .angle((d, i) => this.angleSlice * i + this.angleOffset)
       .radius(d => this.rScale(d.value))
       .curve(this.opts.curve);
 
-    // Draw each series (in our case, just one)
+    // Draw each series
     this.series.forEach(series => {
-      // Draw the filled area
-      this.g.append('path')
-        .datum(series.axes)
-        .attr('class', 'data-area')
-        .attr('d', radarLine)
-        .attr('fill', series.color)
-        .attr('stroke', series.color);
+      // Color palette for each segment
+      const colors = [
+        '#e41a1c', // red
+        '#377eb8', // blue
+        '#4daf4a', // green
+        '#984ea3', // purple
+        '#ff7f00', // orange
+        '#ffff33', // yellow
+        '#a65628', // brown
+        '#f781bf'  // pink
+      ];
+      
+      // Draw each segment centered on its spoke
+      series.axes.forEach((d, i) => {
+        const prevIndex = (i - 1 + series.axes.length) % series.axes.length;
+        const nextIndex = (i + 1) % series.axes.length;
+        
+        // Current spoke angle and radius
+        const currentAngle = this.angleSlice * i + this.angleOffset;
+        const currentRadius = this.rScale(d.value);
+        
+        // Midpoint angles to previous and next spokes
+        const angleToPrev = currentAngle - this.angleSlice / 2;
+        const angleToNext = currentAngle + this.angleSlice / 2;
+        
+        // Radii at the midpoints (interpolate between adjacent values)
+        const prevRadius = this.rScale(series.axes[prevIndex].value);
+        const nextRadius = this.rScale(series.axes[nextIndex].value);
+        const radiusAtPrevMid = (currentRadius + prevRadius) / 2;
+        const radiusAtNextMid = (currentRadius + nextRadius) / 2;
+        
+        // Helper to build path at a given progress t in [0,1]
+        const buildPath = (t) => {
+          const s = Math.max(0, Math.min(1, t));
+          const rPrev = radiusAtPrevMid * s;
+          const rCur  = currentRadius * s;
+          const rNext = radiusAtNextMid * s;
+          return `M 0,0
+            L ${rPrev * Math.cos(angleToPrev)},${rPrev * Math.sin(angleToPrev)}
+            L ${rCur * Math.cos(currentAngle)},${rCur * Math.sin(currentAngle)}
+            L ${rNext * Math.cos(angleToNext)},${rNext * Math.sin(angleToNext)}
+            Z`;
+        };
 
-      // --- 6. Draw Tooltip Hotspots ---
-      // Add invisible points at each vertex for easier hovering
-      this.g.selectAll('.data-point')
-        .data(series.axes)
-        .enter()
-        .append('circle')
-        .attr('class', 'data-point')
-        .attr('r', 12) // Generous hover/tap target
-        .attr('cx', (d, i) => this.rScale(d.value) * Math.cos(this.angleSlice * i + this.angleOffset))
-        .attr('cy', (d, i) => this.rScale(d.value) * Math.sin(this.angleSlice * i + this.angleOffset))
-        .attr('fill', 'transparent')
-        .on('mouseover', (event, d) => this.showTooltip(event, d))
-        .on('mouseout', () => this.hideTooltip());
+        const segment = this.g.append('path')
+          .attr('d', buildPath(0))
+          .attr('fill', colors[i % colors.length])
+          .attr('fill-opacity', 0)
+          .attr('stroke', colors[i % colors.length])
+          .attr('stroke-width', 2)
+          .attr('stroke-opacity', 0)
+          .style('cursor', 'pointer')
+          .on('mousemove', (event) => {
+            this.showTooltip(event, d);
+          })
+          .on('mouseout', () => this.hideTooltip());
+
+        // Animate outwards
+        segment
+          .transition()
+          .delay(i * 80)
+          .duration(700)
+          .ease(d3.easeCubicOut)
+          .attrTween('d', () => (t) => buildPath(t))
+          .attr('fill-opacity', 0.7)
+          .attr('stroke-opacity', 1);
+      });
     });
   }
 
@@ -192,10 +313,18 @@ class RoundaboutChart {
    */
   showTooltip(event, d) {
     const formatPercent = d3.format('.1%');
+    const formatNumber = d3.format(',');
+
+    let valueLine = formatPercent(d.value);
+    if (Number.isFinite(this.opts.totalCollisions)) {
+      const count = Math.round((d.value || 0) * this.opts.totalCollisions);
+      valueLine += ` (${formatNumber(count)} of ${formatNumber(this.opts.totalCollisions)})`;
+    }
+
     this.tooltip.style('opacity', 1)
       .style('left', `${event.pageX + 10}px`)
       .style('top', `${event.pageY - 28}px`)
-      .html(`<strong>${d.axis}</strong><br>${formatPercent(d.value)}`);
+      .html(`<strong>${d.axis}</strong><br>${valueLine}`);
   }
 
   /**
@@ -203,6 +332,23 @@ class RoundaboutChart {
    */
   hideTooltip() {
     this.tooltip.style('opacity', 0);
+  }
+
+  /**
+   * Updates the chart with a new data series (and optional options) and re-renders.
+   * @param {Array} seriesData - New series data in the same format as constructor.
+   * @param {Object} options - Optional options to merge (e.g., totalCollisions)
+   */
+  update(seriesData, options = {}) {
+    this.series = seriesData;
+    // Merge option overrides
+    this.opts = { ...this.opts, ...options };
+    // Recompute axes and angle slice
+    this.axes = this.series[0].axes.map(d => d.axis);
+    this.numAxes = this.axes.length;
+    this.angleSlice = (Math.PI * 2) / this.numAxes;
+    // Re-render
+    this.render();
   }
 
   /**
