@@ -1,12 +1,29 @@
-/* Highway Gothic font - using Interstate/Inter as alternative */
-/* Note: Highway Gothic is proprietary. Using Inter (similar to Interstate) as closest alternative */
+/* =============================================================================
+   GLOBAL RESET AND BASE STYLES
+   Reset margins, padding, and box-sizing for all elements
+   ============================================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    background: #EBEADD !important;
+    color: #000;
+}
+
+html {
+    overflow: hidden;
+}
 
 body {
     height: 100%;
     margin: 0;
     overflow: hidden;
-    font-family: 'Times New Roman', Times, serif;
-    font-style: italic;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
     position: fixed;
     width: 100%;
     background: #EBEADD !important;
@@ -15,10 +32,88 @@ body {
     background-position: center center !important;
 }
 
-/* Allow scrolling on page container */
-html {
-    overflow: hidden;
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
 }
+
+/* =============================================================================
+   TYPOGRAPHY
+   Heading styles, paragraph styles, and text formatting across all pages
+   ============================================================================= */
+
+h1 {
+    color: #0C7B56;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 0.25rem;
+    margin-top: 0.5rem;
+    text-shadow: none;
+}
+
+h2 {
+    color: #0C7B56;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+}
+
+h3, h4, h5, h6 {
+    color: #0C7B56;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    text-shadow: none;
+}
+
+p {
+    color: #000;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+/* Highway Gothic font for road signs */
+.highway-font {
+    font-family: 'Inter', 'Arial Black', 'Arial Bold', sans-serif;
+    font-weight: 900;
+    font-style: normal;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* Ensure all text on pages uses appropriate font */
+.page p,
+.page h1,
+.page h2,
+.page h3,
+.page h4,
+.page h5,
+.page h6,
+.page span,
+.page div:not(.highway-font):not(.sign-text) {
+    font-family: 'Times New Roman', Times, serif;
+    font-style: italic;
+}
+
+/* =============================================================================
+   LAYOUT CONTAINERS
+   Main page structure, containers, and grid layouts
+   ============================================================================= */
 
 /* Page Container with Scroll Snap */
 .page-container {
@@ -79,6 +174,97 @@ html {
     will-change: transform;
 }
 
+/* Infographic containers from visualizations */
+.infographic-container {
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chart-container {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    width: 100%;
+    max-width: 700px;
+    box-sizing: border-box;
+}
+
+.visualization-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0 40px;
+    min-height: auto;
+}
+
+.main-layout {
+    display: flex;
+    gap: 25px;
+    width: 100%;
+    align-items: flex-start;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.left-panel {
+    flex: 0 0 30%;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.viz-container {
+    width: 100%;
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+#vizContainer {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    height: 400px;
+    margin-bottom: 0;
+}
+
+#vizContainer svg {
+    display: block;
+    margin: 0 auto;
+}
+
+.viz-section {
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+}
+
+/* =============================================================================
+   TITLE AND HEADER SECTIONS
+   Title overlays, section headers, and descriptions across all visualizations
+   ============================================================================= */
+
 .title-overlay {
     position: absolute;
     top: 15%;
@@ -110,6 +296,284 @@ html {
     font-weight: normal;
     letter-spacing: -0.02em;
 }
+
+.title-section {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin: 20px 40px;
+    z-index: 10;
+    text-align: center;
+}
+
+.main-title {
+    color: #0C7B56;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    line-height: 1.2;
+    font-style: italic;
+}
+
+.title-line-1 {
+    font-size: 40px;
+    display: inline;
+    margin-bottom: 0;
+    margin-right: 8px;
+    font-weight: 400;
+}
+
+.title-line-2 {
+    font-size: 40px;
+    display: inline;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.title-line-3 {
+    font-size: 18px;
+    display: block;
+    font-weight: 400;
+}
+
+.title-line-3 a {
+    color: #0C7B56;
+    text-decoration: underline;
+}
+
+.title-line-3 a:hover {
+    text-decoration: underline;
+}
+
+.description-section {
+    margin-top: 30px;
+    margin-bottom: -15px;
+    max-width: 150vh;
+    color: #000;
+}
+
+.question-text {
+    font-family: 'Times New Roman', Times, serif;
+    color: #0C7B56;
+    font-style: italic;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(12, 123, 86, 0.3);
+    z-index: 10;
+    position: relative;
+    font-weight: normal;
+    max-width: 45%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 1.5rem;
+}
+
+/* =============================================================================
+   INTERACTIVE CONTROLS
+   Buttons, sliders, filters, and other interactive elements
+   ============================================================================= */
+
+.control-label {
+    color: #0C7B56;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.display-text {
+    color: #000;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.display-text p {
+    margin: 5px 0;
+}
+
+.control-buttons {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 45px;
+    margin-top: 30px;
+}
+
+.controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 16px;
+}
+
+.controls-row .control-buttons {
+    margin-top: 0;
+}
+
+/* Play Button */
+.play-button {
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.play-triangle {
+    width: 0;
+    height: 0;
+    border-left: 20px solid #000;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    transition: all 0.3s ease;
+    margin-left: 2px;
+}
+
+.play-button:hover .play-triangle {
+    transform: scale(1.1);
+}
+
+.play-button.playing {
+    background-color: transparent;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.play-button.playing .play-triangle {
+    transform: scale(0.8);
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    border-bottom: 0;
+    width: 4px;
+    height: 20px;
+    background-color: #000000;
+    position: relative;
+}
+
+.play-button.playing .play-triangle::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 0;
+    width: 4px;
+    height: 20px;
+    background-color: #000000;
+}
+
+/* Restart Button */
+.restart-button {
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: transparent;
+    color: #000;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.restart-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: scale(1.05);
+}
+
+.restart-button:active {
+    transform: scale(0.95);
+}
+
+.restart-button svg {
+    transition: all 0.3s ease;
+}
+
+.restart-button:hover svg {
+    transform: rotate(-45deg);
+}
+
+#playBtn {
+    font-weight: bold;
+    font-size: 1.4rem;
+    border: 3px solid #0C7B56;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    color: #000;
+    text-transform: uppercase;
+    transition: background 0.3s, color 0.3s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 10px auto;
+}
+
+#playBtn.go,
+#playBtn.stop {
+    background-color: #0C7B56;
+}
+
+.nav-button {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #000;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.nav-button:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+#nextPageBtn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+#nextPageBtn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+#nextPageBtn:active {
+    transform: translateY(0);
+}
+
+/* =============================================================================
+   SIGN AND ROAD VISUALS
+   Road signs, warning signs, and related graphics
+   ============================================================================= */
 
 .sign-container-right {
     position: absolute;
@@ -567,6 +1031,420 @@ html {
     transition: all 0.5s ease;
 }
 
+/* =============================================================================
+   FILTER CONTROLS
+   Filter bars, tiles, dropdowns, and checkbox containers for data filtering
+   ============================================================================= */
+
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 18px;
+    margin: 0px 0 10px 0;
+    width: auto;
+}
+
+.filter-bar::before {
+    content: '';
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #333333 20%, #333333 80%, transparent);
+    opacity: .35;
+    order: -1;
+    margin-bottom: 2px;
+}
+
+.tile-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tile-label {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 700;
+    color: #0C7B56;
+}
+
+.tile {
+    appearance: none;
+    border: 1px solid rgba(12,123,86,.45);
+    background: rgba(255,255,255,.55);
+    color: #000;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1;
+    padding: 8px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color .15s ease, background-color .15s ease, color .15s ease, box-shadow .15s ease, transform .05s ease-in-out;
+    backdrop-filter: saturate(120%) blur(2px);
+}
+
+.tile:hover {
+    background: #fff;
+    border-color: #0C7B56;
+}
+
+.tile:active {
+    transform: translateY(1px);
+}
+
+.tile.active {
+    background: #0C7B56;
+    color: #fff;
+    border-color: #0C7B56;
+    box-shadow: 0 0 0 1px rgba(12,123,86,.1), 0 6px 10px rgba(0,0,0,.06);
+}
+
+.tile:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #F8F5ED, 0 0 0 4px #0C7B56;
+}
+
+.filter-dropdown-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid rgba(12,123,86,.45);
+    background: rgba(255,255,255,.55);
+    color: #000;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    backdrop-filter: saturate(120%) blur(2px);
+}
+
+.filter-btn:hover {
+    background: #fff;
+    border-color: #0C7B56;
+}
+
+.filter-btn i {
+    font-size: 12px;
+}
+
+.filter-select {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    min-width: 200px;
+    max-width: 300px;
+    max-height: 200px;
+    padding: 8px;
+    border: 1px solid rgba(12,123,86,.45);
+    border-radius: 5px;
+    background: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    display: none;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #0C7B56;
+}
+
+.filter-checkbox-container {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    min-width: 250px;
+    max-width: 350px;
+    max-height: 300px;
+    padding: 10px;
+    border: 1px solid rgba(12,123,86,.45);
+    border-radius: 5px;
+    background: #fff;
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.filter-checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    cursor: pointer;
+}
+
+.filter-checkbox-item:hover {
+    background-color: rgba(12,123,86,.05);
+}
+
+.filter-checkbox-item input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: #0C7B56;
+}
+
+.filter-checkbox-item label {
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #333;
+    flex: 1;
+    margin: 0;
+    user-select: none;
+}
+
+.filter-option {
+    margin-bottom: 15px;
+}
+
+.filter-option input[type="checkbox"] {
+    display: none;
+}
+
+.filter-option label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.filter-indicator {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 1px solid #000;
+    margin-right: 8px;
+    position: relative;
+}
+
+.filter-option input[type="checkbox"]:checked + label .filter-indicator::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #000;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.filter-label {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    color: #000;
+    margin-right: auto;
+    line-height: 1.2;
+}
+
+.filter-checkbox {
+    width: 13px;
+    height: 13px;
+    border-radius: 2px;
+}
+
+.filter-checkbox.fatal { background-color: rgba(226,55,55,0.76); }
+.filter-checkbox.major { background-color: rgba(237,119,55,0.8); }
+.filter-checkbox.minor { background-color: rgba(237,225,55,0.8); }
+.filter-checkbox.minimal { background-color: rgba(128,128,128,0.8); }
+.filter-checkbox.speeding { background-color: rgba(237,225,55,0.8) !important; }
+.filter-checkbox.dark { background-color: rgba(0,0,0,0.64) !important; }
+.filter-checkbox.ice { background-color: rgba(58,93,220,0.8) !important; }
+.filter-checkbox.inattentive { background-color: rgba(98,228,165,0.8) !important; }
+
+/* =============================================================================
+   YEAR SLIDER AND TIMELINE CONTROLS
+   Year scrollers, timelines, markers, and related interactive elements
+   ============================================================================= */
+
+.year-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: grab;
+    z-index: 10;
+}
+
+.year-slider:active {
+    cursor: grabbing;
+}
+
+.year-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: #0C7B56;
+    border-radius: 50%;
+    cursor: grab;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(12, 123, 86, 0.4);
+    transition: all 0.2s ease;
+}
+
+.year-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 12px rgba(12, 123, 86, 0.6);
+}
+
+.year-slider::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.1);
+}
+
+.year-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: #0C7B56;
+    border-radius: 50%;
+    cursor: grab;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(12, 123, 86, 0.4);
+    transition: all 0.2s ease;
+}
+
+.year-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 12px rgba(12, 123, 86, 0.6);
+}
+
+.year-slider::-moz-range-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.1);
+}
+
+.timeline-container {
+    position: relative;
+    width: 100%;
+    height: 70px;
+    margin-top: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.timeline-container:hover {
+    transform: translateY(-2px);
+}
+
+.timeline-container:hover .timeline-line {
+    height: 3px;
+    background-color: #0C7B56;
+}
+
+.timeline-container:hover .marker-dot {
+    transform: scale(1.3);
+    box-shadow: 0 0 10px rgba(12, 123, 86, 0.6);
+}
+
+.timeline-line {
+    flex: 1;
+    height: 2px;
+    background-color: #333333;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.timeline-line::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.timeline-label {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #000;
+    position: absolute;
+    bottom: 10px;
+    font-style: italic;
+}
+
+.timeline-start {
+    left: 0;
+}
+
+.timeline-end {
+    right: 0;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 5.9%;
+    top: 0;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.marker-dot {
+    width: 12px;
+    height: 12px;
+    background-color: #0C7B56;
+    border-radius: 50%;
+    margin-bottom: 5px;
+    position: relative;
+    margin-top: 20px;
+    top: 37px;
+    transition: all 0.3s ease;
+    cursor: grab;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.marker-dot:active {
+    cursor: grabbing;
+    transform: scale(1.2);
+}
+
+.timeline-container:hover .marker-dot {
+    border-color: #0C7B56;
+    border-width: 3px;
+}
+
+.marker-label {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #0C7B56;
+    font-weight: 700;
+    font-style: italic;
+    bottom: 0px;
+}
+
+#yearSlider {
+    width: 100%;
+}
+
+/* =============================================================================
+   CHART AND VISUALIZATION ELEMENTS
+   Bar charts, road containers, and visualization-specific styles
+   ============================================================================= */
+
 /* Bar Chart Container */
 .bar-chart-container {
     width: 100%;
@@ -575,6 +1453,414 @@ html {
     border-radius: 8px;
     padding: 1rem;
 }
+
+#bar-chart {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    max-height: 42vh;
+}
+
+#bar-chart svg {
+    overflow: visible;
+}
+
+.chart-block {
+    flex: 1 1 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.road-container {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 42vh;
+    max-height: 44vh;
+    position: relative;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0 20px 0 110px;
+    margin-right: 0px;
+    margin-top: 12px;
+    margin-bottom: 10px;
+    overflow: visible;
+}
+
+.road-container::before,
+.road-container::after {
+    display: none;
+}
+
+.roundabout-chart {
+    display: block;
+    margin: 0 auto;
+}
+
+.roundabout-road {
+    fill: #444444;
+    stroke: #666666;
+    stroke-width: 3px;
+}
+
+.roundabout-island {
+    fill: #2a4f2a;
+    stroke: #555555;
+    stroke-width: 2px;
+}
+
+.data-area {
+    fill-opacity: 0.7;
+    stroke-width: 2.5px;
+}
+
+/* =============================================================================
+   SVG AND D3 CHART COMPONENTS
+   Axes, bars, labels, grid lines, and other D3/SVG elements
+   ============================================================================= */
+
+.bar {
+    rx: 4px;
+    ry: 4px;
+}
+
+.bar-label {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    fill: #FFFFFF;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+}
+
+.emoji-icon {
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    fill: #000;
+    pointer-events: none;
+}
+
+.lane-divider {
+    fill: none;
+    stroke: #FFFFFF;
+    stroke-width: 3;
+    stroke-dasharray: 10, 10;
+    opacity: 0.8;
+}
+
+.axis {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+}
+
+.axis text {
+    fill: #000;
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+}
+
+.axis path,
+.axis line {
+    stroke: #000;
+    stroke-width: 1;
+}
+
+.x-axis .tick line,
+.y-axis .tick line {
+    stroke: #999;
+    stroke-width: 1px;
+}
+
+.x-axis .domain,
+.y-axis .domain {
+    stroke: #999;
+    stroke-width: 1px;
+}
+
+.x-axis .tick text,
+.y-axis .tick text {
+    fill: #333;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.axis-spoke {
+    stroke: white;
+    stroke-width: 1px;
+    opacity: 0.3;
+}
+
+.axis-label {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    fill: #111;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.grid-line {
+    stroke: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+}
+
+.vehicle-circle {
+    transition: all 0.3s ease;
+}
+
+.vehicle-circle:hover {
+    opacity: 2;
+}
+
+.circle-count {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    text-anchor: middle;
+    pointer-events: none;
+    font-size: 11px;
+}
+
+.vehicle-label {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    text-anchor: middle;
+    pointer-events: none;
+    font-size: 10px;
+}
+
+/* =============================================================================
+   LEGEND COMPONENTS
+   Legend containers, items, colors, and labels for all visualizations
+   ============================================================================= */
+
+.legend-container {
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 20px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    justify-content: space-between;
+    height: 35vh;
+    position: relative;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.legend-text {
+    color: #0C7B56;
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    line-height: 1.2;
+    word-wrap: break-word;
+    font-style: italic;
+}
+
+.legend-label {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 16px !important;
+    fill: #000000 !important;
+    font-style: italic !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    pointer-events: none;
+}
+
+.legend text {
+    fill: #000;
+    font-family: 'Roboto', sans-serif;
+    font-size: 11px;
+}
+
+/* =============================================================================
+   TOOLTIP STYLES
+   Tooltip containers, content, and specific tooltip types
+   ============================================================================= */
+
+.tooltip {
+    position: absolute;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    border: 1px solid #0C7B56;
+    border-radius: 8px;
+    pointer-events: none;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-width: 280px;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.tooltip.show {
+    opacity: 1;
+}
+
+.tooltip-title {
+    font-weight: bold;
+    color: #0C7B56;
+    margin-bottom: 6px;
+    font-size: 13px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 4px;
+}
+
+.tooltip-item {
+    margin: 4px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tooltip-label {
+    font-weight: 600;
+    margin-right: 8px;
+    min-width: 120px;
+}
+
+.tooltip-value {
+    text-align: right;
+    font-weight: 400;
+}
+
+.tooltip-positive {
+    color: #2E8B57;
+}
+
+.tooltip-negative {
+    color: #DC143C;
+}
+
+.tooltip-neutral {
+    color: #666;
+}
+
+.tooltip strong {
+    color: #0C7B56;
+    font-weight: 600;
+}
+
+.tooltip br {
+    margin-bottom: 4px;
+}
+
+.injury-breakdown-tooltip {
+    max-width: 500px;
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.injury-breakdown h3 {
+    color: #3b96ff;
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 8px;
+}
+
+.injury-breakdown h4 {
+    color: #87CEEB;
+    margin: 15px 0 10px 0;
+    font-size: 14px;
+}
+
+.injury-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 15px;
+    margin: 15px 0;
+}
+
+.injury-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    margin: 8px 0;
+    border-bottom: 1px solid #333;
+}
+
+.injury-label {
+    color: #ccc;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.injury-count {
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.sample-records {
+    max-height: 200px;
+    overflow-y: auto;
+    margin: 10px 0;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sample-records h4 {
+    margin-top: 0;
+    font-size: 14px;
+    color: #0C7B56;
+}
+
+.record {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #ddd;
+    border-left: 3px solid #ff4757;
+}
+
+.click-note {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    font-size: 11px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #444;
+}
+
+.improvement-tooltip {
+    pointer-events: none;
+}
+
+/* =============================================================================
+   MAIN LANDING PAGE SPECIFIC STYLES
+   Dashboard, main visualization page, and special page layouts
+   ============================================================================= */
 
 /* Main Visualization Page */
 .main-viz-page {
@@ -681,78 +1967,250 @@ html {
     font-size: 1.5rem;
 }
 
-/* Ensure all text on pages uses Times New Roman italic */
-.page p,
-.page h1,
-.page h2,
-.page h3,
-.page h4,
-.page h5,
-.page h6,
-.page span,
-.page div:not(.highway-font):not(.sign-text) {
-    font-family: 'Times New Roman', Times, serif;
-    font-style: italic;
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 1.5s ease-in-out;
-}
-
-/* First page should not have overlay */
 .page[data-page="0"]::before {
     display: none;
 }
 
-header {
+#pedestrianPage {
+    height: 100vh;
+    overflow-y: auto;
+}
+
+#pageNavContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 10px;
+}
+
+/* =============================================================================
+   CATEGORY CARDS AND SPECIAL ELEMENTS
+   Category cards, crash points, and other special visualization elements
+   ============================================================================= */
+
+#cardsRow {
     position: relative;
-    z-index: 1;
-    background-color: rgba(255,255,255,0.01);
-    border-radius: 0;
-    padding: 1.5rem;
 }
 
-footer {
-    font-size: 0.9rem;
-    color: #0C7B56;
-    margin-top: auto;
-    backdrop-filter: blur(8px);
-    background-color: rgba(255,255,255,0.02);
-}
-
-.left-panel {
-    flex: 0 0 30%;
-    min-width: 400px;
-}
-
-.right-panel {
-    flex: 0 0 68.5%;
-    min-width: 200px;
+.category-card {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-radius: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 200px;
+    color: #000;
 }
 
-h1, h5, h6, p {
+.category-card .rank {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.category-card .icon {
+    width: 80px;
+    height: 105px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.category-card .count {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.category-card .name {
+    font-size: 1rem;
+    color: #000;
+}
+
+.crash-point {
+    cursor: pointer;
+}
+
+.crash-point:hover {
+    opacity: 1 !important;
+    stroke-width: 2px;
+}
+
+.improvement-circle {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.improvement-circle:hover {
+    opacity: 1 !important;
+    stroke-width: 2px;
+}
+
+.highlight-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    color: white;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.highlight-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* =============================================================================
+   SOLUTION VISUAL SPECIFIC STYLES
+   Map container, options panel, and improvements view
+   ============================================================================= */
+
+#main-container {
+    width: 1250px;
+    height: 700px;
+    margin: 0 auto;
+    background-color: #e7e5df;
+    border-radius: 12px;
+    box-shadow: 0px 4px 1px rgba(0,0,0,0.25);
+    position: relative;
+}
+
+#mapDiv {
+    position: absolute;
+    left: 31px;
+    top: 20px;
+    height: 560px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+#options-panel {
+    position: absolute;
+    left: 895px;
+    top: 20px;
+    width: 320px;
+    height: 614px;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.options-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 25px;
     color: #0C7B56;
-    text-shadow: none;
-    font-family: 'Times New Roman', Times, serif;
-    font-style: italic;
+    margin-bottom: 20px;
 }
 
-@keyframes gradientAnimation {
-    0% { background-position: 0 50% }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0 50%; }
+#options-panel h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: #0C7B56;
+}
+
+#timelineDiv {
+    position: absolute;
+    left: 42px;
+    top: 600px;
+}
+
+#improvementsButton {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-weight: 700;
+    border-radius: 8px;
+    background-color: #000;
+    border: 1px solid #000;
+    color: #fff;
+    transition: background-color 0.2s ease;
+}
+
+#improvementsButton:hover,
+#playButton:hover {
+    background-color: #333;
+}
+
+#improvement-modal {
+    font-family: 'Roboto', sans-serif;
+}
+
+#improvement-modal h2 {
+    color: #000;
+    margin-top: 0;
+}
+
+#improvement-modal p {
+    color: #333;
+    line-height: 1.6;
+}
+
+#improvement-modal a:hover {
+    background-color: #333 !important;
+}
+
+#locationChart svg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+#locationChart .bar {
+    fill: #f18f8f;
+}
+
+/* =============================================================================
+   CUSTOM SCROLLBARS
+   Scrollbar styling for various containers (legend, filters, etc.)
+   ============================================================================= */
+
+.legend-container::-webkit-scrollbar,
+.filter-select::-webkit-scrollbar,
+.filter-checkbox-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.legend-container::-webkit-scrollbar-track,
+.filter-select::-webkit-scrollbar-track,
+.filter-checkbox-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.legend-container::-webkit-scrollbar-thumb,
+.filter-select::-webkit-scrollbar-thumb,
+.filter-checkbox-container::-webkit-scrollbar-thumb {
+    background: #0C7B56;
+    border-radius: 3px;
+}
+
+.legend-container::-webkit-scrollbar-thumb:hover,
+.filter-select::-webkit-scrollbar-thumb:hover,
+.filter-checkbox-container::-webkit-scrollbar-thumb:hover {
+    background: #0a5d3f;
+}
+
+/* =============================================================================
+   TIMELINE AND YEAR SCROLLER SPECIFIC ELEMENTS
+   Time slider, year display, and car slider animations
+   ============================================================================= */
+
+.timeline-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
 #timeSlider {
@@ -793,94 +2251,6 @@ h1, h5, h6, p {
     color: pink;
 }
 
-.error-message {
-    color: #ff6b6b;
-    font-weight: bold;
-    padding: 10px;
-    background: rgba(0,0,0,0.5);
-    border-radius: 5px;
-}
-
-.tooltip {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.95);
-    color: #0C7B56;
-    padding: 15px 20px;
-    border-radius: 12px;
-    pointer-events: none;
-    font-size: 14px;
-    z-index: 1000;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(12, 123, 86, 0.3);
-    backdrop-filter: blur(10px);
-    opacity: 0;
-    transition: opacity 0.3s;
-    max-width: 300px;
-    line-height: 1.5;
-}
-
-.tooltip.show {
-    opacity: 1;
-}
-
-.tooltip strong {
-    color: #00ffa6;
-    font-weight: 600;
-}
-
-.tooltip br {
-    margin-bottom: 4px;
-}
-
-.axis {
-    font-family: 'Roboto', sans-serif;
-    font-size: 12px;
-}
-
-.axis text {
-    fill: rgba(255, 255, 255, 0.8);
-}
-
-.axis path,
-.axis line {
-    stroke: rgba(255, 255, 255, 0.3);
-}
-
-.vehicle-circle {
-    transition: all 0.3s ease;
-}
-
-.vehicle-circle:hover {
-    opacity: 2;
-}
-
-.circle-count {
-    font-family: 'Roboto', sans-serif;
-    font-weight: bold;
-    text-anchor: middle;
-    pointer-events: none;
-    font-size: 11px;
-}
-
-.vehicle-label {
-    font-family: 'Roboto', sans-serif;
-    font-weight: bold;
-    text-anchor: middle;
-    pointer-events: none;
-    font-size: 10px;
-}
-
-/* Consolidated grid-line */
-.grid-line {
-    pointer-events: none;
-}
-
-.legend text {
-    font-family: 'Roboto', sans-serif;
-    font-size: 11px;
-    fill: white;
-}
-
 .year-scroller-car {
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.05);
@@ -917,14 +2287,111 @@ h1, h5, h6, p {
     font-weight: bold;
 }
 
-#vizContainer {
-    height: 400px;
-    margin-bottom: 0;
+#year-scroll-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
+    padding: 0 20px;
+    width: 100%;
 }
 
-.viz-section {
-    overflow-y: auto;
-    max-height: calc(100vh - 200px);
+/* =============================================================================
+   ERROR MESSAGES AND UTILITY STYLES
+   Error displays and miscellaneous utility classes
+   ============================================================================= */
+
+.error-message {
+    color: #ff6b6b;
+    font-weight: bold;
+    padding: 10px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 5px;
+}
+
+/* =============================================================================
+   ANIMATIONS
+   Keyframe animations used throughout the site
+   ============================================================================= */
+
+@keyframes gradientAnimation {
+    0% { background-position: 0 50% }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+
+/* =============================================================================
+   RESPONSIVE DESIGN
+   Media queries for tablet and mobile layouts
+   ============================================================================= */
+
+@media (max-width: 1200px) {
+    .left-panel {
+        flex: 0 0 35%;
+        min-width: 300px;
+    }
+
+    .right-panel {
+        flex: 0 0 63%;
+    }
+}
+
+@media (max-width: 820px) {
+    .filter-bar {
+        padding: 10px 20px 0 20px;
+        gap: 10px 12px;
+    }
+
+    .tile {
+        padding: 7px 10px;
+        font-size: 12px;
+    }
+
+    .tile-label {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .d-flex.gap-4 {
+        flex-direction: column;
+    }
+
+    .left-panel, .right-panel {
+        flex: 1;
+        min-width: auto;
+    }
+}
+
+/* =============================================================================
+   LEGACY AND OVERRIDES
+   Remaining styles that haven't been categorized or need special positioning
+   ============================================================================= */
+
+header {
+    position: relative;
+    z-index: 1;
+    background-color: rgba(255,255,255,0.01);
+    border-radius: 0;
+    padding: 1.5rem;
+}
+
+header h1 {
+    color: #0C7B56 !important;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+}
+
+header {
+    padding-top: 10px;
+}
+
+footer {
+    font-size: 0.9rem;
+    color: #0C7B56;
+    margin-top: auto;
+    backdrop-filter: blur(8px);
+    background-color: rgba(255,255,255,0.02);
 }
 
 .left-panel h5 {
@@ -945,125 +2412,4 @@ h1, h5, h6, p {
 .left-panel #timeDisplay p {
     margin-bottom: 0.25rem;
     color: #0C7B56;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1200px) {
-    .left-panel {
-        flex: 0 0 35%;
-        min-width: 300px;
-    }
-
-    .right-panel {
-        flex: 0 0 63%;
-    }
-}
-
-@media (max-width: 768px) {
-    .d-flex.gap-4 {
-        flex-direction: column;
-    }
-
-    .left-panel, .right-panel {
-        flex: 1;
-        min-width: auto;
-    }
-}
-
-.injury-breakdown-tooltip {
-    max-width: 500px;
-    background: rgba(0, 0, 0, 0.95);
-    border: 2px solid #fff;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-}
-
-.injury-breakdown h3 {
-    color: #3b96ff;
-    margin: 0 0 15px 0;
-    font-size: 18px;
-    border-bottom: 1px solid #444;
-    padding-bottom: 8px;
-}
-
-.injury-breakdown h4 {
-    color: #87CEEB;
-    margin: 15px 0 10px 0;
-    font-size: 14px;
-}
-
-.injury-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 15px;
-}
-
-.injury-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 0;
-    border-bottom: 1px solid #333;
-}
-
-.injury-label {
-    color: #ccc;
-    font-size: 13px;
-}
-
-.injury-count {
-    color: #fff;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.sample-records {
-    max-height: 200px;
-    overflow-y: auto;
-    margin: 10px 0;
-}
-
-.record {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 8px;
-    margin: 5px 0;
-    border-radius: 4px;
-    font-size: 12px;
-    color: #ddd;
-    border-left: 3px solid #ff4757;
-}
-
-.click-note {
-    text-align: center;
-    color: #888;
-    font-style: italic;
-    font-size: 11px;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #444;
-}
-
-#nextPageBtn {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-#nextPageBtn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-#nextPageBtn:active {
-    transform: translateY(0);
 }
