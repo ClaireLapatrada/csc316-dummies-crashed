@@ -32,6 +32,8 @@ html {
     width: 100%;
     z-index: 2;
     background: transparent;
+    will-change: scroll-position;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Introduction Page Specific Styles */
@@ -72,6 +74,9 @@ html {
     position: absolute;
     top: 0;
     left: 0;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 .title-overlay {
@@ -332,6 +337,8 @@ html {
     justify-content: center;
     overflow: hidden;
     background: #EBEADD;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .page-content {
