@@ -1,0 +1,14 @@
+/* Override styles to prevent scrolling in iframe */
+body, html {
+    overflow: hidden !important;
+    height: 100% !important;
+    width: 100% !important;
+    position: fixed !important;
+}
+
+.infographic-container {
+    overflow: hidden !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+}
+

@@ -141,6 +141,11 @@ p {
     background: transparent;
     will-change: scroll-position;
     -webkit-overflow-scrolling: touch;
+    /* Optimize for smooth scrolling */
+    overscroll-behavior: contain;
+    scroll-padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* Introduction Page Specific Styles */
@@ -179,6 +184,9 @@ p {
     backface-visibility: hidden;
     transform: translateZ(0);
     will-change: transform;
+    /* Prevent iframe from creating scrollbars */
+    overflow: hidden;
+    pointer-events: auto;
 }
 
 /* Infographic containers from visualizations */
@@ -785,6 +793,11 @@ p {
     background: #EBEADD;
     will-change: transform;
     transform: translateZ(0);
+    /* Optimize for smooth scrolling */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
 }
 
 .page-content {

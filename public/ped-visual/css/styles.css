@@ -9,6 +9,15 @@ body {
     background-color: #EBEADD; /* Match main page background */
     font-family: 'Playfair Display', serif;
     overflow-x: hidden;
+    overflow-y: hidden;
+    height: 100vh;
+    position: fixed;
+    width: 100%;
+}
+
+html {
+    overflow: hidden;
+    height: 100%;
 }
 
 /* Main container */
