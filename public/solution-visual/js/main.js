@@ -122,9 +122,6 @@ function initMainPage(crashData, geoData) {
     // Set up filter checkboxes
     setupFilters();
 
-    // Set up scroll listener
-    setupScrollListener();
-
     // Set up improvements view button
     setupImprovementsView();
 }
@@ -301,39 +298,5 @@ function updateFilters() {
     myLocationChart.setFilters(activeFilters);
 }
 
-function setupScrollListener() {
-    let scrollThrottle = null;
-    
-    window.addEventListener('scroll', function() {
-        if (scrollThrottle) {
-            clearTimeout(scrollThrottle);
-        }
-        
-        scrollThrottle = setTimeout(function() {
-            updateYearFromScroll();
-        }, 10);
-    });
-}
 
-function updateYearFromScroll() {
-    if (!myTimelineVis) return;
-    
-    // Calculate scroll position
-    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    let documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-    let scrollPercent = Math.max(0, Math.min(1, scrollTop / documentHeight));
-    
-    // Map scroll position to year range
-    let yearRange = myTimelineVis.yearRange;
-    let selectedYear = Math.round(yearRange[0] + scrollPercent * (yearRange[1] - yearRange[0]));
-    
-    // Clamp to valid range
-    selectedYear = Math.max(yearRange[0], Math.min(yearRange[1], selectedYear));
-    
-    // Update timeline and map
-    if (myTimelineVis.selectedYear !== selectedYear) {
-        myTimelineVis.setYear(selectedYear);
-        myMapVis.setYear(selectedYear);
-    }
-}
 

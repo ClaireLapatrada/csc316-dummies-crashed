@@ -403,8 +403,7 @@ p {
     z-index: 10;
     display: flex;
     align-items: center;
-    margin-left: auto;
-    margin-right: 45px;
+    gap: 8px;
     margin-top: 30px;
 }
 
@@ -509,29 +508,6 @@ p {
 
 .restart-button:hover svg {
     transform: rotate(-45deg);
-}
-
-#playBtn {
-    font-weight: bold;
-    font-size: 1.4rem;
-    border: 3px solid #0C7B56;
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    color: #000;
-    text-transform: uppercase;
-    transition: background 0.3s, color 0.3s;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    margin: 10px auto;
-}
-
-#playBtn.go,
-#playBtn.stop {
-    background-color: #0C7B56;
 }
 
 .nav-button {
