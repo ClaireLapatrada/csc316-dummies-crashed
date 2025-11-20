@@ -166,9 +166,15 @@ function loadData(){
     });
 
     // dataset toggle events
-    const radios = document.querySelectorAll('input[name="dataset"]');
-    radios.forEach(r => r.addEventListener('change', e => {
-      if (e.target.value === 'ages') {
+    const datasetButtons = document.querySelectorAll('.tile-group[data-group="dataset"] .tile');
+    datasetButtons.forEach(btn => btn.addEventListener('click', e => {
+      // Remove active class from all buttons in this group
+      datasetButtons.forEach(b => b.classList.remove('active'));
+      // Add active class to clicked button
+      e.target.classList.add('active');
+      
+      const value = e.target.getAttribute('data-value');
+      if (value === 'ages') {
         chart.update(ageSeries, { totalCollisions: rows206_23.length });
       } else {
         chart.update(factorSeries, { totalCollisions: rows206_23.length });
