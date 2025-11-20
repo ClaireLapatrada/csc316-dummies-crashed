@@ -34,6 +34,13 @@
 <!-- Filter Bar above map -->
 <div class="container" style="max-width: 1250px; margin: 20px auto 0;">
 	<div class="filter-bar" style="display: flex; gap: 15px; padding: 10px 20px; align-items: center;">
+		<!-- View Mode Toggle -->
+		<div class="tile-group" data-group="view">
+			<span class="tile-label">View</span>
+			<button class="tile active" id="view-mode-map" data-value="map">Map</button>
+			<button class="tile" id="view-mode-improvements" data-value="improvements">Improvements</button>
+		</div>
+		
 		<span class="tile-label">Filters</span>
 		<!-- Severity Filter Dropdown -->
 		<div class="filter-dropdown-group">
@@ -84,8 +91,6 @@
 
 		<!-- Options Panel -->
 		<div id="options-panel" class="col-3 rounded shadow-sm p-3">
-			<button id="improvementsButton" class="btn btn-primary" style="width: 100%; height: 40px; padding: 10px; margin-bottom: 20px; font-weight: 700; border-radius: 8px; background-color: #000; border: 1px solid #000; color: #fff; transition: background-color 0.2s ease; cursor: pointer;">Improvements</button>
-
 			<div class="mt-4">
 				<h6 class="fw-bold">Top Neighborhoods by Collision Count</h6>
 				<div id="locationChart"></div>

@@ -144,9 +144,8 @@ function switchToImprovementsView() {
     
     // Hide severity filters and control buttons
     d3.select("#severity-filter-btn").style("display", "none");
-    d3.select("#severity-checkboxes").style("display", "none");
+    d3.select("#severity-checkboxes").classed("show", false).style("display", "none");
     d3.select(".control-buttons").style("display", "none");
-    d3.select("#improvementsButton").style("display", "none");
     
     // Show improvement circles and create UI
     if (myImprovementsVis) {
@@ -182,13 +181,26 @@ function switchToMapView() {
     
     // Restore severity filters and control buttons
     d3.select("#severity-filter-btn").style("display", "block");
+    d3.select("#severity-checkboxes").classed("show", false).style("display", "");
     d3.select(".control-buttons").style("display", "flex");
-    d3.select("#improvementsButton").style("display", "block");
 }
 
 function setupImprovementsView() {
-    d3.select("#improvementsButton").on("click", function() {
-        switchToImprovementsView();
+    // Set up view toggle buttons
+    d3.selectAll('.tile-group[data-group="view"] .tile').on('click', function(event) {
+        event.stopPropagation(); // Prevent event bubbling
+        const value = d3.select(this).attr('data-value');
+        
+        // Update active state
+        d3.selectAll('.tile-group[data-group="view"] .tile').classed('active', false);
+        d3.select(this).classed('active', true);
+        
+        // Switch views
+        if (value === 'improvements') {
+            switchToImprovementsView();
+        } else {
+            switchToMapView();
+        }
     });
     
     // Set up play button handler
