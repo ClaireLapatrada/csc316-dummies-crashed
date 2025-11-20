@@ -145,14 +145,10 @@ function switchToImprovementsView() {
     // Hide LocationChart container
     d3.select("#options-panel").select(".mt-4").style("display", "none");
     
-    // Hide severity filters and buttons
-    d3.selectAll(".filter-option")
-        .filter(function() {
-            let inputId = d3.select(this).select("input").attr("id");
-            return inputId && inputId.startsWith("filter-");
-        })
-        .style("display", "none");
-    d3.select("#playButton").style("display", "none");
+    // Hide severity filters and control buttons
+    d3.select("#severity-filter-btn").style("display", "none");
+    d3.select("#severity-checkboxes").style("display", "none");
+    d3.select(".control-buttons").style("display", "none");
     d3.select("#improvementsButton").style("display", "none");
     
     // Show improvement circles and create UI
@@ -187,16 +183,9 @@ function switchToMapView() {
         myImprovementsVis.removeFactorFilters();
     }
     
-    // Restore severity filters - they should already be in the DOM, just hidden
-    // The removeFactorFilters() method should have restored the original title
-    // The severity filter checkboxes are in the HTML, so they'll be visible again
-    d3.selectAll(".filter-option")
-        .filter(function() {
-            let inputId = d3.select(this).select("input").attr("id");
-            return inputId && inputId.startsWith("filter-");
-        })
-        .style("display", "block");
-    d3.select("#playButton").style("display", "block");
+    // Restore severity filters and control buttons
+    d3.select("#severity-filter-btn").style("display", "block");
+    d3.select(".control-buttons").style("display", "flex");
     d3.select("#improvementsButton").style("display", "block");
 }
 
@@ -210,11 +199,18 @@ function setupImprovementsView() {
         if (myTimelineVis) {
             if (myTimelineVis.isPlaying) {
                 myTimelineVis.pause();
-                this.textContent = "▶";
+                d3.select(this).classed("playing", false);
             } else {
                 myTimelineVis.play();
-                this.textContent = "⏸";
+                d3.select(this).classed("playing", true);
             }
+        }
+    });
+    
+    // Set up restart button handler
+    d3.select("#restartButton").on("click", function() {
+        if (myTimelineVis) {
+            myTimelineVis.setYear(myTimelineVis.yearRange[0]);
         }
     });
     

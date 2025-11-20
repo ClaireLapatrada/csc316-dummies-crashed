@@ -1183,6 +1183,10 @@ p {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.filter-checkbox-container.show {
+    display: flex;
+}
+
 .filter-checkbox-item {
     display: flex;
     align-items: center;

@@ -9,14 +9,17 @@
 	<!-- bootstrap -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 	<!-- custom css -->
 	<link rel="stylesheet" href="../../css/style.css">
-	<link rel="stylesheet" href="css/iframe-override.css">
+	<link rel="stylesheet" href="css/style.css">
 
 	<!-- GOOGLE FONTS -->
 	<link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700&family=Roboto:100,300,400,500,700' rel='stylesheet' type='text/css'>
 </head>
-<body>
+<body class="infographic-container">
 
 
 <header class="d-flex justify-content-center align-items-center" style="position: relative;">
@@ -27,56 +30,61 @@
 	
 	<button id="infoButton" style="position: absolute; right: 20px; background: none; border: none; cursor: pointer; font-size: 24px; color: #000; padding: 5px 10px; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor='#e0e0e0'" onmouseout="this.style.backgroundColor='transparent'">ℹ</button>
 </header>
+
+<!-- Filter Bar above map -->
+<div class="container" style="max-width: 1250px; margin: 20px auto 0;">
+	<div class="filter-bar" style="display: flex; gap: 15px; padding: 10px 20px; align-items: center;">
+		<span class="tile-label">Filters</span>
+		<!-- Severity Filter Dropdown -->
+		<div class="filter-dropdown-group">
+			<button class="filter-btn" id="severity-filter-btn">
+				<i class="fas fa-filter"></i>
+				<span>Severity</span>
+			</button>
+			<div class="filter-checkbox-container" id="severity-checkboxes">
+				<label class="filter-checkbox-label">
+					<input type="checkbox" id="filter-fatal" class="severity-checkbox" checked>
+					<span>Fatal</span>
+				</label>
+				<label class="filter-checkbox-label">
+					<input type="checkbox" id="filter-major" class="severity-checkbox" checked>
+					<span>Major</span>
+				</label>
+				<label class="filter-checkbox-label">
+					<input type="checkbox" id="filter-minor" class="severity-checkbox" checked>
+					<span>Minor</span>
+				</label>
+				<label class="filter-checkbox-label">
+					<input type="checkbox" id="filter-minimal" class="severity-checkbox" checked>
+					<span>Minimal</span>
+				</label>
+			</div>
+		</div>
+
+		<!-- Play and Restart Buttons -->
+		<div class="control-buttons">
+			<div class="play-button" id="playButton">
+				<div class="play-triangle"></div>
+			</div>
+			<div class="restart-button" id="restartButton">
+				<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+					<path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</div>
+		</div>
+	</div>
+</div>
+
 <!-- Main Container -->
-<div id="main-container" class="container rounded shadow p-3">
+<div id="main-container" class="container rounded shadow p-3" style="padding-bottom: 80px !important;">
 	<div class="row">
 		<!-- Map Visualization -->
 		<div id="mapDiv" class="col-9 rounded"></div>
 
 		<!-- Options Panel -->
 		<div id="options-panel" class="col-3 rounded shadow-sm p-3">
-			<div class="options-title mb-3">Filters</div>
-
-			<div class="filter-option mb-2">
-				<input type="checkbox" id="filter-fatal" checked>
-				<label for="filter-fatal" class="d-flex align-items-center">
-					<span class="filter-indicator me-2"></span>
-					<span class="filter-label me-auto">Fatal</span>
-					<span class="filter-checkbox fatal"></span>
-				</label>
-			</div>
-
-			<div class="filter-option mb-2">
-				<input type="checkbox" id="filter-major" checked>
-				<label for="filter-major" class="d-flex align-items-center">
-					<span class="filter-indicator me-2"></span>
-					<span class="filter-label me-auto">Major</span>
-					<span class="filter-checkbox major"></span>
-				</label>
-			</div>
-
-			<div class="filter-option mb-2">
-				<input type="checkbox" id="filter-minor" checked>
-				<label for="filter-minor" class="d-flex align-items-center">
-					<span class="filter-indicator me-2"></span>
-					<span class="filter-label me-auto">Minor</span>
-					<span class="filter-checkbox minor"></span>
-				</label>
-			</div>
-
-			<div class="filter-option mb-2">
-				<input type="checkbox" id="filter-minimal" checked>
-				<label for="filter-minimal" class="d-flex align-items-center">
-					<span class="filter-indicator me-2"></span>
-					<span class="filter-label me-auto">Minimal</span>
-					<span class="filter-checkbox minimal"></span>
-				</label>
-			</div>
-
-			<div class="d-flex gap-2 mt-3" style="gap: 8px;">
-				<button id="playButton" class="btn btn-primary" style="width: 55px; height: 40px; padding: 0; font-weight: 700; border-radius: 8px; background-color: #000; border: 1px solid #000; color: #fff; transition: background-color 0.2s ease; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer;">▶</button>
-				<button id="improvementsButton" class="btn btn-primary flex-grow-1" style="height: 40px; padding: 10px; font-weight: 700; border-radius: 8px; background-color: #000; border: 1px solid #000; color: #fff; transition: background-color 0.2s ease; cursor: pointer;">Improvements</button>
-			</div>
+			<button id="improvementsButton" class="btn btn-primary" style="width: 100%; height: 40px; padding: 10px; margin-bottom: 20px; font-weight: 700; border-radius: 8px; background-color: #000; border: 1px solid #000; color: #fff; transition: background-color 0.2s ease; cursor: pointer;">Improvements</button>
 
 			<div class="mt-4">
 				<h6 class="fw-bold">Top Neighborhoods by Collision Count</h6>
@@ -107,5 +115,32 @@
 <script src="js/locationChart.js"></script>
 <script src="js/improvementsVis.js"></script>
 <script src="js/main.js"></script>
+
+<!-- Dropdown Filter Toggle -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterBtn = document.getElementById('severity-filter-btn');
+    const checkboxContainer = document.getElementById('severity-checkboxes');
+    
+    if (filterBtn && checkboxContainer) {
+        filterBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            checkboxContainer.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!filterBtn.contains(e.target) && !checkboxContainer.contains(e.target)) {
+                checkboxContainer.classList.remove('show');
+            }
+        });
+        
+        // Prevent closing when clicking inside the dropdown
+        checkboxContainer.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+});
+</script>
 </body>
 </html>
