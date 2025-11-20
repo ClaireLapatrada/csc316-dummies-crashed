@@ -16,11 +16,13 @@ class PlayButton {
         this.transitionTime = transitionTime;
         this.playInterval = null;
 
-        this.button.classList.add('go');
-        this.button.textContent = 'GO';
-        this.button.style.cursor = 'pointer';
-
         this.button.addEventListener('click', () => this.toggle());
+        
+        // Set up restart button
+        const restartBtn = document.querySelector('#restartBtn');
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => this.restart());
+        }
     }
 
     toggle() {
@@ -32,13 +34,14 @@ class PlayButton {
     }
 
     start() {
-        this.button.textContent = 'STOP';
-        this.button.classList.remove('go');
-        this.button.classList.add('stop');
+        this.button.classList.add('playing');
 
         this.playInterval = setInterval(() => {
             let nextYear = this.yearScroll.getCurrentYear() + 1;
-            if (nextYear > this.yearScroll.endYear) nextYear = this.yearScroll.startYear;
+            if (nextYear > this.yearScroll.endYear) {
+                this.stop();
+                return;
+            }
 
             const endX = this.yearScroll.xScale(nextYear);
 
@@ -57,9 +60,22 @@ class PlayButton {
     stop() {
         clearInterval(this.playInterval);
         this.playInterval = null;
-        this.button.textContent = 'GO';
-        this.button.classList.remove('stop');
-        this.button.classList.add('go');
+        this.button.classList.remove('playing');
+    }
+    
+    restart() {
+        this.stop();
+        const startYear = this.yearScroll.startYear;
+        const endX = this.yearScroll.xScale(startYear);
+        
+        this.yearScroll.car.transition()
+            .duration(this.transitionTime)
+            .ease(d3.easeLinear)
+            .attr("transform", `translate(${endX - 18}, ${this.yearScroll.height/2 - 10})`);
+        
+        this.yearScroll.currentYear = startYear;
+        this.yearScroll._updateYearLabels();
+        if (this.yearScroll.onYearChange) this.yearScroll.onYearChange(startYear);
     }
 }
 window.PlayButton = PlayButton;

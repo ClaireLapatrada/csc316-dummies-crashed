@@ -69,7 +69,7 @@ class YearScroll {
             .attr("y", trackY - 45)
             .attr("text-anchor", "middle")
             .attr("font-size", "13px")
-            .attr("fill", d => d === this.currentYear ? "#0C7B56" : "#666")
+            .attr("fill", d => d === this.currentYear ? "#ffeb3b" : "#ccc")
             .attr("font-weight", d => d === this.currentYear ? "bold" : "normal")
             .style("pointer-events", "none")
             .text(d => d);
@@ -181,7 +181,7 @@ class YearScroll {
 
     _updateYearLabels() {
         this.yearLabels
-            .attr("fill", d => d === this.currentYear ? "#0C7B56" : "#666")
+            .attr("fill", d => d === this.currentYear ? "#ffeb3b" : "#ccc")
             .attr("font-weight", d => d === this.currentYear ? "bold" : "normal");
 
         // REMOVED: Year display on car update

@@ -14,6 +14,7 @@ class YearScroll {
         this.width = width;
         this.height = 140;
         this.margin = { left: 60, right: 60, top: 30, bottom: 30 };
+        this.isPlayingState = false;
     }
 
     init() {
@@ -184,10 +185,11 @@ class YearScroll {
             .attr("fill", d => d === this.currentYear ? "#ffeb3b" : "#ccc")
             .attr("font-weight", d => d === this.currentYear ? "bold" : "normal");
 
-        // REMOVED: Year display on car update
-
-        // Update year display in HTML (this remains for the separate display)
-        document.getElementById('currentYearDisplay').textContent = this.currentYear;
+        // Update year display in HTML if element exists
+        const yearDisplay = document.getElementById('currentYearDisplay');
+        if (yearDisplay) {
+            yearDisplay.textContent = this.currentYear;
+        }
     }
 
 
@@ -199,6 +201,9 @@ class YearScroll {
         if (newYear !== this.currentYear) {
             this.currentYear = newYear;
             this._updateYearLabels();
+            if (this.onYearChange) {
+                this.onYearChange(this.currentYear);
+            }
         }
     }
 
@@ -229,5 +234,15 @@ class YearScroll {
     // Public method to get current year
     getCurrentYear() {
         return this.currentYear;
+    }
+
+    // Method to check if playing
+    isPlaying() {
+        return this.isPlayingState;
+    }
+
+    // Method to set playing state
+    setPlaying(playing) {
+        this.isPlayingState = playing;
     }
 }

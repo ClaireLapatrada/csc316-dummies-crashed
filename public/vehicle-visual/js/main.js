@@ -130,6 +130,52 @@ d3.csv("data/dataset.csv").then(function(data) {
     );
     timeSlider.init();
 
+    // Set up play and restart buttons
+    const playBtn = document.querySelector('#playBtn');
+    const restartBtn = document.querySelector('#restartBtn');
+    let playInterval = null;
+    
+    if (playBtn) {
+        playBtn.addEventListener('click', () => {
+            if (playInterval) {
+                // Stop playing
+                clearInterval(playInterval);
+                playInterval = null;
+                playBtn.classList.remove('playing');
+            } else {
+                // Start playing
+                playBtn.classList.add('playing');
+                playInterval = setInterval(() => {
+                    let nextYear = currentYear + 1;
+                    if (nextYear > 2023) {
+                        clearInterval(playInterval);
+                        playInterval = null;
+                        playBtn.classList.remove('playing');
+                        return;
+                    }
+                    currentYear = nextYear;
+                    yearScroller.setYear(currentYear);
+                    vehicleChart.setYear(currentYear);
+                    updateDisplay();
+                }, 1000);
+            }
+        });
+    }
+    
+    if (restartBtn) {
+        restartBtn.addEventListener('click', () => {
+            if (playInterval) {
+                clearInterval(playInterval);
+                playInterval = null;
+                playBtn.classList.remove('playing');
+            }
+            currentYear = 2006;
+            yearScroller.setYear(currentYear);
+            vehicleChart.setYear(currentYear);
+            updateDisplay();
+        });
+    }
+
     // Initial display update
     updateDisplay();
 

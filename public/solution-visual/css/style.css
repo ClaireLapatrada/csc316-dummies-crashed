@@ -1,7 +1,7 @@
 /* Main Container */
 #main-container {
     width: 1250px;
-    height: 700px;
+    height: 780px;
     margin: 0 auto;
     background-color: #e7e5df;
     border-radius: 12px;
@@ -114,7 +114,7 @@ body {
     margin: 0;
     font-family: 'Roboto', sans-serif;
     background-color: #EBEADD !important;
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* Crash points */

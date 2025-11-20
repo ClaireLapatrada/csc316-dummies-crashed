@@ -122,9 +122,6 @@ function initMainPage(crashData, geoData) {
     // Set up filter checkboxes
     setupFilters();
 
-    // Set up scroll listener
-    setupScrollListener();
-
     // Set up improvements view button
     setupImprovementsView();
 }
@@ -145,15 +142,10 @@ function switchToImprovementsView() {
     // Hide LocationChart container
     d3.select("#options-panel").select(".mt-4").style("display", "none");
     
-    // Hide severity filters and buttons
-    d3.selectAll(".filter-option")
-        .filter(function() {
-            let inputId = d3.select(this).select("input").attr("id");
-            return inputId && inputId.startsWith("filter-");
-        })
-        .style("display", "none");
-    d3.select("#playButton").style("display", "none");
-    d3.select("#improvementsButton").style("display", "none");
+    // Hide severity filters and control buttons
+    d3.select("#severity-filter-btn").style("display", "none");
+    d3.select("#severity-checkboxes").classed("show", false).style("display", "none");
+    d3.select(".control-buttons").style("display", "none");
     
     // Show improvement circles and create UI
     if (myImprovementsVis) {
@@ -187,22 +179,28 @@ function switchToMapView() {
         myImprovementsVis.removeFactorFilters();
     }
     
-    // Restore severity filters - they should already be in the DOM, just hidden
-    // The removeFactorFilters() method should have restored the original title
-    // The severity filter checkboxes are in the HTML, so they'll be visible again
-    d3.selectAll(".filter-option")
-        .filter(function() {
-            let inputId = d3.select(this).select("input").attr("id");
-            return inputId && inputId.startsWith("filter-");
-        })
-        .style("display", "block");
-    d3.select("#playButton").style("display", "block");
-    d3.select("#improvementsButton").style("display", "block");
+    // Restore severity filters and control buttons
+    d3.select("#severity-filter-btn").style("display", "block");
+    d3.select("#severity-checkboxes").classed("show", false).style("display", "");
+    d3.select(".control-buttons").style("display", "flex");
 }
 
 function setupImprovementsView() {
-    d3.select("#improvementsButton").on("click", function() {
-        switchToImprovementsView();
+    // Set up view toggle buttons
+    d3.selectAll('.tile-group[data-group="view"] .tile').on('click', function(event) {
+        event.stopPropagation(); // Prevent event bubbling
+        const value = d3.select(this).attr('data-value');
+        
+        // Update active state
+        d3.selectAll('.tile-group[data-group="view"] .tile').classed('active', false);
+        d3.select(this).classed('active', true);
+        
+        // Switch views
+        if (value === 'improvements') {
+            switchToImprovementsView();
+        } else {
+            switchToMapView();
+        }
     });
     
     // Set up play button handler
@@ -210,11 +208,18 @@ function setupImprovementsView() {
         if (myTimelineVis) {
             if (myTimelineVis.isPlaying) {
                 myTimelineVis.pause();
-                this.textContent = "▶";
+                d3.select(this).classed("playing", false);
             } else {
                 myTimelineVis.play();
-                this.textContent = "⏸";
+                d3.select(this).classed("playing", true);
             }
+        }
+    });
+    
+    // Set up restart button handler
+    d3.select("#restartButton").on("click", function() {
+        if (myTimelineVis) {
+            myTimelineVis.setYear(myTimelineVis.yearRange[0]);
         }
     });
     
@@ -305,39 +310,5 @@ function updateFilters() {
     myLocationChart.setFilters(activeFilters);
 }
 
-function setupScrollListener() {
-    let scrollThrottle = null;
-    
-    window.addEventListener('scroll', function() {
-        if (scrollThrottle) {
-            clearTimeout(scrollThrottle);
-        }
-        
-        scrollThrottle = setTimeout(function() {
-            updateYearFromScroll();
-        }, 10);
-    });
-}
 
-function updateYearFromScroll() {
-    if (!myTimelineVis) return;
-    
-    // Calculate scroll position
-    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    let documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-    let scrollPercent = Math.max(0, Math.min(1, scrollTop / documentHeight));
-    
-    // Map scroll position to year range
-    let yearRange = myTimelineVis.yearRange;
-    let selectedYear = Math.round(yearRange[0] + scrollPercent * (yearRange[1] - yearRange[0]));
-    
-    // Clamp to valid range
-    selectedYear = Math.max(yearRange[0], Math.min(yearRange[1], selectedYear));
-    
-    // Update timeline and map
-    if (myTimelineVis.selectedYear !== selectedYear) {
-        myTimelineVis.setYear(selectedYear);
-        myMapVis.setYear(selectedYear);
-    }
-}
 

@@ -18,6 +18,7 @@ class BarChart {
         this.wasPlaying = undefined;
         this.playInterval = null;
         this.initialYear = 2006;
+        this.yearScroll = null;
         this.viewMode = 'pedestrian'; // 'pedestrian' or 'driver'
         this.filterState = { severity: 'all', pedAct: 'all', drivAct: 'all', district: 'all', pedAge: 'all', drivAge: 'all' };
         this.lastHighlightYear = null; // Track last year we showed highlight for
@@ -45,17 +46,10 @@ class BarChart {
         // Process data and filter by current year
         vis.processData();
 
-        // Set up year slider, control buttons, and filters
-        vis.setupYearSlider();
-        vis.setupPlayButton();
-        vis.setupRestartButton();
-        vis.bindTileFilters();
-        vis.setupDropdownFilters();
-
         // Margins and dimensions
         vis.margin = {top: 5, right: 5, bottom: 30, left: 110};
 		vis.width = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.left - vis.margin.right;
-		vis.height = document.getElementById(vis.parentElement).getBoundingClientRect().height * 1.17 - vis.margin.top - vis.margin.bottom;
+		vis.height = document.getElementById(vis.parentElement).getBoundingClientRect().height * 1.3 - vis.margin.top - vis.margin.bottom;
 
 		// SVG drawing area
 		vis.svg = d3.select("#" + vis.parentElement).append("svg")
@@ -103,6 +97,13 @@ class BarChart {
 
         vis.updateVis();
         
+        // Set up year scroll, control buttons, and filters (after chart is rendered)
+        vis.setupYearScroll();
+        vis.setupPlayButton();
+        vis.setupRestartButton();
+        vis.bindTileFilters();
+        vis.setupDropdownFilters();
+        
         // Responsive resize listener to handle window size changes
         window.addEventListener('resize', debounce(() => vis.handleResize(), 150));
     }
@@ -134,11 +135,13 @@ class BarChart {
         vis.laneDividersCreated = false;
         vis.updateVis();
 
-        // Update legend and timeline marker
-        const timelineMarker = document.getElementById('timeline-marker');
-        if (timelineMarker) {
-            const percentage = ((vis.currentYear - 2006) / (2023 - 2006)) * 100;
-            timelineMarker.style.left = percentage + '%';
+        // Reinitialize year scroll with new width
+        if (vis.yearScroll) {
+            const container = document.querySelector('.visualization-area');
+            const containerWidth = container ? container.getBoundingClientRect().width : 800;
+            vis.yearScroll.width = Math.min(containerWidth * 0.9, 800);
+            vis.yearScroll.init();
+            vis.yearScroll.setYear(vis.currentYear);
         }
     }
 
@@ -493,47 +496,30 @@ class BarChart {
     /* Timeline related methods --------------------------------------------------------------------------------- */
 
     /*
-     * Set up year slider functionality
+     * Set up year scroll functionality
      */
-    setupYearSlider() {
+    setupYearScroll() {
         let vis = this;
         
-        const yearSlider = document.getElementById('year-slider');
-        let currentYearLabel = document.getElementById('current-year');
-        if (!currentYearLabel) {
-            currentYearLabel = document.querySelector('.marker-label');
-        }
-        if (!currentYearLabel) {
-            currentYearLabel = document.querySelector('#timeline-marker .marker-label');
-        }
-        const timelineMarker = document.getElementById('timeline-marker');
+        // Get container width for responsive sizing
+        const container = document.querySelector('.visualization-area');
+        const containerWidth = container ? container.getBoundingClientRect().width : 800;
         
-        yearSlider.addEventListener('input', function() {
-            vis.currentYear = parseInt(this.value);
-            if (currentYearLabel) {
-                currentYearLabel.textContent = vis.currentYear;
+        // Initialize YearScroll
+        vis.yearScroll = new YearScroll('#year-scroll-container', {
+            startYear: 2006,
+            endYear: 2023,
+            width: Math.min(containerWidth * 0.9, 800),
+            onYearChange: (year) => {
+                vis.currentYear = year;
+                vis.processData();
+                vis.updateVis();
+                vis.checkAndShowHighlight();
             }
-            
-            // Update marker position
-            const percentage = ((vis.currentYear - 2006) / (2023 - 2006)) * 100;
-            timelineMarker.style.left = percentage + '%';
-            
-            // Reprocess data and update visualization
-            vis.processData();
-            vis.updateVis();
-            
-            // Check for highlights
-            vis.checkAndShowHighlight();
-            // vis.createLegend();
         });
         
-        // Set initial year display
-        console.log('Setting initial year display:', vis.currentYear);
-        console.log('Current year label element:', currentYearLabel);
-        if (currentYearLabel) {
-            currentYearLabel.textContent = vis.currentYear;
-            console.log('Initial year set to:', currentYearLabel.textContent);
-        }
+        vis.yearScroll.init();
+        vis.yearScroll.setYear(vis.currentYear);
     }
     
     /*
@@ -563,6 +549,9 @@ class BarChart {
         let vis = this;
         
         vis.isPlaying = true;
+        if (vis.yearScroll) {
+            vis.yearScroll.setPlaying(true);
+        }
         const playButton = document.querySelector('.play-button');
         if (playButton) {
             playButton.classList.add('playing');
@@ -576,28 +565,9 @@ class BarChart {
                 vis.lastHighlightYear = null; // Reset highlight tracking when looping
             }
             
-            // Update slider
-            const yearSlider = document.getElementById('year-slider');
-            if (yearSlider) {
-                yearSlider.value = vis.currentYear;
-            }
-            
-            // Update current year display - try multiple selectors
-            let currentYearLabel = document.getElementById('current-year');
-            if (!currentYearLabel) {
-                currentYearLabel = document.querySelector('.marker-label');
-            }
-            if (!currentYearLabel) {
-                currentYearLabel = document.querySelector('#timeline-marker .marker-label');
-            }
-            
-            console.log('Current year label found:', currentYearLabel);
-            console.log('Setting year to:', vis.currentYear);
-            if (currentYearLabel) {
-                currentYearLabel.textContent = vis.currentYear;
-                console.log('Year updated to:', currentYearLabel.textContent);
-            } else {
-                console.log('Current year label not found with any selector!');
+            // Update year scroll
+            if (vis.yearScroll) {
+                vis.yearScroll.setYear(vis.currentYear);
             }
             
             // Update visualization
@@ -606,13 +576,7 @@ class BarChart {
             
             // Check for highlights
             vis.checkAndShowHighlight();
-            
-            // Update timeline marker
-            const timelineMarker = document.querySelector('.timeline-marker');
-            if (timelineMarker) {
-                timelineMarker.style.left = `${((vis.currentYear - 2006) / (2023 - 2006)) * 100}%`;
-            }
-        }, 2000); // 1 second between year changes
+        }, 2000); // 2 seconds between year changes
     }
 
     /*
@@ -622,6 +586,9 @@ class BarChart {
         let vis = this;
         
         vis.isPlaying = false;
+        if (vis.yearScroll) {
+            vis.yearScroll.setPlaying(false);
+        }
         const playButton = document.querySelector('.play-button');
         if (playButton) {
             playButton.classList.remove('playing');
@@ -653,37 +620,13 @@ class BarChart {
     restartTimeline() {
         let vis = this;
         
-        // Stop auto-play if it's running
-        // if (vis.isPlaying) {
-        //     vis.stopPlay();
-        // }
-        
         // Reset to initial year
         vis.currentYear = vis.initialYear;
         vis.lastHighlightYear = null; // Reset highlight tracking
         
-        // Update slider
-        const yearSlider = document.getElementById('year-slider');
-        if (yearSlider) {
-            yearSlider.value = vis.currentYear;
-        }
-        
-        // Update current year display
-        let currentYearLabel = document.getElementById('current-year');
-
-        if (!currentYearLabel) {
-            currentYearLabel = document.querySelector('.marker-label');
-            currentYearLabel = document.querySelector('#timeline-marker .marker-label');
-        }
-        
-        if (currentYearLabel) {
-            currentYearLabel.textContent = vis.currentYear;
-        }
-        
-        // Update timeline marker position
-        const timelineMarker = document.querySelector('.timeline-marker');
-        if (timelineMarker) {
-            timelineMarker.style.left = `${((vis.currentYear - 2006) / (2023 - 2006)) * 100}%`;
+        // Update year scroll
+        if (vis.yearScroll) {
+            vis.yearScroll.setYear(vis.currentYear);
         }
         
         // Reprocess data and update visualization
@@ -1538,27 +1481,28 @@ class BarChart {
 
         bigYear.exit().remove();
 
-        // Add total collision count below the year label with same styling but smaller font
-        const totalCount = vis.displayData.length;
-        const countFontSize = Math.max(18, Math.round(fontSize * 0.45));
-        const bigCount = vis.svg.selectAll('.big-count-label').data([totalCount]);
+        // // Add total collision count below the year label with same styling but smaller font
+        // NOTE: Temporarily removed 
+        // const totalCount = vis.displayData.length;
+        // const countFontSize = Math.max(18, Math.round(fontSize * 0.45));
+        // const bigCount = vis.svg.selectAll('.big-count-label').data([totalCount]);
 
-        const bigCountEnter = bigCount.enter().append('text')
-            .attr('class', 'big-count-label')
-            .attr('text-anchor', 'end')
-            .style('font-family', 'Playfair Display, serif')
-            .style('font-weight', '1000')
-            .style('fill', '#bfbfbf')
-            .style('fill-opacity', 0.7)
-            .style('pointer-events', 'none');
+        // const bigCountEnter = bigCount.enter().append('text')
+        //     .attr('class', 'big-count-label')
+        //     .attr('text-anchor', 'end')
+        //     .style('font-family', 'Playfair Display, serif')
+        //     .style('font-weight', '1000')
+        //     .style('fill', '#bfbfbf')
+        //     .style('fill-opacity', 0.7)
+        //     .style('pointer-events', 'none');
 
-        bigCountEnter.merge(bigCount)
-            .text(d => d.toLocaleString())
-            .attr('x', vis.width - 20)
-            .attr('y', vis.height - 156) // Position below year with small gap
-            .style('font-size', countFontSize + 'px');
+        // bigCountEnter.merge(bigCount)
+        //     .text(d => d.toLocaleString())
+        //     .attr('x', vis.width - 20)
+        //     .attr('y', vis.height - 156) // Position below year with small gap
+        //     .style('font-size', countFontSize + 'px');
 
-        bigCount.exit().remove();
+        // bigCount.exit().remove();
     }
 }
 

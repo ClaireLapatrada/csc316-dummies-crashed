@@ -18,121 +18,162 @@ class TimelineVis {
     initVis() {
         let vis = this;
 
-        vis.margin = {top: 0, right: 20, bottom: 40, left: 0};
-        vis.width = 831 - vis.margin.left - vis.margin.right;
-        // Use a positive inner height so content isn't clipped
-        vis.height = 27;
+        vis.margin = {left: 60, right: 60, top: 30, bottom: 30};
+        vis.width = 800;
+        vis.height = 140;
 
-        // Equal padding on both sides for year scale
-        vis.padding = 20;
+        const trackY = vis.height / 2;
 
         // init drawing area
         vis.svg = d3.select("#" + vis.parentElement)
             .append("svg")
-            .attr("width", vis.width + vis.margin.left + vis.margin.right)
-            .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
-
-        // Year scale - equal padding on both sides
-        vis.yearScale = d3.scaleTime()
-            .domain([new Date(vis.yearRange[0], 0, 1), new Date(vis.yearRange[1], 0, 1)])
-            .range([vis.padding, vis.width - vis.padding]);
-
-        // Create slider track
-        vis.track = vis.svg.append("rect")
-            .attr("class", "timeline-track")
-            .attr("x", 0)
-            .attr("y", 0)
             .attr("width", vis.width)
             .attr("height", vis.height)
-            .attr("rx", 7)
-            .attr("fill", "#fff");
+            .style("display", "block")
+            .style("margin", "0 auto");
 
-        // Create dashed line
-        vis.line = vis.svg.append("line")
-            .attr("class", "timeline-line")
-            .attr("x1", 0)
-            .attr("y1", vis.height / 2)
-            .attr("x2", vis.width)
-            .attr("y2", vis.height / 2)
-            .attr("stroke", "#000")
-            .attr("stroke-width", 1)
-            .attr("stroke-dasharray", "5,5");
+        // Year scale
+        vis.yearScale = d3.scaleLinear()
+            .domain([vis.yearRange[0], vis.yearRange[1]])
+            .range([vis.margin.left, vis.width - vis.margin.right]);
 
-        // Create triangular handle
-        let initialX = vis.yearScale(new Date(vis.selectedYear, 0, 1));
-        vis.handle = vis.svg.append("g")
-            .attr("class", "timeline-handle")
-            .style("cursor", "grab")
-            .attr("transform", `translate(${initialX}, ${vis.height / 2})`);
+        // Create track background (road-like)
+        vis.svg.append("rect")
+            .attr("x", vis.margin.left - 25)
+            .attr("y", trackY - 25)
+            .attr("width", vis.width - vis.margin.left - vis.margin.right + 50)
+            .attr("height", 50)
+            .attr("rx", 12)
+            .attr("fill", "#2f2f2f")
+            .attr("stroke", "#555")
+            .attr("stroke-width", 2);
 
-        vis.handle.append("polygon")
-            .attr("points", "-18.5,-18.5 0,0 -18.5,18.5")
-            .attr("fill", "#ec6b68")
-            .attr("transform", "rotate(90)");
+        // Road center line (dashed)
+        vis.svg.append("line")
+            .attr("x1", vis.margin.left - 5)
+            .attr("x2", vis.width - vis.margin.right + 5)
+            .attr("y1", trackY)
+            .attr("y2", trackY)
+            .attr("stroke", "#dcdcdc")
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray", "10,10")
+            .attr("stroke-linecap", "round");
 
-        // Year labels - dynamically generate based on year range (show every year from 2006 to 2023)
-        vis.years = [];
-        for (let y = vis.yearRange[0]; y <= vis.yearRange[1]; y += 1) {
-            vis.years.push(y);
-        }
+        // Year labels above the track
+        vis.years = d3.range(vis.yearRange[0], vis.yearRange[1] + 1);
         
         vis.yearLabels = vis.svg.selectAll(".year-label")
             .data(vis.years)
             .enter()
             .append("text")
             .attr("class", "year-label")
-            .attr("x", d => vis.yearScale(new Date(d, 0, 1)))
-            .attr("y", vis.height + 20)
+            .attr("x", d => vis.yearScale(d))
+            .attr("y", trackY - 40)
             .attr("text-anchor", "middle")
-            .attr("font-family", "Roboto, sans-serif")
-            .attr("font-weight", 800)
-            .attr("font-size", "16px")
-            .attr("fill", "#000")
-            .text(d => String(d).slice(-2)); // Show last 2 digits (03, 04, etc.)
+            .attr("font-size", "12px")
+            .attr("fill", d => d === vis.selectedYear ? "#ffeb3b" : "#ccc")
+            .attr("font-weight", d => d === vis.selectedYear ? "bold" : "normal")
+            .style("pointer-events", "none")
+            .text(d => d);
+
+        // Create car slider
+        const carWidth = 36;
+        const carHeight = 20;
+
+        vis.handle = vis.svg.append("g")
+            .attr("class", "car-slider")
+            .attr("transform", `translate(${vis.yearScale(vis.selectedYear) - carWidth/2}, ${trackY - carHeight/2})`)
+            .style("cursor", "grab");
+
+        // Car body (main rectangle)
+        vis.handle.append("rect")
+            .attr("width", carWidth)
+            .attr("height", carHeight)
+            .attr("rx", 4)
+            .attr("fill", "#ff4757")
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 1.5);
+
+        // Car windows
+        vis.handle.append("rect")
+            .attr("x", 4)
+            .attr("y", 4)
+            .attr("width", 12)
+            .attr("height", 8)
+            .attr("rx", 2)
+            .attr("fill", "#87CEEB");
+
+        vis.handle.append("rect")
+            .attr("x", 20)
+            .attr("y", 4)
+            .attr("width", 12)
+            .attr("height", 8)
+            .attr("rx", 2)
+            .attr("fill", "#87CEEB");
+
+        // Car wheels
+        vis.handle.append("circle")
+            .attr("cx", 8)
+            .attr("cy", carHeight)
+            .attr("r", 4)
+            .attr("fill", "#333")
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 1);
+
+        vis.handle.append("circle")
+            .attr("cx", carWidth - 8)
+            .attr("cy", carHeight)
+            .attr("r", 4)
+            .attr("fill", "#333")
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 1);
+
+        // Headlights
+        vis.handle.append("circle")
+            .attr("cx", 2)
+            .attr("cy", 8)
+            .attr("r", 2)
+            .attr("fill", "#ffeb3b");
+
+        vis.handle.append("circle")
+            .attr("cx", carWidth - 2)
+            .attr("cy", 8)
+            .attr("r", 2)
+            .attr("fill", "#ffeb3b");
+
+        vis.carWidth = carWidth;
+        vis.carHeight = carHeight;
 
         // Drag functionality
         vis.drag = d3.drag()
             .on("start", function(event) {
                 d3.select(this).raise();
-                // Change cursor to grabbing when dragging
                 d3.select(this).style("cursor", "grabbing");
             })
             .on("drag", function(event) {
-                let x = Math.max(vis.padding, Math.min(vis.width - vis.padding, event.x));
-                vis.handle.attr("transform", `translate(${x}, ${vis.height / 2})`);
+                let x = Math.max(vis.margin.left, Math.min(vis.width - vis.margin.right, event.x));
+                const trackY = vis.height / 2;
+                vis.handle.attr("transform", `translate(${x - vis.carWidth/2}, ${trackY - vis.carHeight/2})`);
                 
                 // Calculate year from position
-                let year = Math.round(vis.yearScale.invert(x).getFullYear());
-                if (year !== vis.selectedYear && year >= vis.yearRange[0] && year <= vis.yearRange[1]) {
+                let year = Math.round(vis.yearScale.invert(x));
+                year = Math.max(vis.yearRange[0], Math.min(vis.yearRange[1], year));
+                
+                if (year !== vis.selectedYear) {
                     vis.selectedYear = year;
+                    vis._updateYearLabels();
                     if (vis.onYearChange) {
                         vis.onYearChange(year);
                     }
                 }
             })
             .on("end", function(event) {
-                // Change cursor back to grab when not dragging
                 d3.select(this).style("cursor", "grab");
             });
 
         vis.handle.call(vis.drag);
 
-        d3.select("#playButton").on("click", function() {
-            if (vis.isPlaying) {
-                vis.pause();
-                d3.select(this).text("▶");
-            } else {
-                vis.play();
-                d3.select(this).text("⏸");
-            }
-            // Update improvements play button if it exists
-            let improvementsPlayButton = d3.select("#improvementsPlayButton");
-            if (!improvementsPlayButton.empty()) {
-                improvementsPlayButton.text(vis.isPlaying ? "⏸" : "▶");
-            }
-        });
+        // Play button click handler is now in main.js
 
         vis.updateVis();
     }
@@ -151,10 +192,19 @@ class TimelineVis {
         let vis = this;
         if (year >= vis.yearRange[0] && year <= vis.yearRange[1]) {
             vis.selectedYear = year;
-            let x = vis.yearScale(new Date(year, 0, 1));
+            const trackY = vis.height / 2;
+            let x = vis.yearScale(year);
             vis.handle.transition().duration(800).ease(d3.easeCubicOut)
-                .attr("transform", `translate(${x}, ${vis.height / 2})`);
+                .attr("transform", `translate(${x - vis.carWidth/2}, ${trackY - vis.carHeight/2})`);
+            vis._updateYearLabels();
         }
+    }
+
+    _updateYearLabels() {
+        let vis = this;
+        vis.yearLabels
+            .attr("fill", d => d === vis.selectedYear ? "#ffeb3b" : "#ccc")
+            .attr("font-weight", d => d === vis.selectedYear ? "bold" : "normal");
     }
 
     animateToYear(year) {
@@ -169,21 +219,17 @@ class TimelineVis {
         let vis = this;
         vis.isPlaying = true;
         
-        // Update play button text
-        d3.select("#playButton").text("⏸");
+        // Update play button state
+        d3.select("#playButton").classed("playing", true);
         let improvementsPlayButton = d3.select("#improvementsPlayButton");
         if (!improvementsPlayButton.empty()) {
-            improvementsPlayButton.text("⏸");
+            improvementsPlayButton.classed("playing", true);
         }
 
         vis.playInterval = d3.interval(() => {
             let nextYear = vis.selectedYear + 1;
             if (nextYear > vis.yearRange[1]) {
                 vis.pause();
-                d3.select("#playButton").text("▶");
-                if (!improvementsPlayButton.empty()) {
-                    improvementsPlayButton.text("▶");
-                }
             } else {
                 vis.animateToYear(nextYear);
             }
@@ -198,11 +244,11 @@ class TimelineVis {
             vis.playInterval = null;
         }
         
-        // Update play button text
-        d3.select("#playButton").text("▶");
+        // Update play button state
+        d3.select("#playButton").classed("playing", false);
         let improvementsPlayButton = d3.select("#improvementsPlayButton");
         if (!improvementsPlayButton.empty()) {
-            improvementsPlayButton.text("▶");
+            improvementsPlayButton.classed("playing", false);
         }
     }
 }

@@ -10,12 +10,16 @@
     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700&family=Roboto:100,300,400,500,700" rel="stylesheet" type="text/css">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="css/iframe-override.css">
 </head>
 <body>
 
-    <h1>Roundabout Radar</h1>
-    <h2>Toronto Crash Factors (2006–2023)</h2>
+    <h1 class="main-title">
+      <span class="title-line-1">Roundabout Radar</span>
+      <span class="title-line-2">Toronto Crash Factors (2006–2023)</span>
+    </h1>
+
     <p class="description">
       A roundabout-themed radar chart visualizing the proportion of various 
       contributing factors in all Toronto vehicle collisions from 2006 to 2023. 
@@ -23,14 +27,12 @@
     </p>
 
     <!-- Controls: dataset toggle -->
-    <div class="controls" style="max-width:700px;margin:0 auto 6px;display:flex;gap:12px;justify-content:center;align-items:center;">
-      <span style="font-size:13px;color:#444;">Dataset:</span>
-      <label style="font-size:13px;">
-        <input type="radio" name="dataset" value="factors" checked> Collision factors
-      </label>
-      <label style="font-size:13px;">
-        <input type="radio" name="dataset" value="ages"> Age ranges (INVAGE)
-      </label>
+    <div class="controls" style="max-width:700px;margin:0 auto 20px;display:flex;justify-content:center;align-items:center;">
+      <div class="tile-group" data-group="dataset">
+        <span class="tile-label">Views</span>
+        <button class="tile active" data-value="factors">Collision factors</button>
+        <button class="tile" data-value="ages">Age ranges (INVAGE)</button>
+      </div>
     </div>
 
     <!-- Container for the D3 chart -->

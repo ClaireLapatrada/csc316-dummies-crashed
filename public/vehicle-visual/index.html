@@ -4,13 +4,14 @@
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Vehicle Injury Analysis (2006-2023)</title>
+    <title>Vehicle Injury Analysis</title>
 
     <!-- Load Google Fonts -->
     <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700&family=Roboto:100,300,400,500,700' rel='stylesheet' type='text/css'>
 
     <!-- Custom CSS code -->
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="css/iframe-override.css">
 </head>
 <body>
     <div class="infographic-container">
@@ -18,7 +19,7 @@
         <div class="title-section">
             <h1 class="main-title">
                 <span class="title-line-1">Vehicle Injury Analysis</span>
-                <span class="title-line-2">by Vehicle Type (2006-2023)</span>
+                <span class="title-line-2">by Vehicle Type</span>
             </h1>
 
             <!-- Description -->
@@ -49,7 +50,20 @@
 
                     <!-- Timeline (Year Scroller) -->
                     <div class="timeline-section">
-                        <h5 class="control-label">Year</h5>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                            <h5 class="control-label" style="margin: 0;">Year</h5>
+                            <div class="control-buttons">
+                                <div class="play-button" id="playBtn">
+                                    <div class="play-triangle"></div>
+                                </div>
+                                <div class="restart-button" id="restartBtn">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
                         <div id="yearScroller"></div>
                         <div id="yearDisplay" class="display-text">Selected Year: <span id="currentYearDisplay">2006</span></div>
                     </div>

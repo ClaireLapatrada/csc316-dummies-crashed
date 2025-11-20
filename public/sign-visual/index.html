@@ -3,12 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Number of deaths across categories yearly (2006-2023)</title>
+    <title>Number of deaths across categories yearly</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700&family=Roboto:100,300,400,500,700' rel='stylesheet' type='text/css'>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="css/iframe-override.css">
 </head>
 <body>
 
@@ -17,7 +18,6 @@
     <div class="title-section">
         <h1 class="main-title">
             <span class="title-line-1">Fatal Collisions by Category</span>
-            <span class="title-line-2">(2006-2023)</span>
         </h1>
     </div>
 
@@ -50,10 +50,19 @@
 
 
     <div class="row justify-content-center mt-4">
-        <div class="col-md-8" id="yearScrollContainer"></div>
-        <div class="text-center mt-2">
-            <button class="btn btn-success" id="playBtn">GO</button>
-            <div id="currentYear" class="mt-2 fw-bold"></div>
+        <div class="col-md-8">
+            <div class="control-buttons" style="justify-content: center; margin-bottom: 15px;">
+                <div class="play-button" id="playBtn">
+                    <div class="play-triangle"></div>
+                </div>
+                <div class="restart-button" id="restartBtn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+            <div id="yearScrollContainer"></div>
         </div>
     </div>
 
