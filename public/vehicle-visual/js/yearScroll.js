@@ -142,14 +142,14 @@ class YearScroll {
 
         // REMOVED: Year display below car
 
-        // Add instruction text
-        this.svg.append("text")
-            .attr("x", this.width / 2)
-            .attr("y", this.height - 15)
-            .attr("text-anchor", "middle")
-            .attr("fill", "#000")
-            .attr("font-size", "13px")
-            .text("Drag the car to select year");
+        // // Add instruction text
+        // this.svg.append("text")
+        //     .attr("x", this.width / 2)
+        //     .attr("y", this.height - 15)
+        //     .attr("text-anchor", "middle")
+        //     .attr("fill", "#000")
+        //     .attr("font-size", "13px")
+        //     .text("Drag the car to select year");
 
         // Drag behavior
         const dragBehavior = d3.drag()

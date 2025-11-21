@@ -12,23 +12,59 @@
     <!-- Custom CSS code -->
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="css/iframe-override.css">
+    <link rel="stylesheet" href="../css/style.css">
+
     <style>
         body, html, * {
             font-family: 'Overpass', sans-serif !important;
+            overflow-x: hidden !important;
+
         }
+        .timeline-section {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .scroll-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            overflow: hidden;
+        }
+        .year-scroll {
+            flex: 1;
+            min-width: 0;
+        }
+        .display-text {
+            white-space: nowrap;
+        }
+        .right-panel {
+            gap:0;
+        }
+        .section-description{
+            text-align: center;
+        }
+
+
     </style>
 </head>
 <body>
     <div class="infographic-container">
         <!-- Title Section -->
-        <div class="title-section">
-            <h1 class="main-title">
+        <div class="section-title">
+            <h1 class="title-main">
                 <span class="title-line-1">Vehicle Injury Analysis</span>
                 <span class="title-line-2">by Vehicle Type</span>
             </h1>
 
-            <div class="description-section">
-                <p>This visualization shows the number of injuries
+            <div class="section-description">
+                <p>This visualization shows the <strong>number of injuries</strong>
                     by vehicle type for different times of day and years.</p>
                 <p>Use the year slider and time control to explore how injuries vary across
                         different vehicle types throughout the day and over the years.
@@ -56,30 +92,35 @@
                     </div>
 
                     <!-- Timeline (Year Scroller) -->
+                    <!-- Timeline (Year Scroller) -->
                     <div class="timeline-section">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                            <div class="control-buttons">
-                                <div class="play-button" id="playBtn">
-                                    <div class="play-triangle"></div>
-                                </div>
-                                <div class="restart-button" id="restartBtn">
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                        <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </div>
+                        <!-- Buttons on top -->
+                        <div class="control-buttons">
+                            <div class="play-button" id="playBtn">
+                                <div class="play-triangle"></div>
+                            </div>
+                            <div class="restart-button" id="restartBtn">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                             </div>
                         </div>
-                        <div id="yearScroller"></div>
-                        <div id="yearDisplay" class="display-text">Selected Year: <span id="currentYearDisplay">2006</span></div>
+
+                        <div class="scroll-row">
+                            <div id="yearScroller" class="year-scroll"></div>
+                            <div id="yearDisplay" class="display-text" style="display: none;">
+                                Selected Year: <span id="currentYearDisplay">2006</span>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Tooltip -->
-    <div id="tooltip" class="tooltip"></div>
+
 
     <!-- Load JS libraries -->
     <script src="https://d3js.org/d3.v7.min.js"></script>

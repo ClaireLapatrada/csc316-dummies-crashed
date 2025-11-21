@@ -12,6 +12,7 @@
 html, body {
     background: #EBEADD !important;
     color: #000;
+    overflow: hidden !important;
 }
 
 html {
@@ -44,6 +45,8 @@ body::before {
     pointer-events: none;
     opacity: 0;
     transition: opacity 1.5s ease-in-out;
+    overflow: hidden;
+
 }
 
 /* Override for visualization pages (inside iframes) - allow scrolling */
@@ -52,6 +55,8 @@ body:has(.infographic-container) {
     position: static !important;
     height: auto !important;
     min-height: 100vh;
+    overflow: hidden;
+
 }
 
 html:has(.infographic-container) {
@@ -167,7 +172,6 @@ p {
     border: none;
     border-radius: 0;
     box-shadow: none;
-    overflow: visible;
     z-index: 10;
 }
 
@@ -188,7 +192,6 @@ p {
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow: visible;
 }
 
 .chart-container {
@@ -209,6 +212,7 @@ p {
     padding: 0 40px;
     min-height: auto;
 }
+
 
 .main-layout {
     display: flex;
@@ -262,7 +266,6 @@ p {
 }
 
 .viz-section {
-    overflow-y: auto;
     max-height: calc(100vh - 200px);
 }
 
@@ -350,12 +353,6 @@ p {
     text-decoration: underline;
 }
 
-.description-section {
-    margin-top: 30px;
-    margin-bottom: -15px;
-    max-width: 150vh;
-    color: #000;
-}
 
 .question-text {
     font-family: 'Times New Roman', Times, serif;
