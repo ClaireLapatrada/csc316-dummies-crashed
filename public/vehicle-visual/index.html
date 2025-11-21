@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="">
 <head>
     <meta charset="utf-8">
     <meta name="description" content="">
@@ -37,14 +37,14 @@
         </div>
 
         <!-- Main Visualization Area -->
+        <!-- Main Visualization Area -->
         <div class="visualization-area">
             <div class="main-layout">
                 <!-- Left: Time Slider (Clock) -->
                 <div class="left-panel">
+                    <h5 class="control-label">Time</h5>
                     <div id="timeSlider"></div>
                     <div id="timeDisplay" class="display-text">
-                        <p><strong>Time: </strong><span id="currentTimeDisplay">6:30 PM</span></p>
-                        <p><strong>Time Period: </strong> <span id="timePeriodDisplay">Evening</span></p>
                     </div>
                 </div>
 
@@ -55,23 +55,33 @@
                         <div id="vizContainer"></div>
                     </div>
 
-                    <!-- Timeline (Year Scroller) -->
-                    <div class="timeline-section">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                            <div class="control-buttons">
-                                <div class="play-button" id="playBtn">
-                                    <div class="play-triangle"></div>
+                    <!-- Timeline (Year Scroller) with controls on left -->
+                    <div class="timeline-section" style="margin-top: -40px; padding-top: 0;">
+                        <div style="display: flex; align-items: flex-start; gap: 10px;">
+                            <!-- Controls on the left - closer to year scroller -->
+                            <div style="flex-shrink: 0; width: 60px; margin-top: 25px;">
+                                <div class="control-buttons" style="display: flex; flex-direction: column; gap: 8px;">
+                                    <div class="play-button" id="playBtn">
+                                        <div class="play-triangle"></div>
+                                    </div>
+                                    <div class="restart-button" id="restartBtn">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                            <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
                                 </div>
-                                <div class="restart-button" id="restartBtn">
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                        <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
+                            </div>
+
+                            <!-- Year scroller on the right -->
+                            <div style="flex: 1;">
+                                <h5 class="control-label" style="margin: 0 0 8px 0;">Year Timeline</h5>
+                                <div id="yearScroller"></div>
+                                <div id="yearDisplay" class="display-text" style="margin-top: 5px; text-align: center;">
+                                    Selected Year: <span id="currentYearDisplay">2006</span>
                                 </div>
                             </div>
                         </div>
-                        <div id="yearScroller"></div>
-                        <div id="yearDisplay" class="display-text">Selected Year: <span id="currentYearDisplay">2006</span></div>
                     </div>
                 </div>
             </div>
@@ -93,4 +103,3 @@
     <script src="js/main.js"></script>
 </body>
 </html>
-

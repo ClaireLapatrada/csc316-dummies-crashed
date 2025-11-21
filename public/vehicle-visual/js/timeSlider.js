@@ -9,24 +9,73 @@ class TimeSliderWithHours {
         this.currentAngle = 0;
         this.animationInProgress = false;
 
-        // map hour numbers to time positions (0=12AM, 1=1AM, ..., 23=11PM)
-        this.hourPositions = this.calculateHourPositions();
+        // Define the 4 equally divided time periods (6 hours each) - COUNTERCLOCKWISE
+        this.timePeriods = [
+            { name: "Morning", start: 6, end: 12, color: "rgba(255, 223, 0, 0.9)" },    // 6 AM - 12 PM (UPPER RIGHT) - Bright yellow
+            { name: "Afternoon", start: 12, end: 18, color: "rgba(255, 140, 0, 0.9)" }, // 12 PM - 6 PM (LOWER RIGHT) - Orange
+            { name: "Evening", start: 18, end: 24, color: "rgba(75, 0, 130, 0.9)" },    // 6 PM - 12 AM (LOWER LEFT) - Purple
+            { name: "Night", start: 0, end: 6, color: "rgba(25, 25, 112, 0.9)" }        // 12 AM - 6 AM (UPPER LEFT) - Dark blue
+        ];
+
+        // Track active period
+        this.activePeriod = null;
+
+        // Calculate period positions
+        this.periodPositions = this.calculatePeriodPositions();
     }
 
-    calculateHourPositions() {
+    calculatePeriodPositions() {
         const positions = [];
         const radius = 120;
         const centerX = 150;
         const centerY = 150;
 
-        for (let hour = 0; hour < 24; hour++) {
-            const angle = (hour * 15 - 90) * (Math.PI / 180);
+        this.timePeriods.forEach(period => {
+            // Calculate middle angle of the period (each period is 6 hours = 90 degrees)
+            // For counterclockwise: 0° at top, 90° at left, 180° at bottom, 270° at right
+            const totalHours = period.end > period.start ? period.end - period.start : (24 - period.start) + period.end;
+            const middleHour = (period.start + totalHours / 2) % 24;
 
-            const x = centerX + radius * Math.cos(angle);
-            const y = centerY + radius * Math.sin(angle);
+            // Convert hour to angle (counterclockwise, 0° at top)
+            // Morning (9 AM) = 315°, Afternoon (3 PM) = 45°, Evening (9 PM) = 135°, Night (3 AM) = 225°
+            let angle;
+            if (period.name === "Morning") {
+                angle = 315 * (Math.PI / 180); // Upper right (315°)
+            } else if (period.name === "Afternoon") {
+                angle = 45 * (Math.PI / 180);  // Lower right (45°)
+            } else if (period.name === "Evening") {
+                angle = 135 * (Math.PI / 180); // Lower left (135°)
+            } else { // Night
+                angle = 225 * (Math.PI / 180); // Upper left (225°)
+            }
 
-            positions.push({ hour, x, y, angle });
-        }
+            const x = centerX + radius * Math.sin(angle); // Use sin for X (counterclockwise from top)
+            const y = centerY - radius * Math.cos(angle); // Use -cos for Y (counterclockwise from top)
+
+            // Calculate start and end angles for the arc (counterclockwise from top)
+            let startAngle, endAngle;
+            if (period.name === "Morning") {
+                startAngle = 270 * (Math.PI / 180); // 270° (right)
+                endAngle = 360 * (Math.PI / 180);   // 360° (top) - FIXED: should be 360°, not 0°
+            } else if (period.name === "Afternoon") {
+                startAngle = 0 * (Math.PI / 180);   // 0° (top)
+                endAngle = 90 * (Math.PI / 180);    // 90° (left)
+            } else if (period.name === "Evening") {
+                startAngle = 90 * (Math.PI / 180);  // 90° (left)
+                endAngle = 180 * (Math.PI / 180);   // 180° (bottom)
+            } else { // Night
+                startAngle = 180 * (Math.PI / 180); // 180° (bottom)
+                endAngle = 270 * (Math.PI / 180);   // 270° (right)
+            }
+
+            positions.push({
+                period: period.name,
+                x, y, angle,
+                startAngle: startAngle,
+                endAngle: endAngle,
+                color: period.color
+            });
+        });
 
         return positions;
     }
@@ -42,7 +91,7 @@ class TimeSliderWithHours {
             .style("position", "relative")
             .style("width", "300px")
             .style("height", "300px")
-            .style("cursor", "grab")
+            .style("cursor", "pointer")
             .style("user-select", "none");
 
         // create SVG
@@ -50,6 +99,9 @@ class TimeSliderWithHours {
             .attr("width", 300)
             .attr("height", 300)
             .attr("viewBox", "0 0 300 300");
+
+        // Create time period arcs
+        this.createTimePeriodArcs(svg);
 
         // create background circle with gradient
         const gradient = svg.append("defs")
@@ -68,7 +120,7 @@ class TimeSliderWithHours {
             .attr("offset", "100%")
             .attr("stop-color", "rgba(255,255,255,0.05)");
 
-        // Main circle (draggable area)
+        // Main circle (clickable area)
         const clockCircle = svg.append("circle")
             .attr("cx", 150)
             .attr("cy", 150)
@@ -76,222 +128,348 @@ class TimeSliderWithHours {
             .attr("fill", "url(#circleGradient)")
             .attr("stroke", "rgba(0,0,0,0.2)")
             .attr("stroke-width", 2)
-            .style("cursor", "grab");
+            .style("cursor", "pointer")
+            .on("click", function(event) {
+                if (self.animationInProgress) return;
 
-        for (let hour = 0; hour < 24; hour++) {
-            const angle = (hour * 15) * (Math.PI / 180); // 15° per hour
-            const isMajorHour = hour % 6 === 0; // 0, 6, 12, 18 are major hours
+                const rect = this.getBoundingClientRect();
+                const x = event.clientX - rect.left - 150;
+                const y = event.clientY - rect.top - 150;
+                const angle = Math.atan2(y, x);
 
-            const innerRadius = isMajorHour ? 130 : 135;
-            const outerRadius = 140;
-            const strokeWidth = isMajorHour ? 2 : 1;
-            const strokeColor = isMajorHour ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.3)";
+                self.handleClickOnAngle(angle);
+            });
 
-            const x1 = 150 + innerRadius * Math.cos(angle - Math.PI/2); // Offset by -90° to start at top
-            const y1 = 150 + innerRadius * Math.sin(angle - Math.PI/2);
-            const x2 = 150 + outerRadius * Math.cos(angle - Math.PI/2);
-            const y2 = 150 + outerRadius * Math.sin(angle - Math.PI/2);
+        // Create period labels
+        this.createPeriodLabels(svg);
 
-            svg.append("line")
-                .attr("x1", x1)
-                .attr("y1", y1)
-                .attr("x2", x2)
-                .attr("y2", y2)
-                .attr("stroke", strokeColor)
-                .attr("stroke-width", strokeWidth);
-        }
+        // Create clickable period arcs (invisible overlay for better clicking)
+        this.createClickablePeriodArcs(svg);
 
-        this.hourPositions.forEach((pos, index) => {
-            const isMajorHour = index % 6 === 0; // 0, 6, 12, 18
-            const fontSize = isMajorHour ? "12px" : "10px";
-            const fontWeight = isMajorHour ? "bold" : "normal";
-            const fillColor = isMajorHour ? "#000" : "rgba(0,0,0,0.7)";
-
-            svg.append("text")
-                .attr("x", pos.x)
-                .attr("y", pos.y)
-                .attr("text-anchor", "middle")
-                .attr("dominant-baseline", "middle")
-                .attr("fill", fillColor)
-                .style("font-size", fontSize)
-                .style("font-weight", fontWeight)
-                .style("pointer-events", "none")
-                .text(pos.hour);
-        });
-
-        const currentHour = this.getCurrentHour();
-        const pointerAngle = (currentHour * 15 - 90) * (Math.PI / 180);
-        const pointerLength = 110;
-
-        this.pointerGroup = svg.append("g")
-            .attr("class", "pointer-group");
-
-        // Pointer line
-        this.pointer = this.pointerGroup.append("line")
-            .attr("x1", 150)
-            .attr("y1", 150)
-            .attr("x2", 150 + pointerLength * Math.cos(pointerAngle))
-            .attr("y2", 150 + pointerLength * Math.sin(pointerAngle))
-            .attr("stroke", "#ffffff")
-            .attr("stroke-width", 3)
-            .attr("marker-end", "url(#arrowhead)");
-
-        // add arrowhead marker
-        svg.append("defs")
-            .append("marker")
-            .attr("id", "arrowhead")
-            .attr("markerWidth", 10)
-            .attr("markerHeight", 7)
-            .attr("refX", 10)
-            .attr("refY", 3.5)
-            .attr("orient", "auto")
-            .append("polygon")
-            .attr("points", "0 0, 10 3.5, 0 7")
-            .attr("fill", "#ffffff");
-
+        // Center dot
         svg.append("circle")
             .attr("cx", 150)
             .attr("cy", 150)
             .attr("r", 4)
             .attr("fill", "#ffffff");
 
-        const drag = d3.drag()
-            .on("start", function(event) {
-                self.isDragging = true;
-                container.style("cursor", "grabbing");
-                
-                // Notify that dragging started
-                if (self.callbacks && self.callbacks.onDragStart) {
-                    self.callbacks.onDragStart(true);
-                }
+        // Set initial active period based on current time
+        this.setInitialActivePeriod();
 
-                const dx = event.x - 150;
-                const dy = event.y - 150;
-                self.startAngle = Math.atan2(dy, dx);
-                self.currentAngle = self.startAngle;
-            })
-            .on("drag", function(event) {
-                if (!self.isDragging) return;
-
-                const dx = event.x - 150;
-                const dy = event.y - 150;
-                self.currentAngle = Math.atan2(dy, dx);
-
-                // Calculate which time bucket we should be on based on current angle
-                // Convert angle to hour (0-23) - angle starts at -90 degrees (top)
-                let normalizedAngle = self.currentAngle + (Math.PI / 2); // Add 90 degrees
-                if (normalizedAngle < 0) normalizedAngle += 2 * Math.PI;
-                let hour = Math.round((normalizedAngle / (2 * Math.PI)) * 24) % 24;
-                
-                // Find the closest time bucket index for this hour
-                let newTimeIndex = self.currentTimeIndex;
-                let minDiff = Infinity;
-                
-                for (let i = 0; i < self.timeBuckets.length; i++) {
-                    const bucket = self.timeBuckets[i];
-                    if (!bucket) continue;
-                    
-                    const [timePart, period] = bucket.split(' ');
-                    if (!timePart) continue;
-                    
-                    let [bucketHours, bucketMinutes = 0] = timePart.split(':').map(Number);
-                    if (period === 'PM' && bucketHours !== 12) bucketHours += 12;
-                    if (period === 'AM' && bucketHours === 12) bucketHours = 0;
-                    
-                    // Calculate difference in hours (considering minutes for better matching)
-                    let diff = Math.abs(bucketHours - hour);
-                    if (diff > 12) diff = 24 - diff; // Handle wrap-around
-                    
-                    if (diff < minDiff) {
-                        minDiff = diff;
-                        newTimeIndex = i;
-                    }
-                }
-
-                // Update if time index changed
-                if (newTimeIndex !== self.currentTimeIndex) {
-                    self.currentTimeIndex = newTimeIndex;
-                    
-                    // Update pointer position immediately
-                    self.updatePointer();
-                    
-                    // Update visualization immediately during drag - call synchronously
-                    if (self.callbacks && self.callbacks.handleTimeChange) {
-                        // Call immediately, don't defer - this should update the visualization
-                        try {
-                            self.callbacks.handleTimeChange(self.currentTimeIndex);
-                        } catch (e) {
-                            console.error('Error updating time:', e);
-                        }
-                    }
-                } else {
-                    // Still update pointer position for smooth visual feedback
-                    self.updatePointer();
-                }
-            })
-            .on("end", function(event) {
-                self.isDragging = false;
-                container.style("cursor", "grab");
-                
-                // Notify that dragging ended
-                if (self.callbacks && self.callbacks.onDragStart) {
-                    self.callbacks.onDragStart(false);
-                }
-            });
-
-        clockCircle.call(drag);
-
-        const element = document.querySelector(this.containerSelector);
-
-        element.addEventListener('wheel', function(event) {
-            if (self.animationInProgress || self.isDragging) return;
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            const delta = event.deltaY;
-
-            self.animationInProgress = true;
-
-            if (delta < 0) {
-                // Scroll up - move backward by exactly 30 minutes (1 time bucket)
-                if (self.currentTimeIndex === 0) {
-                    // Wrap around to the end (11:30 PM)
-                    self.currentTimeIndex = self.timeBuckets.length - 1;
-                } else {
-                    self.currentTimeIndex--;
-                }
-            } else {
-                if (self.currentTimeIndex === self.timeBuckets.length - 1) {
-                    self.currentTimeIndex = 0;
-                } else {
-                    self.currentTimeIndex++;
-                }
-            }
-
-            self.smoothUpdatePointer();
-
-        }, { passive: false });
-
-        element.addEventListener('click', function(event) {
-            if (self.animationInProgress || self.isDragging) return;
-
-            self.animationInProgress = true;
-
-            if (self.currentTimeIndex < self.timeBuckets.length - 1) {
-                self.currentTimeIndex++;
-            } else {
-                self.currentTimeIndex = 0;
-            }
-            self.smoothUpdatePointer();
-        });
-
-        console.log('TimeSlider with 180-degree dragging and 30-minute scroll increments initialized');
+        console.log('TimeSlider with clickable time periods initialized');
+        console.log('Available time buckets:', this.timeBuckets);
     }
 
-    getCurrentHour() {
-        const currentTime = this.timeBuckets[this.currentTimeIndex];
-        const [timePart, period] = currentTime.split(' ');
+    createTimePeriodArcs(svg) {
+        const centerX = 150;
+        const centerY = 150;
+        const innerRadius = 100;
+        const outerRadius = 140;
+
+        // Store arc references for later updates
+        this.periodArcs = [];
+
+        this.timePeriods.forEach((period, index) => {
+            // Calculate angles for specific quadrants (counterclockwise from top)
+            let startAngle, endAngle;
+            if (period.name === "Morning") {
+                startAngle = 270 * (Math.PI / 180); // 270° (right)
+                endAngle = 360 * (Math.PI / 180);   // 360° (top) - FIXED
+            } else if (period.name === "Afternoon") {
+                startAngle = 0 * (Math.PI / 180);   // 0° (top)
+                endAngle = 90 * (Math.PI / 180);    // 90° (left)
+            } else if (period.name === "Evening") {
+                startAngle = 90 * (Math.PI / 180);  // 90° (left)
+                endAngle = 180 * (Math.PI / 180);   // 180° (bottom)
+            } else { // Night
+                startAngle = 180 * (Math.PI / 180); // 180° (bottom)
+                endAngle = 270 * (Math.PI / 180);   // 270° (right)
+            }
+
+            // Create arc path
+            const arcGenerator = d3.arc()
+                .innerRadius(innerRadius)
+                .outerRadius(outerRadius)
+                .startAngle(startAngle)
+                .endAngle(endAngle);
+
+            const arc = svg.append("path")
+                .attr("d", arcGenerator)
+                .attr("transform", `translate(${centerX}, ${centerY})`)
+                .attr("fill", period.color)
+                .attr("stroke", "rgba(0,0,0,0.8)")
+                .attr("stroke-width", 2)
+                .attr("class", `period-arc period-${period.name.toLowerCase()}`)
+                .style("opacity", 0.9); // Increased opacity
+
+            this.periodArcs.push({
+                element: arc,
+                period: period
+            });
+        });
+    }
+
+    createClickablePeriodArcs(svg) {
+        const centerX = 150;
+        const centerY = 150;
+        const innerRadius = 100;
+        const outerRadius = 140;
+        const self = this;
+
+        this.timePeriods.forEach(period => {
+            // Calculate angles for specific quadrants (counterclockwise from top)
+            let startAngle, endAngle;
+            if (period.name === "Morning") {
+                startAngle = 270 * (Math.PI / 180); // 270° (right)
+                endAngle = 360 * (Math.PI / 180);   // 360° (top) - FIXED
+            } else if (period.name === "Afternoon") {
+                startAngle = 0 * (Math.PI / 180);   // 0° (top)
+                endAngle = 90 * (Math.PI / 180);    // 90° (left)
+            } else if (period.name === "Evening") {
+                startAngle = 90 * (Math.PI / 180);  // 90° (left)
+                endAngle = 180 * (Math.PI / 180);   // 180° (bottom)
+            } else { // Night
+                startAngle = 180 * (Math.PI / 180); // 180° (bottom)
+                endAngle = 270 * (Math.PI / 180);   // 270° (right)
+            }
+
+            // Create invisible clickable arc
+            const arcGenerator = d3.arc()
+                .innerRadius(innerRadius)
+                .outerRadius(outerRadius)
+                .startAngle(startAngle)
+                .endAngle(endAngle);
+
+            svg.append("path")
+                .attr("d", arcGenerator)
+                .attr("transform", `translate(${centerX}, ${centerY})`)
+                .attr("fill", "transparent")
+                .attr("stroke", "none")
+                .style("cursor", "pointer")
+                .on("click", function(event) {
+                    event.stopPropagation();
+                    if (self.animationInProgress) return;
+                    console.log(`Clicked on ${period.name} period`);
+                    self.selectPeriod(period);
+                })
+                .on("mouseover", function() {
+                    d3.select(this).style("cursor", "pointer");
+                });
+        });
+    }
+
+    createPeriodLabels(svg) {
+        const centerX = 150;
+        const centerY = 150;
+        const self = this;
+
+        // Store label references for later updates
+        this.periodLabels = [];
+
+        this.periodPositions.forEach(position => {
+            const label = svg.append("text")
+                .attr("x", position.x)
+                .attr("y", position.y)
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
+                .attr("fill", "#000")
+                .style("font-size", "14px")
+                .style("font-weight", "bold")
+                .style("cursor", "pointer")
+                .style("pointer-events", "all")
+                .on("click", function(event) {
+                    event.stopPropagation();
+                    if (self.animationInProgress) return;
+
+                    const period = self.timePeriods.find(p => p.name === position.period);
+                    if (period) {
+                        console.log(`Clicked on ${period.name} label`);
+                        self.selectPeriod(period);
+                    }
+                })
+                .on("mouseover", function() {
+                    d3.select(this).style("cursor", "pointer");
+                })
+                .text(position.period);
+
+            this.periodLabels.push({
+                element: label,
+                period: position.period
+            });
+        });
+    }
+
+    // ... rest of the methods remain the same as your previous code
+    handleClickOnAngle(angle) {
+        if (this.animationInProgress) return;
+
+        // For counterclockwise from top: adjust angle calculation
+        let normalizedAngle = angle + (Math.PI / 2); // Rotate 90° counterclockwise
+        if (normalizedAngle < 0) normalizedAngle += 2 * Math.PI;
+
+        // Convert angle to degrees (counterclockwise from top)
+        let degrees = (normalizedAngle * 180 / Math.PI);
+
+        // Determine which quadrant was clicked
+        let targetPeriod;
+        if (degrees >= 315 || degrees < 45) {
+            // Upper right quadrant (Morning)
+            targetPeriod = this.timePeriods.find(p => p.name === "Morning");
+        } else if (degrees >= 45 && degrees < 135) {
+            // Lower right quadrant (Afternoon)
+            targetPeriod = this.timePeriods.find(p => p.name === "Afternoon");
+        } else if (degrees >= 135 && degrees < 225) {
+            // Lower left quadrant (Evening)
+            targetPeriod = this.timePeriods.find(p => p.name === "Evening");
+        } else {
+            // Upper left quadrant (Night)
+            targetPeriod = this.timePeriods.find(p => p.name === "Night");
+        }
+
+        console.log(`Clicked at ${degrees.toFixed(2)}°, selecting ${targetPeriod.name}`);
+        this.selectPeriod(targetPeriod);
+    }
+
+    getBucketsForPeriod(period) {
+        const buckets = this.timeBuckets.filter(bucket => {
+            const bucketHour = this.getHourFromTimeBucket(bucket);
+            if (period.start < period.end) {
+                return bucketHour >= period.start && bucketHour < period.end;
+            } else {
+                // Overnight period
+                return bucketHour >= period.start || bucketHour < period.end;
+            }
+        });
+
+        console.log(`Buckets for ${period.name}:`, buckets);
+        return buckets;
+    }
+
+    selectPeriod(period) {
+        console.log(`=== SELECTING PERIOD: ${period.name} ===`);
+
+        if (this.animationInProgress) {
+            console.log('Animation in progress, skipping');
+            return;
+        }
+
+        this.animationInProgress = true;
+
+        // Update active period
+        this.activePeriod = period.name;
+        console.log(`Active period set to: ${this.activePeriod}`);
+
+        // Update visualization - make the selected period bright
+        this.updatePeriodHighlights();
+
+        // Find all time buckets within this period
+        const periodBuckets = this.getBucketsForPeriod(period);
+        console.log(`Found ${periodBuckets.length} buckets for ${period.name}`);
+
+        if (periodBuckets.length > 0) {
+            // For now, just select the FIRST available bucket in this period
+            const selectedBucket = periodBuckets[0];
+            const newTimeIndex = this.timeBuckets.indexOf(selectedBucket);
+
+            console.log(`Selected bucket: ${selectedBucket}, New time index: ${newTimeIndex}`);
+
+            if (newTimeIndex !== -1 && newTimeIndex !== this.currentTimeIndex) {
+                this.currentTimeIndex = newTimeIndex;
+
+                // Update visualization
+                if (this.callbacks && this.callbacks.handleTimeChange) {
+                    try {
+                        console.log('Calling handleTimeChange with index:', newTimeIndex);
+                        this.callbacks.handleTimeChange(this.currentTimeIndex);
+                    } catch (e) {
+                        console.error('Error updating time:', e);
+                    }
+                }
+
+                this.updateBackgroundGradient();
+
+                console.log(`Successfully selected ${period.name}: ${selectedBucket}`);
+            } else {
+                console.log(`Already selected this time or couldn't find index`);
+            }
+        } else {
+            console.warn(`No time buckets found for period: ${period.name}`);
+        }
+
+        this.animationInProgress = false;
+        console.log('=== SELECTION COMPLETED ===');
+    }
+
+    updatePeriodHighlights() {
+        console.log('Updating period highlights for:', this.activePeriod);
+
+        // Update arcs
+        this.periodArcs.forEach(arc => {
+            if (arc.period.name === this.activePeriod) {
+                arc.element
+                    .transition()
+                    .duration(300)
+                    .style("opacity", 1)
+                    .attr("stroke", "rgba(255,255,255,0.8)")
+                    .attr("stroke-width", 3);
+            } else {
+                arc.element
+                    .transition()
+                    .duration(300)
+                    .style("opacity", 0.9) // Keep non-active periods more visible
+                    .attr("stroke", "rgba(0,0,0,0.5)")
+                    .attr("stroke-width", 2);
+            }
+        });
+
+        // Update labels
+        this.periodLabels.forEach(label => {
+            if (label.period === this.activePeriod) {
+                label.element
+                    .transition()
+                    .duration(300)
+                    .style("font-size", "16px")
+                    .style("fill", "#fff")
+                    .style("text-shadow", "0 0 5px rgba(0,0,0,0.8)");
+            } else {
+                label.element
+                    .transition()
+                    .duration(300)
+                    .style("font-size", "14px")
+                    .style("fill", "#000")
+                    .style("text-shadow", "none");
+            }
+        });
+    }
+
+    setInitialActivePeriod() {
+        // Set initial active period based on current time index
+        const currentHour = this.getHourFromTimeBucket(this.timeBuckets[this.currentTimeIndex]);
+        console.log('Initial current hour:', currentHour);
+
+        for (const period of this.timePeriods) {
+            if (period.start < period.end) {
+                if (currentHour >= period.start && currentHour < period.end) {
+                    this.activePeriod = period.name;
+                    break;
+                }
+            } else {
+                if (currentHour >= period.start || currentHour < period.end) {
+                    this.activePeriod = period.name;
+                    break;
+                }
+            }
+        }
+
+        console.log('Initial active period:', this.activePeriod);
+
+        // Update highlights
+        this.updatePeriodHighlights();
+    }
+
+    getHourFromTimeBucket(timeBucket) {
+        if (!timeBucket) return 0;
+        const [timePart, period] = timeBucket.split(' ');
         let [hours] = timePart.split(':').map(Number);
 
         if (period === 'PM' && hours !== 12) hours += 12;
@@ -300,45 +478,12 @@ class TimeSliderWithHours {
         return hours;
     }
 
-    smoothUpdatePointer() {
-        const self = this;
-        const currentHour = this.getCurrentHour();
-        const targetAngle = (currentHour * 15 - 90) * (Math.PI / 180);
-        const pointerLength = 110;
-
-        const targetX = 150 + pointerLength * Math.cos(targetAngle);
-        const targetY = 150 + pointerLength * Math.sin(targetAngle);
-
-        this.pointer
-            .transition()
-            .duration(400)
-            .ease(d3.easeCubicOut)
-            .attr("x2", targetX)
-            .attr("y2", targetY)
-            .on("end", function() {
-                self.animationInProgress = false;
-                self.callbacks.handleTimeChange(self.currentTimeIndex);
-
-                self.updateBackgroundGradient();
-            });
-    }
-
-    updatePointer() {
-        const currentHour = this.getCurrentHour();
-        const pointerAngle = (currentHour * 15 - 90) * (Math.PI / 180);
-        const pointerLength = 110;
-
-        const x2 = 150 + pointerLength * Math.cos(pointerAngle);
-        const y2 = 150 + pointerLength * Math.sin(pointerAngle);
-
-        this.pointer
-            .attr("x2", x2)
-            .attr("y2", y2);
-
-        this.updateBackgroundGradient();
-    }
-
     updateBackgroundGradient() {
+        if (!window.Background) {
+            console.warn('Background module not found');
+            return;
+        }
+
         const currentTime = new Date();
         const [timePart, period] = this.timeBuckets[this.currentTimeIndex].split(' ');
         let [hours, minutes] = timePart.split(':').map(Number);
@@ -350,5 +495,17 @@ class TimeSliderWithHours {
 
         const newColors = window.Background.getGradientByHour(currentTime);
         window.Background.updateGradient(newColors);
+    }
+
+    // Method to manually set time (for debugging)
+    setTimeIndex(index) {
+        if (index >= 0 && index < this.timeBuckets.length) {
+            this.currentTimeIndex = index;
+            this.setInitialActivePeriod();
+            if (this.callbacks && this.callbacks.handleTimeChange) {
+                this.callbacks.handleTimeChange(this.currentTimeIndex);
+            }
+            this.updateBackgroundGradient();
+        }
     }
 }

@@ -3,7 +3,7 @@ class YearScroll {
         startYear = 2006,
         endYear = 2023,
         onYearChange = null,
-        width = 800
+        width = 200
     } = {}) {
         this.containerSelector = containerSelector;
         this.startYear = startYear;
@@ -12,8 +12,9 @@ class YearScroll {
         this.years = d3.range(startYear, endYear + 1);
         this.currentYear = startYear;
         this.width = width;
-        this.height = 140;
-        this.margin = { left: 60, right: 60, top: 40, bottom: 35 };
+        this.height = 150;
+
+        this.margin = { left: 60, right: 60, top: 10, bottom: 40 };
     }
 
     init() {
@@ -140,12 +141,10 @@ class YearScroll {
             .attr("r", 2)
             .attr("fill", "#ffeb3b");
 
-        // REMOVED: Year display below car
-
         // Add instruction text
         this.svg.append("text")
             .attr("x", this.width / 2)
-            .attr("y", this.height - 15)
+            .attr("y", this.height - 30)
             .attr("text-anchor", "middle")
             .attr("fill", "#000")
             .attr("font-size", "13px")
@@ -183,8 +182,6 @@ class YearScroll {
         this.yearLabels
             .attr("fill", d => d === this.currentYear ? "#ffeb3b" : "#ccc")
             .attr("font-weight", d => d === this.currentYear ? "bold" : "normal");
-
-        // REMOVED: Year display on car update
 
         // Update year display in HTML (this remains for the separate display)
         document.getElementById('currentYearDisplay').textContent = this.currentYear;
@@ -226,8 +223,4 @@ class YearScroll {
         }
     }
 
-    // Public method to get current year
-    getCurrentYear() {
-        return this.currentYear;
-    }
 }
