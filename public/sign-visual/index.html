@@ -6,21 +6,33 @@
     <title>Number of deaths across categories yearly</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700&family=Roboto:100,300,400,500,700' rel='stylesheet' type='text/css'>
 
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="css/iframe-override.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        body, html, * {
+            font-family: 'Overpass', sans-serif !important;
+        }
+    </style>
 </head>
 <body>
 
 <div class="container py-5">
-    <!-- Title Section -->
     <div class="title-section">
         <h1 class="main-title">
             <span class="title-line-1">Fatal Collisions by Category</span>
         </h1>
     </div>
 
+
+    <div class="row justify-content-center mt-4" style="gap: 30px;">
+
+    <div class="col-auto ms-0" style="flex: 0 0 500px;">
+        <div id="signChartContainer" style="width: 100%; height: 400px;">
     <div class="row justify-content-center text-center mb-4" id="cardsRow">
         <div class="col-4 col-md-2 d-flex justify-content-center">
             <div class="category-card">
@@ -48,7 +60,6 @@
         </div>
     </div>
 
-
     <div class="row justify-content-center mt-4">
         <div class="col-md-8">
             <div class="control-buttons" style="justify-content: center; margin-bottom: 15px;">
@@ -65,7 +76,16 @@
             <div id="yearScrollContainer"></div>
         </div>
     </div>
+</div>
+</div>
 
+        <div class="col-auto" style="flex: 0 0 400px;">
+            <div class="text-section" style=" padding: 20px;    ">
+                <p>This chart shows the number of <strong>fatal collisions</strong> for different types of <strong>road users</strong> over the years, including <strong>cyclists</strong>, <strong>car drivers</strong>, and <strong>pedestrians</strong>.</p>
+                <p>You can use the <strong>interactive slider</strong> to see how these numbers change each year and compare trends for each category.</p>
+                <p>This helps spot which categories are at <strong>higher risk</strong> and understand overall <strong>road safety trends</strong>.</p>
+            </div>
+        </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

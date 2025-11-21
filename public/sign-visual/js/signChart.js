@@ -107,7 +107,7 @@ d3.csv('data/dataset.csv').then(csvData => {
         startYear: actualStartYear,
         endYear: actualEndYear,
         onYearChange: updateCountsAndRanks,
-        width: 800
+        width: 836
     });
     signScroll.init();
 

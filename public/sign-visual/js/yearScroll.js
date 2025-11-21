@@ -13,7 +13,7 @@ class YearScroll {
         this.currentYear = startYear;
         this.width = width;
         this.height = 140;
-        this.margin = { left: 60, right: 60, top: 30, bottom: 30 };
+        this.margin = { left: 30, right: 280, top: 30, bottom: 30 };
         this.isPlaying = false;
     }
 
@@ -27,7 +27,7 @@ class YearScroll {
 
         this.svg = d3.select(this.containerSelector)
             .append("svg")
-            .attr("width", this.width)
+            .attr("width", this.width+30)
             .attr("height", this.height)
             .attr("class", "year-scroller-car")
             .style("display", "block")
@@ -49,7 +49,7 @@ class YearScroll {
 
         this.svg.append("line")
             .attr("x1", this.margin.left - 5)
-            .attr("x2", this.width - this.margin.right + 5)
+            .attr("x2", this.width - this.margin.right + 10)
             .attr("y1", trackY)
             .attr("y2", trackY)
             .attr("stroke", "#dcdcdc")
@@ -66,7 +66,7 @@ class YearScroll {
             .attr("y", trackY - 40)
             .attr("text-anchor", "middle")
             .attr("font-size", "12px")
-            .attr("fill", d => d === this.currentYear ? "#ffeb3b" : "#ccc")
+            .attr("fill", d => d === this.currentYear ? "#fff200" : "#bababa")
             .attr("font-weight", d => d === this.currentYear ? "bold" : "normal")
             .style("pointer-events", "none")
             .text(d => d);
@@ -125,7 +125,9 @@ class YearScroll {
     _updateYearLabels() {
         this.yearLabels
             .attr("fill", d => d === this.currentYear ? "#ffeb3b" : "#ccc")
-            .attr("font-weight", d => d === this.currentYear ? "bold" : "normal");
+            .attr("font-weight", d => d === this.currentYear ? "bold" : "normal")
+            .attr("stroke", d => d === this.currentYear ? "#000" : "none")
+            .attr("stroke-width", d => d === this.currentYear ? 0.1 : 0);
 
         if (document.getElementById('currentYearDisplay')) {
             document.getElementById('currentYearDisplay').textContent = this.currentYear;

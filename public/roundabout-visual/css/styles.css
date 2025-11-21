@@ -1,6 +1,6 @@
 /* --- Global & Font Setup --- */
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Overpass', sans-serif;
   font-weight: 300;
   background-color: #EBEADD; /* Match main page background */
   color: #333;
@@ -10,6 +10,7 @@ body {
   margin: 0;
   padding: 1.5rem 0.5rem 0.5rem 0.5rem;
   box-sizing: border-box;
+  overflow-y: hidden;
 }
 
 /* --- Typography (for elements to be added in main.js) --- */

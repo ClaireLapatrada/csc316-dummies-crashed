@@ -23,11 +23,11 @@
 
 
 <header class="d-flex justify-content-center align-items-center" style="position: relative;">
-	
+
 	<div class="main-title">
 		<span class="title-line-1">Toronto Collisions Map</span>
 	</div>
-	
+
 	<button id="infoButton" style="position: absolute; right: 20px; background: none; border: none; cursor: pointer; font-size: 24px; color: #000; padding: 5px 10px; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor='#e0e0e0'" onmouseout="this.style.backgroundColor='transparent'">ℹ</button>
 </header>
 
@@ -40,7 +40,7 @@
 			<button class="tile active" id="view-mode-map" data-value="map">Map</button>
 			<button class="tile" id="view-mode-improvements" data-value="improvements">Improvements</button>
 		</div>
-		
+
 		<span class="tile-label">Filters</span>
 		<!-- Severity Filter Dropdown -->
 		<div class="filter-dropdown-group">
@@ -126,20 +126,20 @@
 document.addEventListener('DOMContentLoaded', function() {
     const filterBtn = document.getElementById('severity-filter-btn');
     const checkboxContainer = document.getElementById('severity-checkboxes');
-    
+
     if (filterBtn && checkboxContainer) {
         filterBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             checkboxContainer.classList.toggle('show');
         });
-        
+
         // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
             if (!filterBtn.contains(e.target) && !checkboxContainer.contains(e.target)) {
                 checkboxContainer.classList.remove('show');
             }
         });
-        
+
         // Prevent closing when clicking inside the dropdown
         checkboxContainer.addEventListener('click', function(e) {
             e.stopPropagation();

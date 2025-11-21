@@ -1,6 +1,6 @@
 /* Global & Font Setup */
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Robotoя', sans-serif;
     font-weight: 300;
     background-color: #EBEADD; /* Match main page background */
     color: #333;
@@ -46,12 +46,13 @@ body {
 }
 
 .description-section {
-    color: #000; /* Black for non-title text */
+    color: #000;
     font-family: 'Roboto', sans-serif;
-    font-size: 0.8rem;
-    line-height: 1.4;
-    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 0.5rem auto 1rem auto;
     max-width: 800px;
+    text-align: center;
 }
 
 /* Visualization Area */

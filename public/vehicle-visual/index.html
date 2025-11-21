@@ -12,6 +12,11 @@
     <!-- Custom CSS code -->
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="css/iframe-override.css">
+    <style>
+        body, html, * {
+            font-family: 'Overpass', sans-serif !important;
+        }
+    </style>
 </head>
 <body>
     <div class="infographic-container">
@@ -22,9 +27,12 @@
                 <span class="title-line-2">by Vehicle Type</span>
             </h1>
 
-            <!-- Description -->
             <div class="description-section">
-                This visualization shows the number of injuries by vehicle type for different times of day and years. Use the year slider and time control to explore how injuries vary across different vehicle types throughout the day and over the years. Click on any vehicle circle to see detailed injury breakdown information.
+                <p>This visualization shows the number of injuries
+                    by vehicle type for different times of day and years.</p>
+                <p>Use the year slider and time control to explore how injuries vary across
+                        different vehicle types throughout the day and over the years.
+                </p>
             </div>
         </div>
 
@@ -33,11 +41,10 @@
             <div class="main-layout">
                 <!-- Left: Time Slider (Clock) -->
                 <div class="left-panel">
-                    <h5 class="control-label">Time</h5>
                     <div id="timeSlider"></div>
                     <div id="timeDisplay" class="display-text">
-                        <p>Current Time: <span id="currentTimeDisplay">6:30 PM</span></p>
-                        <p>Time Period: <span id="timePeriodDisplay">Evening</span></p>
+                        <p><strong>Time: </strong><span id="currentTimeDisplay">6:30 PM</span></p>
+                        <p><strong>Time Period: </strong> <span id="timePeriodDisplay">Evening</span></p>
                     </div>
                 </div>
 
@@ -51,7 +58,6 @@
                     <!-- Timeline (Year Scroller) -->
                     <div class="timeline-section">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                            <h5 class="control-label" style="margin: 0;">Year</h5>
                             <div class="control-buttons">
                                 <div class="play-button" id="playBtn">
                                     <div class="play-triangle"></div>
