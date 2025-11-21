@@ -31,11 +31,6 @@ class TimeSliderWithHours {
         const centerY = 150;
 
         this.timePeriods.forEach(period => {
-            // Calculate middle angle of the period (each period is 6 hours = 90 degrees)
-            // For counterclockwise: 0° at top, 90° at left, 180° at bottom, 270° at right
-            const totalHours = period.end > period.start ? period.end - period.start : (24 - period.start) + period.end;
-            const middleHour = (period.start + totalHours / 2) % 24;
-
             // Convert hour to angle (counterclockwise, 0° at top)
             // Morning (9 AM) = 315°, Afternoon (3 PM) = 45°, Evening (9 PM) = 135°, Night (3 AM) = 225°
             let angle;
@@ -49,23 +44,22 @@ class TimeSliderWithHours {
                 angle = 225 * (Math.PI / 180); // Upper left (225°)
             }
 
-            const x = centerX + radius * Math.sin(angle); // Use sin for X (counterclockwise from top)
-            const y = centerY - radius * Math.cos(angle); // Use -cos for Y (counterclockwise from top)
+            const x = centerX + radius * Math.sin(angle);
+            const y = centerY - radius * Math.cos(angle);
 
-            // Calculate start and end angles for the arc (counterclockwise from top)
             let startAngle, endAngle;
             if (period.name === "Morning") {
-                startAngle = 270 * (Math.PI / 180); // 270° (right)
-                endAngle = 360 * (Math.PI / 180);   // 360° (top) - FIXED: should be 360°, not 0°
+                startAngle = 270 * (Math.PI / 180);
+                endAngle = 360 * (Math.PI / 180);
             } else if (period.name === "Afternoon") {
-                startAngle = 0 * (Math.PI / 180);   // 0° (top)
-                endAngle = 90 * (Math.PI / 180);    // 90° (left)
+                startAngle = 0;
+                endAngle = 90 * (Math.PI / 180);
             } else if (period.name === "Evening") {
-                startAngle = 90 * (Math.PI / 180);  // 90° (left)
-                endAngle = 180 * (Math.PI / 180);   // 180° (bottom)
+                startAngle = 90 * (Math.PI / 180);
+                endAngle = 180 * (Math.PI / 180);
             } else { // Night
-                startAngle = 180 * (Math.PI / 180); // 180° (bottom)
-                endAngle = 270 * (Math.PI / 180);   // 270° (right)
+                startAngle = 180 * (Math.PI / 180);
+                endAngle = 270 * (Math.PI / 180);
             }
 
             positions.push({
