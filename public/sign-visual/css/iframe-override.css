@@ -1,14 +1,13 @@
-/* Override styles to prevent scrolling in iframe */
+/* Override styles for iframe display */
 body, html {
-    overflow: hidden !important;
+    overflow-x: hidden !important;
     height: 100% !important;
     width: 100% !important;
-    position: fixed !important;
 }
 
 .infographic-container {
-    overflow: hidden !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
     height: 100vh !important;
-    max-height: 100vh !important;
 }
 

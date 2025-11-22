@@ -171,25 +171,26 @@ p {
 
 .viz-container-full {
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
     position: relative;
     background: transparent;
     border: none;
     border-radius: 0;
     box-shadow: none;
     z-index: 10;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .viz-iframe {
     width: 100%;
-    min-height: 100vh;
+    height: 150vh;
+    min-height: 150vh;
     border: none;
     display: block;
     backface-visibility: hidden;
     transform: translateZ(0);
     will-change: transform;
-    /* Prevent iframe from creating scrollbars */
-    overflow: hidden;
     pointer-events: auto;
 }
 
@@ -325,7 +326,7 @@ p {
 
 .main-title {
     color: #0C7B56;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 700;
     line-height: 1.2;
     font-style: italic;
