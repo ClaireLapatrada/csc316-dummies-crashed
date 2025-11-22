@@ -6,50 +6,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Roundabout radar — Toronto crash factors (2006–2023)</title>
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700&family=Roboto:100,300,400,500,700" rel="stylesheet" type="text/css">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <!-- Styles -->
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="css/iframe-override.css">
+    <link rel="stylesheet" href="../css/style.css">
+
+    <style>
+        body, html, * {
+            font-family: 'Overpass', sans-serif !important;
+            overflow: hidden !important;
+        }
+        .container-description {
+            flex: 1 1 0;
+            max-width: 500px;
+            margin-bottom:270px;
+        }
+
+        .container-description p.description {
+            display: block;
+            font-weight: 400;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #000;
+            margin: 0;
+        }
+        .chart-text-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 2rem auto;
+            flex-wrap: wrap;
+        }
+        .controls {
+            max-width: 700px;
+            margin: 30px 300px 10px;
+            display: flex;
+            justify-content: flex-start;
+            padding-left: 50px;
+            padding-top:1rem;
+            align-items: center;
+        }
+
+        .tile-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+    </style>
 </head>
 <body>
 
-    <h1 class="main-title">
-      <span class="title-line-1">Roundabout Radar</span>
-      <span class="title-line-2">Toronto Crash Factors (2006–2023)</span>
-    </h1>
+<h1 class="main-title">
+    <span class="title-line-1">Roundabout Radar</span>
+    <span class="title-line-2">Toronto Crash Factors (2006–2023)</span>
+</h1>
 
-    <p class="description">
-      A roundabout-themed radar chart visualizing the proportion of various 
-      contributing factors in all Toronto vehicle collisions from 2006 to 2023. 
-      Each "lane" on the roundabout represents a 20% increment.
-    </p>
-
-    <!-- Controls: dataset toggle -->
-    <div class="controls" style="max-width:700px;margin:0 auto 20px;display:flex;justify-content:center;align-items:center;">
-      <div class="tile-group" data-group="dataset">
+<!-- Controls -->
+<div class="controls">
+    <div class="tile-group" data-group="dataset" >
         <span class="tile-label">Views</span>
         <button class="tile active" data-value="factors">Collision factors</button>
         <button class="tile" data-value="ages">Age ranges (INVAGE)</button>
-      </div>
     </div>
+</div>
 
-    <!-- Container for the D3 chart -->
+<!-- Two-column layout -->
+<div class="chart-text-wrapper">
     <div class="chart-container">
-      <svg id="roundabout-chart" class="roundabout-chart"></svg>
+        <svg id="roundabout-chart" class="roundabout-chart"></svg>
     </div>
 
-    <!-- Tooltip element, to be controlled by JS -->
-    <div class="tooltip"></div>
+    <div class="container-description">
+        <p class="description">
+            A roundabout-themed radar chart visualizing the proportion of various
+            contributing factors in all Toronto vehicle collisions from 2006 to 2023.
+            Each "lane" on the roundabout represents a 20% increment.
+        </p>
+    </div>
+</div>
 
-    <!-- Libraries -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+<!-- Tooltip -->
+<div class="tooltip"></div>
 
-    <!-- Visualization modules -->
-    <script src="js/roundaboutChart.js"></script>
+<!-- JS Libraries -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="js/roundaboutChart.js"></script>
+<script src="js/main.js"></script>
 
-    <!-- App bootstrap: load data and render -->
-    <script src="js/main.js"></script>
 </body>
-</html>
+</html>>

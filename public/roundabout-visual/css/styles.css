@@ -1,112 +1,97 @@
-/* --- Global & Font Setup --- */
-body {
-  font-family: 'Overpass', sans-serif;
-  font-weight: 300;
-  background-color: #EBEADD; /* Match main page background */
-  color: #333;
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
+/* --- Global Styles --- */
+body, html, * {
+  font-family: 'Overpass', sans-serif !important;
   margin: 0;
-  padding: 1.5rem 0.5rem 0.5rem 0.5rem;
+  padding: 0;
   box-sizing: border-box;
-  overflow-y: hidden;
+  overflow-x: hidden;
 }
 
-/* --- Typography (for elements to be added in main.js) --- */
+body {
+  background-color: #EBEADD;
+  color: #333;
+  min-height: 100vh;
+  padding: 1.5rem 1rem;
+}
+
+/* --- Title --- */
 h1 {
-  font-family: 'Playfair Display', serif;
   font-weight: 700;
   font-size: 2rem;
   text-align: center;
-  color: #0C7B56; /* Match main page color */
+  color: #0C7B56;
   margin-bottom: 0.25rem;
   margin-top: 0.5rem;
 }
 
-h2 {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 300;
-  font-size: 1rem;
-  text-align: center;
-  color: #0C7B56; /* Match main page color */
-  margin-top: 0;
-  margin-bottom: 0.75rem;
+/* --- Controls --- */
+.controls {
+  max-width: 700px;
+  margin: 0 auto 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-p {
-  font-family: 'Roboto', sans-serif;
+.tile-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.tile-label {
+  margin-right: 0.5rem;
+  font-weight: 500;
+}
+
+.tile {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #0C7B56;
+  background: #fff;
+  cursor: pointer;
+}
+
+.tile.active {
+  background: #0C7B56;
+  color: #fff;
+}
+
+/* --- Two-column layout --- */
+.chart-text-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  flex-wrap: wrap; /* responsive for smaller screens */
+}
+
+.chart-container {
+  flex: 1 1 0;
+  max-width: 600px;
+}
+
+.container-description {
+  flex: 1 1 0;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+}
+
+.container-description p.description {
   font-weight: 400;
   font-size: 0.85rem;
-  max-width: 650px;
-  margin: 0.5rem auto;
   line-height: 1.5;
-  text-align: center;
-  color: #000; /* Black for non-title text */
+  color: #000;
 }
 
-/* --- Chart Container (for elements to be added in main.js) --- */
-.chart-container {
-  background-color: transparent;
-  padding: 0;
-  border-radius: 0;
-  box-shadow: none;
-  width: 100%;
-  max-width: 700px; /* Reduced max width to make graph smaller */
-  box-sizing: border-box;
-}
-
-/* --- SVG & Chart Styles (for roundaboutChart.js) --- */
+/* --- Chart SVG --- */
 .roundabout-chart {
-  /* This class will be on the SVG element */
   display: block;
-  margin: 0 auto;
-}
-
-/* --- Roundabout Visuals --- */
-.roundabout-road {
-  fill: #444444; /* Asphalt */
-  stroke: #666666; /* Outer curb */
-  stroke-width: 3px;
-}
-
-.roundabout-island {
-  fill: #2a4f2a; /* Dark green grass */
-  stroke: #555555; /* Inner curb */
-  stroke-width: 2px;
-}
-
-.lane-divider {
-  fill: none;
-  stroke: white;
-  stroke-width: 2px;
-  stroke-dasharray: 10, 10;
-  opacity: 0.8;
-}
-
-/* --- Radar Chart Elements --- */
-.axis-spoke {
-  stroke: white;
-  stroke-width: 1px;
-  opacity: 0.3;
-}
-
-.axis-label {
-  font-family: 'Roboto', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  fill: #111;
-  text-anchor: middle;
-  /* Prevent text from being unselectable */
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.data-area {
-  fill-opacity: 0.7;
-  stroke-width: 2.5px;
+  width: 100%;
+  height: auto;
 }
 
 /* --- Tooltip --- */

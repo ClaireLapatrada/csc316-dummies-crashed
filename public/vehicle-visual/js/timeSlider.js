@@ -9,7 +9,6 @@ class TimeSliderWithHours {
         this.currentAngle = 0;
         this.animationInProgress = false;
 
-        // map hour numbers to time positions (0=12AM, 1=1AM, ..., 23=11PM)
         this.hourPositions = this.calculateHourPositions();
     }
 
