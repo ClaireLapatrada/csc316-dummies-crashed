@@ -144,6 +144,15 @@ body {
     color: #0C7B56;
 }
 
+.description-section {
+    margin: 20px auto;
+    max-width: 600px;
+    text-align: left;
+    color: #000;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
 header {
     padding-top: 10px;
 }

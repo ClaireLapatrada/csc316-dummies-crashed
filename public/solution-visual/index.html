@@ -12,24 +12,30 @@
 	<!-- Font Awesome -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-	<!-- custom css -->
+    <!-- custom css -->
 	<link rel="stylesheet" href="../../css/style.css">
 	<link rel="stylesheet" href="css/style.css">
 
 	<!-- GOOGLE FONTS -->
-	<link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700&family=Roboto:100,300,400,500,700' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body class="infographic-container">
 
 
 <header class="d-flex justify-content-center align-items-center" style="position: relative;">
-
-	<div class="main-title">
-		<span class="title-line-1">Toronto Collisions Map</span>
-	</div>
-
+	
+	<h1 class="main-title">
+		<span class="title-line-1">Cumulative Pedestrian Collisions</span>
+		<span class="title-line-2">by Location</span>
+	</h1>
+	
 	<button id="infoButton" style="position: absolute; right: 20px; background: none; border: none; cursor: pointer; font-size: 24px; color: #000; padding: 5px 10px; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor='#e0e0e0'" onmouseout="this.style.backgroundColor='transparent'">ℹ</button>
 </header>
+
+
+	<div class="description-section">
+		The final visualization translates these behavioral and outcome-based insights into spatial priorities. The Toronto Collisions Map identifies geographic hotspots and neighborhoods where risks converge, providing a blueprint for where Vision Zero interventions and capital investment can deliver the greatest impact.<br><br>
+	</div>
 
 <!-- Filter Bar above map -->
 <div class="container" style="max-width: 1250px; margin: 20px auto 0;">
