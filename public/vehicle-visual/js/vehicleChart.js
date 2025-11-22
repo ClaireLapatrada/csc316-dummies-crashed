@@ -3,7 +3,7 @@
 
 // Pastel color scheme for vehicle types
 const vehicleColors = {
-    "Automobile": "#88ff00",
+    "Automobile": "rgba(136,255,0,0.69)",
     "Motorcycle": "#FFB347",
     "Truck": "rgba(215,47,237,0.96)",
     "Transit": "#61ffd5",
@@ -20,15 +20,15 @@ class VehicleChart {
         this.onYearChange = callbacks.onYearChange || null;
         this.onTimeChange = callbacks.onTimeChange || null;
         this.isDragging = false; // Track if we're in a drag operation
-        
+
         this.svg = null;
         this.width = 0;
-        this.height = 280;
+        this.height = 100;
         this.margin = { top: 50, right: 30, bottom: 40, left: 60 };
         this.yScale = null;
         this.selectedCircle = null;
     }
-    
+
     setDragging(isDragging) {
         this.isDragging = isDragging;
     }
@@ -39,12 +39,17 @@ class VehicleChart {
 
         // Make chart responsive to container size
         const containerRect = container.node().getBoundingClientRect();
-        this.width = containerRect.width || Math.min(600, window.innerWidth - 100);
-        this.height = Math.min(300, (window.innerHeight - 300) || 300);
+        this.width = containerRect.width || Math.min(800, window.innerWidth - 100);
+        this.height = Math.min(400, (window.innerHeight - 300) || 400);
 
+        // Create a centered SVG with proper viewBox
         this.svg = container.append("svg")
-            .attr("width", this.width)
-            .attr("height", this.height);
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("viewBox", `0 0 ${this.width} ${this.height}`)
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            .style("display", "block")
+            .style("margin", "0 auto");
 
         console.log("Vehicle chart initialized with dimensions:", this.width, "x", this.height);
     }
@@ -157,23 +162,9 @@ class VehicleChart {
 
     update() {
         if (!this.currentTimeBucket) return;
-        
+
         // Force immediate update, no throttling
         const circleData = this.prepareVehicleData();
-
-        // Clear previous visualization
-        this.svg.selectAll("*").remove();
-
-        if (circleData.length === 0) {
-            this.svg.append("text")
-                .attr("x", this.width / 2)
-                .attr("y", this.height / 2)
-                .attr("text-anchor", "middle")
-                .style("fill", "#000")
-                .style("font-size", "16px")
-                .text(`No injury data for ${this.currentTimeBucket} in ${this.currentYear}`);
-            return;
-        }
 
         // Get domains for scales
         const injuryCounts = circleData.map(d => d.totalInjuries);
@@ -185,6 +176,10 @@ class VehicleChart {
             parseInt(d.year) === this.currentYear
         ).length;
 
+        // Clear only non-essential elements, keep circles for transitions
+        this.svg.selectAll(".accident-count-display, .axis, .grid-line, .legend").remove();
+
+        // Update accident count display
         this.svg.append("text")
             .attr("class", "accident-count-display")
             .attr("x", this.width / 2)
@@ -236,72 +231,89 @@ class VehicleChart {
             .attr("stroke-width", 1)
             .attr("stroke-dasharray", "2,2");
 
-        // Create vehicle circles group
-        const circlesGroup = this.svg.append("g")
-            .attr("class", "vehicle-circles");
-
         // Calculate horizontal positions for circles (evenly distributed)
         const availableWidth = this.width - this.margin.left - this.margin.right;
         const circleSpacing = availableWidth / (circleData.length + 1);
 
-        // Create or update circles
-        const circles = circlesGroup.selectAll(".vehicle-circle")
-            .data(circleData, d => d.vehicleType);
+        // Get or create vehicle circles group
+        let circlesGroup = this.svg.select(".vehicle-circles");
+        if (circlesGroup.empty()) {
+            circlesGroup = this.svg.append("g").attr("class", "vehicle-circles");
+        }
 
-        // Enter: create new circles
+        // Create a key function to track circles by vehicle type
+        const key = d => d.vehicleType;
+
+        // Bind data with key function
+        const circles = circlesGroup.selectAll(".vehicle-circle")
+            .data(circleData, key);
+
+        // ENTER: Create new circles for new vehicle types
         const circlesEnter = circles.enter()
             .append("circle")
             .attr("class", "vehicle-circle")
             .attr("cx", (d, i) => this.margin.left + circleSpacing * (i + 1))
-            .attr("cy", this.height - this.margin.bottom)
-            .attr("r", d => d.radius)
+            .attr("cy", this.height - this.margin.bottom) // Start from bottom
+            .attr("r", 0) // Start with radius 0
             .attr("fill", d => d.color)
             .attr("stroke", "#000")
             .attr("stroke-width", 2)
-            .style("opacity", 0.95)
+            .style("opacity", 0)
             .style("cursor", "pointer")
             .style("filter", "drop-shadow(0 2px 6px rgba(0,0,0,0.4))");
 
-        // Merge enter and update selections
-        const circlesMerged = circlesEnter.merge(circles);
+        // Animate new circles in
+        circlesEnter
+            .transition()
+            .duration(1000)
+            .delay((d, i) => i * 150)
+            .attr("cy", d => this.yScale(d.totalInjuries))
+            .attr("r", d => d.radius)
+            .style("opacity", 0.95)
+            .ease(d3.easeElasticOut.period(0.6));
 
-        // Update positions - skip animation during drag for real-time updates
-        if (this.isDragging) {
-            circlesMerged
-                .attr("cx", (d, i) => this.margin.left + circleSpacing * (i + 1))
-                .attr("cy", d => this.yScale(d.totalInjuries))
-                .attr("r", d => d.radius);
-        } else {
-            circlesMerged
-                .attr("cx", (d, i) => this.margin.left + circleSpacing * (i + 1))
-                .transition()
-                .duration(1000)
-                .delay((d, i) => i * 200)
-                .attr("cy", d => this.yScale(d.totalInjuries))
-                .attr("r", d => d.radius)
-                .ease(d3.easeElasticOut.period(0.6));
-        }
+        // UPDATE: Transition existing circles to new positions
+        circles
+            .transition()
+            .duration(1000)
+            .delay((d, i) => i * 100)
+            .attr("cx", (d, i) => {
+                // Find the new index for this vehicle type
+                const newIndex = circleData.findIndex(item => item.vehicleType === d.vehicleType);
+                return this.margin.left + circleSpacing * (newIndex + 1);
+            })
+            .attr("cy", d => this.yScale(d.totalInjuries))
+            .attr("r", d => d.radius)
+            .style("opacity", 0.95)
+            .ease(d3.easeCubicOut);
 
-        // Exit: remove circles that are no longer in data
-        circles.exit().remove();
+        // EXIT: Animate out circles that are no longer in data
+        circles.exit()
+            .transition()
+            .duration(800)
+            .attr("cy", this.height - this.margin.bottom) // Move to bottom
+            .attr("r", 0) // Shrink to zero
+            .style("opacity", 0)
+            .remove();
 
-        // Add click interaction to merged circles
+        // Add click interaction to all circles
         const self = this;
-        circlesMerged.on("click", function(event, circleData) {
-            event.stopPropagation();
+        circlesGroup.selectAll(".vehicle-circle")
+            .on("click", function(event, circleData) {
+                event.stopPropagation();
 
-            // Reset previously selected circle
-            if (self.selectedCircle && self.selectedCircle !== circleData) {
-                self.resetSelectedCircle();
-            }
+                // Reset previously selected circle
+                if (self.selectedCircle && self.selectedCircle !== circleData) {
+                    self.resetSelectedCircle();
+                }
 
-            // Toggle selection
-            if (circleData.isSelected) {
-                self.resetSelectedCircle();
-            } else {
-                self.selectCircle(this, circleData, event);
-            }
-        });
+                // Toggle selection
+                if (circleData.isSelected) {
+                    self.resetSelectedCircle();
+                } else {
+                    self.selectCircle(this, circleData, event);
+                }
+            });
 
         // Click anywhere else to deselect (only if not dragging)
         if (!this.isDragging) {
@@ -312,7 +324,8 @@ class VehicleChart {
             });
         }
 
-        // Add legend
+        // Update legend (remove and recreate)
+        this.svg.selectAll(".legend").remove();
         const vehicleTypes = ['Automobile', 'Motorcycle', 'Truck', 'Transit', 'Bicycle', 'Other'];
         const legend = this.svg.selectAll(".legend")
             .data(vehicleTypes)
@@ -444,7 +457,7 @@ class VehicleChart {
 
         tooltip.innerHTML = breakdownContent;
         tooltip.classList.add('show', 'injury-breakdown-tooltip');
-        
+
         // Position tooltip near the circle after content is set
         if (event) {
             // Use setTimeout to ensure content is rendered
@@ -452,10 +465,10 @@ class VehicleChart {
                 const tooltipRect = tooltip.getBoundingClientRect();
                 const viewportWidth = window.innerWidth;
                 const viewportHeight = window.innerHeight;
-                
+
                 let left = event.pageX + 15;
                 let top = event.pageY - 20;
-                
+
                 // Adjust if tooltip would go off screen
                 if (left + tooltipRect.width > viewportWidth) {
                     left = event.pageX - tooltipRect.width - 15;
@@ -463,7 +476,7 @@ class VehicleChart {
                 if (top + tooltipRect.height > viewportHeight) {
                     top = event.pageY - tooltipRect.height - 20;
                 }
-                
+
                 tooltip.style.left = left + 'px';
                 tooltip.style.top = top + 'px';
             }, 10);

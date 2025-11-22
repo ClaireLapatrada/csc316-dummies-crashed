@@ -811,13 +811,3 @@ body {
 .tooltip-neutral {
     color: #666;
 }
-
-/* Year Scroll Container */
-#year-scroll-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 100px;
-    padding: 0 20px;
-    width: 100%;
-}
