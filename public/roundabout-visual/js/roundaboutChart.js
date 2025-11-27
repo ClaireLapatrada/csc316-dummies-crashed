@@ -32,9 +32,9 @@ class RoundaboutChart {
     this.opts = {
       levels: 5,
       islandRadius: 70,
-      labelFactor: 1.15, // How far out to place labels
+      labelFactor: 1.25, // How far out to place labels (increased to prevent overlap)
       margin: { top: 60, right: 60, bottom: 60, left: 60 },
-      curve: d3.curveLinearClosed, // Smooth curve for the data path
+      curve: d3.curveBasisClosed, // Smoother curve for the data path
       totalCollisions: null, // Total number of collisions for converting percentages
       ...options // User options (from main.js) will override defaults
     };
@@ -223,10 +223,14 @@ class RoundaboutChart {
       .enter()
       .append('text')
       .attr('class', 'axis-label')
-      .attr('x', (d, i) => this.rScale(1.05) * Math.cos(this.angleSlice * i + this.angleOffset))
-      .attr('y', (d, i) => this.rScale(1.05) * Math.sin(this.angleSlice * i + this.angleOffset))
+      .attr('x', (d, i) => this.rScale(this.opts.labelFactor) * Math.cos(this.angleSlice * i + this.angleOffset))
+      .attr('y', (d, i) => this.rScale(this.opts.labelFactor) * Math.sin(this.angleSlice * i + this.angleOffset))
       .attr('dy', '0.35em') // Vertical alignment
       .text(d => d)
+      .style('font-family', 'Overpass, sans-serif')
+      .style('font-size', '14px')
+      .style('font-weight', '500')
+      .style('fill', '#FFFFFF')
       .call(this.wrapText, 100); // Wrap long labels
 
     // --- 5. Draw the Data Series ---
@@ -282,6 +286,10 @@ class RoundaboutChart {
             Z`;
         };
 
+        // Store the angle for hover expansion
+        const segmentAngle = currentAngle;
+        const chartInstance = this;
+        
         const segment = this.g.append('path')
           .attr('d', buildPath(0))
           .attr('fill', colors[i % colors.length])
@@ -290,10 +298,34 @@ class RoundaboutChart {
           .attr('stroke-width', 2)
           .attr('stroke-opacity', 0)
           .style('cursor', 'pointer')
-          .on('mousemove', (event) => {
-            this.showTooltip(event, d);
+          .attr('transform', 'translate(0, 0)')
+          .on('mouseover', function(event) {
+            // Expand the segment on hover
+            const expandDistance = 15; // pixels to expand
+            const dx = Math.cos(segmentAngle) * expandDistance;
+            const dy = Math.sin(segmentAngle) * expandDistance;
+            d3.select(this)
+              .transition()
+              .duration(200)
+              .ease(d3.easeCubicOut)
+              .attr('transform', `translate(${dx}, ${dy})`)
+              .attr('stroke-width', 3)
+              .attr('fill-opacity', 0.9);
           })
-          .on('mouseout', () => this.hideTooltip());
+          .on('mousemove', (event) => {
+            chartInstance.showTooltip(event, d);
+          })
+          .on('mouseout', function() {
+            // Contract the segment on mouseout
+            d3.select(this)
+              .transition()
+              .duration(200)
+              .ease(d3.easeCubicOut)
+              .attr('transform', 'translate(0, 0)')
+              .attr('stroke-width', 2)
+              .attr('fill-opacity', 0.7);
+            chartInstance.hideTooltip();
+          });
 
         // Animate outwards
         segment

@@ -37,7 +37,7 @@ class BarChart {
         }
 
         // Filter out null values for the current view mode's action field
-        const actionField = vis.viewMode === 'pedestrian' ? 'pedAct' : 'drivAct';
+        const actionField = vis.viewMode === 'pedestrian' ? 'pedAct' : 'manoeuver';
         vis.data = vis.originalData.filter(d => d[actionField])
 
         // Calculate year highlights (use original data)
@@ -206,7 +206,7 @@ class BarChart {
                 }
             } else {
                 if (vis.filterState.drivAct !== 'all' && Array.isArray(vis.filterState.drivAct) && vis.filterState.drivAct.length > 0) {
-                    filteredData = filteredData.filter(d => vis.filterState.drivAct.includes(d.drivAct));
+                    filteredData = filteredData.filter(d => vis.filterState.drivAct.includes(d.manoeuver));
                 }
             }
             
@@ -221,8 +221,8 @@ class BarChart {
                 filteredData = filteredData.filter(d => ageFilter.includes(d.pedAge));
             }
             
-            // Aggregate counts per action - use pedAct or drivAct based on view mode
-            const actionField = vis.viewMode === 'pedestrian' ? 'pedAct' : 'drivAct';
+            // Aggregate counts per action - use pedAct or manoeuver based on view mode
+            const actionField = vis.viewMode === 'pedestrian' ? 'pedAct' : 'manoeuver';
             const counts = Array.from(
                 d3.rollup(
                     filteredData,
@@ -270,7 +270,7 @@ class BarChart {
             }
         } else {
             if (vis.filterState.drivAct !== 'all' && Array.isArray(vis.filterState.drivAct) && vis.filterState.drivAct.length > 0) {
-                vis.displayData = vis.displayData.filter(d => vis.filterState.drivAct.includes(d.drivAct));
+                vis.displayData = vis.displayData.filter(d => vis.filterState.drivAct.includes(d.manoeuver));
             }
         }
 
@@ -286,8 +286,8 @@ class BarChart {
             vis.displayData = vis.displayData.filter(d => ageFilter.includes(d.pedAge));
         }
 
-        // Aggregate counts per action (cumulative) - use pedAct or drivAct based on view mode
-        const actionField = vis.viewMode === 'pedestrian' ? 'pedAct' : 'drivAct';
+        // Aggregate counts per action (cumulative) - use pedAct or manoeuver based on view mode
+        const actionField = vis.viewMode === 'pedestrian' ? 'pedAct' : 'manoeuver';
         vis.counts = Array.from(
             d3.rollup(
                 vis.displayData,
@@ -659,7 +659,7 @@ class BarChart {
         }
         
         // Re-filter data for the new view mode from original data
-        const actionField = vis.viewMode === 'pedestrian' ? 'pedAct' : 'drivAct';
+        const actionField = vis.viewMode === 'pedestrian' ? 'pedAct' : 'manoeuver';
         vis.data = vis.originalData.filter(d => d[actionField])
         
         // Update dropdown filters
@@ -677,7 +677,7 @@ class BarChart {
      */
     bindTileFilters() {
         const vis = this;
-        const bar = document.getElementById('filter-bar');
+        const bar = document.querySelector('.filter-buttons');
         if (!bar) return;
 
         bar.addEventListener('click', (e)=>{
@@ -747,9 +747,9 @@ class BarChart {
             if (pedAgeContainer) pedAgeContainer.style.display = 'none';
             if (drivAgeContainer) drivAgeContainer.style.display = '';
 
-            // Setup driver action filter
-            const uniqueDrivActs = [...new Set(dataToUse.map(d => d.drivAct).filter(d => d))].sort();
-            setupFilter('drivAct', uniqueDrivActs, vis);
+            // Setup driver action filter (using manoeuver instead of drivAct)
+            const uniqueManoeuvres = [...new Set(dataToUse.map(d => d.manoeuver).filter(d => d))].sort();
+            setupFilter('drivAct', uniqueManoeuvres, vis);
 
             // Setup driver age filter (uses pedAge since drivAge = pedAge, but show as "Driver Age")
             const uniquePedAges = [...new Set(dataToUse.map(d => d.pedAge).filter(d => d))].sort();
@@ -767,7 +767,7 @@ class BarChart {
         let vis = this;
 
         // Determine which field to use based on view mode
-        const actionField = vis.viewMode === 'pedestrian' ? 'pedAct' : 'drivAct';
+        const actionField = vis.viewMode === 'pedestrian' ? 'pedAct' : 'manoeuver';
 
         // Helper function to apply filters to data
         const applyFilters = (data) => {
@@ -787,7 +787,7 @@ class BarChart {
                 }
             } else {
                 if (vis.filterState.drivAct !== 'all' && Array.isArray(vis.filterState.drivAct) && vis.filterState.drivAct.length > 0) {
-                    filtered = filtered.filter(d => vis.filterState.drivAct.includes(d.drivAct));
+                    filtered = filtered.filter(d => vis.filterState.drivAct.includes(d.manoeuver));
                 }
             }
 
@@ -1092,6 +1092,9 @@ class BarChart {
             .append("div")
             .attr("class", "tooltip")
             .style("opacity", 0)
+            .style("display", "block")
+            .style("pointer-events", "none")
+            .style("visibility", "visible")
             .merge(tooltip);
 
         const animationDelay = 50;
@@ -1139,8 +1142,9 @@ class BarChart {
                     .duration(200)
                     .style("opacity", b => b.pedAct === d.pedAct ? 1 : 0.3);
                 
-                // Calculate tooltip data
-                const tooltipData = vis.calculateTooltipData(d.pedAct);
+                // Calculate tooltip data - use the action value from the data
+                const actionValue = d.pedAct; // This contains pedAct in pedestrian mode, manoeuver in driver mode
+                const tooltipData = vis.calculateTooltipData(actionValue);
 
                 // Clear existing tooltip content first
                 tooltip.html("");
@@ -1326,14 +1330,21 @@ class BarChart {
                 tooltip
                     .style("left", `${left}px`)
                     .style("top", `${top}px`)
-                    .style("opacity", 1);
+                    .style("opacity", 1)
+                    .style("display", "block")
+                    .style("visibility", "visible");
                 
                 // Highlight the bar
                 d3.select(this)
                     .attr("stroke", "#0C7B56")
                     .attr("stroke-width", 2);
             })
-            .on("mouseout", function() {
+            .on("mousemove", function(event) {
+                // Keep tooltip visible while moving mouse over bar
+                tooltip.interrupt();
+                tooltip.style("opacity", 1);
+            })
+            .on("mouseout", function(event) {
                 // Check if mouse moved directly onto another bar
                 const related = event.relatedTarget;
 
@@ -1344,8 +1355,15 @@ class BarChart {
                 const movedToBar = related && related.classList && related.classList.contains("bar");
                 if (movedToBar) return; // Don't hide tooltip if we moved to another bar
 
-                // Hide tooltip
-                tooltip.transition().duration(150).style("opacity", 0);
+                // Hide tooltip with a small delay to prevent flickering
+                setTimeout(() => {
+                    // Double check that mouse is not over any bar or tooltip
+                    const hoveredBar = document.querySelector('.bar:hover');
+                    const tooltipNode = tooltip.node();
+                    if (!hoveredBar && tooltipNode) {
+                        tooltip.transition().duration(150).style("opacity", 0);
+                    }
+                }, 50);
                 
                 // Restore full opacity to all bars
                 barsMerged.transition()
@@ -1408,10 +1426,10 @@ class BarChart {
             .attr("y", (d, i) => vis.yScale(i) + vis.yScale.bandwidth()/2)
             .attr("text-anchor", "end")
             .attr("dy", "0.35em")
-            .style("font-family", "Arial, sans-serif")
+            .style("font-family", "Overpass, sans-serif")
             .style("font-size", "12px")
             .style("font-weight", "500")
-            .style("fill", "#000")
+            .style("fill", "#FFFFFF")
             .style("stroke", "none")
             .style("stroke-width", 0)
             .style("opacity", 0)
@@ -1422,7 +1440,7 @@ class BarChart {
             .duration(1000)
             .ease(d3.easeCubicInOut)
             .style("opacity", 1)
-            .style("fill", "#000")
+            .style("fill", "#FFFFFF")
             .style("stroke", "none")
             .style("stroke-width", 0)
             .attr("x", -15)
@@ -1438,9 +1456,12 @@ class BarChart {
             vis.laneDividersCreated = true;
         }
 
-        // Add walking icons - position them at the end of each bar
+        // Add icons - position them at the end of each bar (pedestrian or car based on view mode)
         const emojiIcons = vis.svg.selectAll(".emoji-icon")
             .data(vis.counts, d => d.pedAct);
+
+        // Choose emoji based on view mode
+        const emoji = vis.viewMode === 'pedestrian' ? "🚶‍♀️" : "🚗";
 
         const emojiIconsEnter = emojiIcons.enter().append("text")
             .attr("class", "emoji-icon")
@@ -1450,7 +1471,7 @@ class BarChart {
             .attr("dy", "0.35em")
             .style("font-size", "20px")
             .style("opacity", 0)
-            .text("🚶‍♀️");
+            .text(emoji);
 
         emojiIconsEnter.merge(emojiIcons)
             .transition()
@@ -1463,7 +1484,7 @@ class BarChart {
                 return Math.max(barWidth + 15, 50);
             })
             .attr("y", (d, i) => vis.yScale(i) + vis.yScale.bandwidth()/2)
-            .text("🚶‍♀️");
+            .text(emoji);
 
         emojiIcons.exit().remove();
 
