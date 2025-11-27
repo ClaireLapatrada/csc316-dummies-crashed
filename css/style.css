@@ -27,26 +27,7 @@ body {
     font-weight: 300;
     position: fixed;
     width: 100%;
-    background: #EBEADD !important;
-    background-attachment: fixed !important;
-    background-size: auto !important;
-    background-position: center center !important;
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 1.5s ease-in-out;
-    overflow: hidden;
-
+    background: #0A6B4A !important;
 }
 
 /* Override for visualization pages (inside iframes) - allow scrolling */
@@ -127,6 +108,69 @@ p {
     font-style: italic;
 }
 
+/* Exception for intro page - use Overpass font */
+.intro-page h1,
+.intro-page .safety-text {
+    font-family: 'Overpass', sans-serif !important;
+    font-style: normal !important;
+}
+
+/* Exception for statement page - use Overpass font */
+.statement-page h1,
+.statement-page p {
+    font-family: 'Overpass', sans-serif !important;
+    font-style: normal !important;
+}
+
+/* Path selection page styles */
+.path-selection-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.path-selection-content .statement-title {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.path-buttons {
+    display: flex;
+    gap: 2rem;
+    margin-top: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.path-button {
+    background: transparent;
+    border: 2px solid #FFFFFF;
+    color: #FFFFFF;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    font-family: 'Overpass', sans-serif !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.path-button:hover {
+    background: #FFFFFF;
+    color: #0A6B4A;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.path-button:active {
+    transform: translateY(0);
+}
+
 /* =============================================================================
    LAYOUT CONTAINERS
    Main page structure, containers, and grid layouts
@@ -155,11 +199,168 @@ p {
 
 /* Introduction Page Specific Styles */
 .intro-page {
-    background-color: transparent;
+    background-color: #0A6B4A;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 5%;
+}
+
+/* Statement Page Specific Styles */
+.statement-page {
+    background-color: #0A6B4A;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 0 0 5%;
+}
+
+.statement-content {
+    width: 100%;
+    max-width: 800px;
+}
+
+.statement-title {
+    font-family: 'Overpass', sans-serif !important;
+    font-weight: 700 !important;
+    font-style: normal !important;
+    font-size: 3rem;
+    color: #FFFFFF;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.2;
+    text-align: left;
+}
+
+.statement-text {
+    font-family: 'Overpass', sans-serif !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    font-size: 1.5rem;
+    color: #FFFFFF;
+    margin: 0;
+    line-height: 1.4;
+    text-align: left;
 }
 
 .intro-page .page-background {
     opacity: 1;
+}
+
+.intro-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+}
+
+.intro-title {
+    margin-bottom: 3rem;
+}
+
+.page.intro-page .intro-title .main-title,
+.intro-page .intro-title h1.main-title {
+    font-family: 'Overpass', sans-serif !important;
+    font-weight: 700 !important;
+    font-style: normal !important;
+    font-size: 3.5rem;
+    color: #FFFFFF;
+    margin: 0;
+    line-height: 1.2;
+    text-align: left;
+    max-width: 600px;
+}
+
+.safety-box {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.intro-page .safety-box .safety-text,
+.page.intro-page .safety-text {
+    font-family: 'Overpass', sans-serif !important;
+    font-weight: 700 !important;
+    font-style: normal !important;
+    font-size: 1.5rem;
+    color: #0A6B4A;
+    text-align: center;
+}
+
+/* Dot Navigation */
+.dot-navigation {
+    position: fixed;
+    right: 3%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.5;
+}
+
+.dot:hover {
+    opacity: 0.8;
+    transform: scale(1.3);
+}
+
+.dot.active {
+    opacity: 1;
+}
+
+/* Progressive dot scaling based on page index */
+.dot[data-page="0"].active {
+    width: 10px;
+    height: 10px;
+}
+
+.dot[data-page="1"].active {
+    width: 12px;
+    height: 12px;
+}
+
+.dot[data-page="2"].active {
+    width: 14px;
+    height: 14px;
+}
+
+.dot[data-page="3"].active {
+    width: 16px;
+    height: 16px;
+}
+
+.dot[data-page="4"].active {
+    width: 18px;
+    height: 18px;
+}
+
+.dot[data-page="5"].active {
+    width: 20px;
+    height: 20px;
+}
+
+.dot[data-page="6"].active {
+    width: 22px;
+    height: 22px;
+}
+
+.dot[data-page="7"].active {
+    width: 24px;
+    height: 24px;
 }
 
 /* Visualization Pages */
@@ -178,14 +379,12 @@ p {
     border-radius: 0;
     box-shadow: none;
     z-index: 10;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 .viz-iframe {
     width: 100%;
-    height: 150vh;
-    min-height: 150vh;
+    height: 100vh;
     border: none;
     display: block;
     backface-visibility: hidden;

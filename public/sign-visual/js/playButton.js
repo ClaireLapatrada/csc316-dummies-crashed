@@ -45,10 +45,12 @@ class PlayButton {
 
             const endX = this.yearScroll.xScale(nextYear);
 
-            this.yearScroll.car.transition()
-                .duration(this.transitionTime)
-                .ease(d3.easeLinear)
-                .attr("transform", `translate(${endX - 18}, ${this.yearScroll.height/2 - 10})`);
+            if (this.yearScroll.pedIcon) {
+                this.yearScroll.pedIcon.transition()
+                    .duration(this.transitionTime)
+                    .ease(d3.easeLinear)
+                    .attr("x", endX - 20);
+            }
 
             this.yearScroll.currentYear = nextYear;
             this.yearScroll._updateYearLabels();
@@ -68,10 +70,12 @@ class PlayButton {
         const startYear = this.yearScroll.startYear;
         const endX = this.yearScroll.xScale(startYear);
         
-        this.yearScroll.car.transition()
-            .duration(this.transitionTime)
-            .ease(d3.easeLinear)
-            .attr("transform", `translate(${endX - 18}, ${this.yearScroll.height/2 - 10})`);
+        if (this.yearScroll.pedIcon) {
+            this.yearScroll.pedIcon.transition()
+                .duration(this.transitionTime)
+                .ease(d3.easeLinear)
+                .attr("x", endX - 20);
+        }
         
         this.yearScroll.currentYear = startYear;
         this.yearScroll._updateYearLabels();

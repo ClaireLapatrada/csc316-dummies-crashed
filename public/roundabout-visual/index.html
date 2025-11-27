@@ -10,13 +10,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="css/iframe-override.css">
 
     <style>
-        body, html {
-            overflow: hidden !important;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
+        
+        html {
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+        }
+        
+        body {
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #0A6B4A;
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            margin: 0;
+            padding: 0;
+            font-family: 'Overpass', sans-serif;
+        }
+        
+        .main-title {
+            color: #FFFFFF !important;
+            font-family: 'Overpass', sans-serif !important;
+            font-weight: 700 !important;
+            font-style: normal !important;
+            text-align: left !important;
+            margin: 20px 40px !important;
+            padding-top: 40px !important;
+        }
+        
+        .title-line-1,
+        .title-line-2 {
+            font-size: 2.5rem !important;
+            color: #FFFFFF !important;
+            font-weight: 700 !important;
+            font-style: normal !important;
+            text-align: left !important;
+        }
+        
         .container-description {
             flex: 1 1 0;
             max-width: 500px;
@@ -26,10 +65,12 @@
         .container-description p.description {
             display: block;
             font-weight: 400;
-            font-size: 0.85rem;
-            line-height: 1.5;
-            color: #000;
+            font-size: 1.1rem !important;
+            line-height: 1.6 !important;
+            color: #FFFFFF !important;
+            font-family: 'Overpass', sans-serif !important;
             margin: 0;
+            text-align: left !important;
         }
         .chart-text-wrapper {
             display: flex;
@@ -40,21 +81,163 @@
             max-width: 1200px;
             margin: 2rem auto;
             flex-wrap: wrap;
+            background-color: transparent;
         }
-        .controls {
-            max-width: 700px;
-            margin: 30px 300px 10px;
+        
+        .chart-container {
+            flex: 1 1 0;
+            max-width: 600px;
+            background-color: transparent;
+        }
+        .filter-buttons {
+            position: absolute;
+            top: 8%;
+            right: 2%;
             display: flex;
-            justify-content: flex-start;
-            padding-left: 50px;
-            padding-top:1rem;
+            gap: 10px;
+            z-index: 100;
             align-items: center;
         }
-
+        
+        /* Filter Dropdown Styling */
+        .filter-dropdown-group {
+            position: relative;
+        }
+        
+        .filter-checkbox-container {
+            position: absolute;
+            top: calc(100% + 5px);
+            right: 0;
+            min-width: 200px;
+            max-width: 300px;
+            max-height: 400px;
+            padding: 10px;
+            background: #FFFFFF;
+            border: 2px solid #0A6B4A;
+            border-radius: 4px;
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .filter-dropdown-group.active .filter-checkbox-container {
+            display: flex;
+        }
+        
+        .filter-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            color: #333333;
+            font-family: 'Overpass', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        .filter-checkbox-item:hover {
+            background-color: rgba(10, 107, 74, 0.05);
+            border-radius: 2px;
+        }
+        
+        .filter-checkbox-item input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: #0A6B4A;
+        }
+        
+        .filter-checkbox-item label {
+            cursor: pointer;
+            user-select: none;
+            color: #333333;
+        }
+        
+        /* Custom scrollbar for filter dropdown */
+        .filter-checkbox-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .filter-checkbox-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .filter-checkbox-container::-webkit-scrollbar-thumb {
+            background: #0A6B4A;
+            border-radius: 3px;
+        }
+        
+        .filter-checkbox-container::-webkit-scrollbar-thumb:hover {
+            background: #0C7B56;
+        }
+        
+        .tile-label {
+            color: #FFFFFF !important;
+            font-family: 'Overpass', sans-serif !important;
+            font-weight: 400 !important;
+            font-size: 0.9rem !important;
+        }
+        
+        .tile {
+            background: #0A6B4A !important;
+            border: 2px solid #FFFFFF !important;
+            color: #FFFFFF !important;
+            font-family: 'Overpass', sans-serif !important;
+            font-weight: 400 !important;
+            font-size: 0.9rem !important;
+            padding: 8px 16px !important;
+            border-radius: 4px !important;
+        }
+        
+        .tile.active {
+            background: #FFFFFF !important;
+            color: #0A6B4A !important;
+        }
+        
         .tile-group {
             display: flex;
             gap: 0.5rem;
             align-items: center;
+        }
+        
+        .controls {
+            display: none;
+        }
+        
+        /* Roundabout Chart Styling */
+        .roundabout-road {
+            fill: #2a2a2a;
+            stroke: none;
+        }
+        
+        .roundabout-island {
+            fill: #1a5a3a;
+            stroke: none;
+        }
+        
+        .lane-divider {
+            fill: none;
+            stroke: #FFFFFF;
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+            opacity: 0.6;
+        }
+        
+        /* Tooltip Styling */
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 8px 12px;
+            font-family: 'Overpass', sans-serif;
+            font-size: 13px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            border-radius: 4px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 1000;
         }
 
     </style>
@@ -66,10 +249,10 @@
     <span class="title-line-2">by Conditions</span>
 </h1>
 
-<!-- Controls -->
-<div class="controls">
+<!-- Filter Buttons (Top Right) -->
+<div class="filter-buttons">
+    <span class="tile-label">Views</span>
     <div class="tile-group" data-group="dataset" >
-        <span class="tile-label">Views</span>
         <button class="tile active" data-value="factors">Collision factors</button>
         <button class="tile" data-value="ages">Age ranges (INVAGE)</button>
     </div>

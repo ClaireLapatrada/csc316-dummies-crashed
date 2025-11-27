@@ -1,0 +1,446 @@
+/* =============================================================================
+   PED-VISUAL STYLES
+   Consolidated styles for pedestrian visualization
+   ============================================================================= */
+
+/* Base Styles */
+body {
+    background-color: #0A6B4A;
+    font-family: 'Overpass', sans-serif;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    overflow: hidden;
+    height: 100%;
+}
+
+.infographic-container {
+    background-color: #0A6B4A;
+    overflow: hidden;
+    height: 100vh;
+    max-height: 100vh;
+    width: 100vw;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Title Section */
+.title-section {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin: 5px 40px;
+    z-index: 10;
+}
+
+.main-title {
+    color: #FFFFFF;
+    font-family: 'Overpass', sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    text-align: left;
+    line-height: 1.2;
+}
+
+.title-line-1,
+.title-line-2 {
+    font-size: 2.5rem;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-style: normal;
+    text-align: left;
+}
+
+.title-line-3 {
+    font-size: 1rem;
+    color: #FFFFFF;
+    text-align: left;
+}
+
+.title-line-3 a {
+    color: #FFFFFF;
+}
+
+/* Description Section */
+.description-section {
+    color: #FFFFFF;
+    font-family: 'Overpass', sans-serif;
+    font-weight: 400;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    text-align: left;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    max-width: 100%;
+    width: calc(100% - 80px);
+    padding-right: 25%;
+}
+
+/* Visualization Area */
+.visualization-area {
+    margin-top: 30px;
+    padding-top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0 40px;
+    min-height: auto;
+}
+
+.road-container {
+    margin-top: 0;
+    margin-bottom: 0;
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 75%;
+    height: 42vh;
+    max-height: 44vh;
+    position: relative;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0 20px 0 110px;
+    margin-right: 0;
+    margin-top: 12px;
+    margin-bottom: 10px;
+    overflow: visible;
+}
+
+.road-container::before,
+.road-container::after {
+    display: none;
+}
+
+/* Timeline Section */
+.timeline-section {
+    position: relative;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 5%;
+    margin-top: 60px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.timeline-section svg {
+    flex: 1;
+    min-width: 0;
+    max-width: 836px;
+}
+
+#year-scroll-container {
+    flex: 0 0 auto;
+    min-width: 0;
+    max-width: 836px;
+    margin: 0;
+    padding: 0;
+}
+
+#year-scroll-container svg {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.timeline-section > * {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Control Buttons */
+.control-buttons {
+    position: relative;
+    margin-top: 0;
+    z-index: 10;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    flex-shrink: 0;
+}
+
+.play-button {
+    background: #FFFFFF;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.play-button .play-triangle {
+    border-left: 15px solid #0A6B4A;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    margin-left: 3px;
+}
+
+.play-button.playing .play-triangle {
+    margin-left: 0;
+    transform: translateX(-4px);
+    border-left: none;
+}
+
+.play-button.playing .play-triangle::before,
+.play-button.playing .play-triangle::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 12px;
+    background: #0A6B4A;
+    border-radius: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.play-button.playing .play-triangle::before {
+    left: 50%;
+    transform: translateX(-6px) translateY(-50%);
+}
+
+.play-button.playing .play-triangle::after {
+    left: 50%;
+    transform: translateX(-2px) translateY(-50%);
+}
+
+.restart-button {
+    background: transparent;
+    color: #FFFFFF;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.restart-button svg {
+    stroke: #FFFFFF;
+}
+
+/* Legend Styling */
+.legend-text {
+    color: #FFFFFF;
+    font-family: 'Overpass', sans-serif;
+    font-style: normal;
+}
+
+.legend-label {
+    font-family: 'Overpass', sans-serif !important;
+    fill: #FFFFFF !important;
+    font-style: normal !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+}
+
+/* Filter Buttons */
+.filter-buttons {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+    align-items: center;
+    margin-top: 5px;
+    flex-wrap: wrap;
+}
+
+.tile-label {
+    color: #FFFFFF;
+    font-family: 'Overpass', sans-serif;
+    font-weight: 400;
+    font-size: 0.9rem;
+}
+
+.tile {
+    background: #0A6B4A;
+    border: 2px solid #FFFFFF;
+    color: #FFFFFF;
+    font-family: 'Overpass', sans-serif;
+    font-weight: 400;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.tile.active {
+    background: #FFFFFF;
+    color: #0A6B4A;
+}
+
+.tile:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.filter-btn {
+    background: #0A6B4A;
+    border: 2px solid #FFFFFF;
+    color: #FFFFFF;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: 'Overpass', sans-serif;
+    font-weight: 400;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.filter-btn:hover {
+    background: #0C7B56;
+}
+
+.filter-btn::after {
+    content: '▲';
+    font-size: 0.7rem;
+    margin-left: 6px;
+}
+
+.filter-dropdown-group {
+    position: relative;
+}
+
+.filter-checkbox-container {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 5px;
+    background: #FFFFFF;
+    border: 2px solid #0A6B4A;
+    border-radius: 4px;
+    padding: 10px;
+    min-width: 200px;
+    max-width: 250px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.filter-dropdown-group.active .filter-checkbox-container {
+    display: flex;
+}
+
+.filter-checkbox-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    color: #333333;
+    font-family: 'Overpass', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+.filter-checkbox-item:hover {
+    background-color: rgba(10, 107, 74, 0.05);
+    border-radius: 2px;
+}
+
+.filter-checkbox-item input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: #0A6B4A;
+}
+
+.filter-checkbox-item label {
+    cursor: pointer;
+    user-select: none;
+    color: #333333;
+}
+
+/* Chart Styling */
+#bar-chart {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    max-height: 42vh;
+}
+
+#bar-chart svg {
+    overflow: visible;
+}
+
+/* Tile Group */
+.tile-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Tooltip Styling */
+.tooltip {
+    position: absolute;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #0C7B56;
+    border-radius: 8px;
+    pointer-events: none;
+    font-family: 'Overpass', sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    max-width: 280px;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+}
+
+.tooltip-title {
+    font-weight: bold;
+    color: #0C7B56;
+    margin-bottom: 6px;
+    font-size: 13px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 4px;
+}
+
+.tooltip-item {
+    margin: 4px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tooltip-label {
+    font-weight: 600;
+    margin-right: 8px;
+    min-width: 120px;
+}
+
+.tooltip-value {
+    text-align: right;
+    font-weight: 400;
+}
+
+.tooltip-positive {
+    color: #2E8B57;
+}
+
+.tooltip-negative {
+    color: #DC143C;
+}
+
+.tooltip-neutral {
+    color: #666;
+}
+

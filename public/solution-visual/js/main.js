@@ -4,7 +4,8 @@
 
 // init global variables, switches, helper functions
 let myMapVis,
-    myTimelineVis,
+    yearScroll,
+    playButton,
     myLocationChart,
     myCrashPointsVis,
     myImprovementsVis;
@@ -12,22 +13,22 @@ let currentView = 'map'; // 'map' or 'improvements'
 let globalCrashData = null; // Store crash data globally for access in view switching
 
 // Load data using promises
-let promises = [
-    d3.csv("data/dataset.csv"),
-    d3.json("data/Centreline - Version 2 - 4326.geojson")
-];
-
-Promise.all(promises)
-    .then(function(data) { 
-        initMainPage(data[0], data[1]);
-    })
-    .catch(function(err) {
-        console.log(err);
-        // If GeoJSON fails, continue without it
-        d3.csv("data/dataset.csv")
-            .then(function(csvData) {
+// Try to load GeoJSON, but continue without it if it fails
+d3.csv("data/dataset.csv")
+    .then(function(csvData) {
+        // Try to load GeoJSON, but don't fail if it's missing
+        d3.json("data/Centreline - Version 2 - 4326.geojson")
+            .then(function(geoData) {
+                initMainPage(csvData, geoData);
+            })
+            .catch(function(err) {
+                // GeoJSON file is optional - continue without it
+                console.log("GeoJSON file not found, continuing without road data");
                 initMainPage(csvData, null);
             });
+    })
+    .catch(function(err) {
+        console.error("Failed to load CSV data:", err);
     });
 
 // initMainPage
@@ -61,16 +62,35 @@ function initMainPage(crashData, geoData) {
     // Create visualization instances (don't initialize yet)
     myMapVis = new MapVis('mapDiv', crashData, geoData);
     myMapVis.currentView = 'map'; // Initialize current view
-    myTimelineVis = new TimelineVis('timelineDiv', [minYear, maxYear]);
     myLocationChart = new LocationChart('locationChart', crashData);
 
     // Initialize MapVis first (needed for SVG and projection)
     myMapVis.initVis();
 
-    // Initialize TimelineVis
-    myTimelineVis.initVis();
-
     // LocationChart is already initialized in constructor
+
+    // Initialize year scroll
+    yearScroll = new YearScroll("#yearScrollContainer", {
+        startYear: minYear,
+        endYear: maxYear,
+        onYearChange: (year) => {
+            if (myMapVis) {
+                myMapVis.setYear(year);
+            }
+            if (myLocationChart) {
+                myLocationChart.setYear(year);
+            }
+            // Update improvements when in improvements view
+            if (myImprovementsVis && currentView === 'improvements') {
+                myImprovementsVis.wrangleData(globalCrashData, year);
+            }
+        },
+        width: 836
+    });
+    yearScroll.init();
+
+    // Initialize play button
+    playButton = new PlayButton("#playBtn", yearScroll);
 
     // Create and initialize CrashPointsVis with MapVis's SVG and projection
     myCrashPointsVis = new CrashPointsVis(myMapVis.svg, myMapVis.projection, myMapVis.severityColors);
@@ -78,44 +98,15 @@ function initMainPage(crashData, geoData) {
     myCrashPointsVis.initVis();
 
     // Create and initialize ImprovementsVis with MapVis's SVG and projection
-    myImprovementsVis = new ImprovementsVis(myMapVis.svg, myMapVis.projection, crashData, myTimelineVis);
+    myImprovementsVis = new ImprovementsVis(myMapVis.svg, myMapVis.projection, crashData, yearScroll);
     myMapVis.improvementsVis = myImprovementsVis; // Store reference in MapVis
     myImprovementsVis.initVis();
     myImprovementsVis.onBackClick = function() {
         switchToMapView();
     };
 
-    // Connect timeline to map
-    myTimelineVis.onYearChange = function(year) {
-        myMapVis.setYear(year);
-        myLocationChart.setYear(year);
-        // Update improvements when in improvements view (both manual and playing)
-        if (myImprovementsVis && currentView === 'improvements') {
-            myImprovementsVis.wrangleData(globalCrashData, year);
-        }
-    };
-    
-    // Connect play/pause to improvements
-    if (myTimelineVis) {
-        let originalPlay = myTimelineVis.play;
-        let originalPause = myTimelineVis.pause;
-        
-        myTimelineVis.play = function() {
-            if (originalPlay) originalPlay.call(this);
-            // Draw factors when play starts
-            if (currentView === 'improvements' && myImprovementsVis) {
-                myImprovementsVis.wrangleData(globalCrashData, myTimelineVis.selectedYear);
-            }
-        };
-        
-        myTimelineVis.pause = function() {
-            if (originalPause) originalPause.call(this);
-            // Don't clear factors on pause, just stop updating
-        };
-    }
-
     // Set initial year
-    myTimelineVis.setYear(minYear);
+    yearScroll.setYear(minYear);
     myMapVis.setYear(minYear);
     myLocationChart.setYear(minYear);
 
@@ -153,7 +144,7 @@ function switchToImprovementsView() {
         myImprovementsVis.createFactorFilters();
         myImprovementsVis.createBackButton();
         // Draw factors for current year
-        myImprovementsVis.wrangleData(globalCrashData, myTimelineVis.selectedYear);
+        myImprovementsVis.wrangleData(globalCrashData, yearScroll.getCurrentYear());
     }
 }
 
@@ -203,25 +194,7 @@ function setupImprovementsView() {
         }
     });
     
-    // Set up play button handler
-    d3.select("#playButton").on("click", function() {
-        if (myTimelineVis) {
-            if (myTimelineVis.isPlaying) {
-                myTimelineVis.pause();
-                d3.select(this).classed("playing", false);
-            } else {
-                myTimelineVis.play();
-                d3.select(this).classed("playing", true);
-            }
-        }
-    });
-    
-    // Set up restart button handler
-    d3.select("#restartButton").on("click", function() {
-        if (myTimelineVis) {
-            myTimelineVis.setYear(myTimelineVis.yearRange[0]);
-        }
-    });
+    // Play button and restart button are handled by PlayButton class
     
     // Set up info button handler
     d3.select("#infoButton").on("click", function() {

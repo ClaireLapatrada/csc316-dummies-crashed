@@ -2,156 +2,440 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Toronto Crash Visualization</title>
+	<title>Toronto Collisions Map</title>
 
-	<!-- bootstrap -->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-	<!-- Font Awesome -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- custom css -->
-	<link rel="stylesheet" href="../../css/style.css">
-	<link rel="stylesheet" href="css/style.css">
-
-	<!-- GOOGLE FONTS -->
 	<link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+	
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			background-color: #0A6B4A;
+			font-family: 'Overpass', sans-serif;
+			overflow: hidden;
+			height: 100vh;
+			position: relative;
+		}
+
+		.title-section {
+			position: absolute;
+			top: 8%;
+			left: 5%;
+			right: 25%;
+			z-index: 10;
+		}
+
+		.main-title {
+			color: #FFFFFF;
+			font-family: 'Overpass', sans-serif;
+			font-weight: 700;
+			font-size: 2.5rem;
+			margin: 0;
+			line-height: 1.2;
+		}
+
+		.description-section {
+			position: absolute;
+			top: 20%;
+			left: 5%;
+			right: 25%;
+			z-index: 10;
+			color: #FFFFFF;
+			font-family: 'Overpass', sans-serif;
+			font-weight: 400;
+			font-size: 1.1rem;
+			line-height: 1.6;
+		}
+
+		.filter-buttons {
+			position: absolute;
+			top: 8%;
+			right: 2%;
+			z-index: 10;
+			display: flex;
+			gap: 10px;
+			align-items: center;
+		}
+
+		.tile-label {
+			color: #FFFFFF;
+			font-family: 'Overpass', sans-serif;
+			font-weight: 400;
+			font-size: 0.9rem;
+		}
+
+		.tile {
+			background: #0A6B4A;
+			border: 2px solid #FFFFFF;
+			color: #FFFFFF;
+			padding: 8px 16px;
+			border-radius: 4px;
+			font-family: 'Overpass', sans-serif;
+			font-weight: 400;
+			font-size: 0.9rem;
+			cursor: pointer;
+		}
+
+		.tile.active {
+			background: #FFFFFF;
+			color: #0A6B4A;
+		}
+
+		.filter-dropdown-group {
+			position: relative;
+		}
+
+		.filter-btn {
+			background: #0A6B4A;
+			border: 2px solid #FFFFFF;
+			color: #FFFFFF;
+			padding: 8px 16px;
+			border-radius: 4px;
+			font-family: 'Overpass', sans-serif;
+			font-weight: 400;
+			font-size: 0.9rem;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.filter-btn:hover {
+			background: #0C7B56;
+		}
+
+		.filter-btn::after {
+			content: '▲';
+			font-size: 0.7rem;
+		}
+
+		.filter-checkbox-container {
+			position: absolute;
+			top: 100%;
+			right: 0;
+			margin-top: 5px;
+			background: #FFFFFF;
+			border: 2px solid #0A6B4A;
+			border-radius: 4px;
+			padding: 10px;
+			min-width: 200px;
+			max-width: 250px;
+			max-height: 300px;
+			overflow-y: auto;
+			display: none;
+			z-index: 100;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.filter-dropdown-group.active .filter-checkbox-container {
+			display: block;
+		}
+
+		.filter-checkbox-item {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding: 5px 0;
+			color: #333333;
+			font-family: 'Overpass', sans-serif;
+			font-size: 0.9rem;
+		}
+
+		.filter-checkbox-item:hover {
+			background-color: rgba(10, 107, 74, 0.05);
+			border-radius: 2px;
+		}
+
+		.filter-checkbox-item input[type="checkbox"] {
+			cursor: pointer;
+			accent-color: #0A6B4A;
+		}
+
+		.filter-checkbox-item label {
+			cursor: pointer;
+			user-select: none;
+			color: #333333;
+		}
+
+		.chart-section {
+			flex: 0 1 auto;
+			max-width: 60%;
+			padding: 100px 40px 40px 10%;
+		}
+
+		.description-section-viz {
+			flex: 0 0 auto;
+			padding: 100px 2rem 40px 0;
+			margin-left: 1rem;
+			max-width: 450px;
+			overflow-wrap: break-word;
+			word-wrap: break-word;
+		}
+
+		.main-content-wrapper {
+			position: absolute;
+			top: 35%;
+			left: 5%;
+			right: 3%;
+			bottom: 12%;
+			display: flex;
+			flex-direction: column;
+			padding: 0 !important;
+			margin: 0 !important;
+		}
+
+		.content-top-section {
+			display: flex;
+			flex-direction: row;
+			flex: 1;
+			min-height: 0;
+			gap: 0;
+			overflow: hidden;
+		}
+
+		#mapDiv {
+			flex: 1 1 auto;
+			min-width: 0;
+			display: block;
+			padding: 20px;
+			height: 100%;
+			background: #FFFFFF;
+			border-radius: 8px;
+			overflow: hidden;
+			position: relative;
+			box-sizing: border-box;
+		}
+
+		#mapDiv svg {
+			width: 100%;
+			height: 100%;
+			display: block;
+		}
+
+		#options-panel {
+			flex: 0 0 35%;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			padding: 20px 2rem 20px 1rem;
+			background: transparent;
+			min-width: 0;
+			overflow-wrap: break-word;
+			word-wrap: break-word;
+		}
+
+		#options-panel h6 {
+			color: #FFFFFF;
+			font-family: 'Overpass', sans-serif;
+			font-weight: 400;
+			font-size: 1.1rem;
+			margin-bottom: 20px;
+		}
+
+		#locationChart {
+			height: 300%;
+			min-height: 100px;
+			width: 100%;
+			max-height: none;
+		}
+
+		.timeline-section {
+			position: absolute;
+			bottom: 1%;
+			left: 5%;
+			right: auto;
+			width: auto;
+			z-index: 10;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: flex-start;
+			gap: 20px;
+			padding: 0;
+			margin: 0;
+			box-sizing: border-box;
+			flex-shrink: 0;
+		}
+
+		.timeline-section > * {
+			margin-left: 0 !important;
+			margin-right: 0 !important;
+		}
+
+		#yearScrollContainer {
+			flex: 0 0 auto;
+			min-width: 0;
+			max-width: 836px;
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+
+		#yearScrollContainer svg {
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+
+		.control-buttons {
+			display: flex;
+			gap: 10px;
+		}
+
+		.play-button {
+			background: #FFFFFF !important;
+			border-radius: 50%;
+			width: 50px;
+			height: 50px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+
+		.play-button .play-triangle {
+			border-left: 15px solid #0A6B4A;
+			border-top: 10px solid transparent;
+			border-bottom: 10px solid transparent;
+			margin-left: 3px;
+		}
+
+		.play-button.playing .play-triangle {
+			margin-left: 0 !important;
+			transform: translateX(-4px) !important;
+			border-left: none;
+		}
+
+		.play-button.playing .play-triangle::before,
+		.play-button.playing .play-triangle::after {
+			content: '';
+			position: absolute;
+			width: 4px;
+			height: 12px;
+			background: #0A6B4A;
+			border-radius: 2px;
+		}
+
+		.play-button.playing .play-triangle::before {
+			left: 50%;
+			transform: translateX(-6px) translateY(-50%);
+			top: 50%;
+		}
+
+		.play-button.playing .play-triangle::after {
+			left: 50%;
+			transform: translateX(-2px) translateY(-50%);
+			top: 50%;
+		}
+
+		.restart-button {
+			background: transparent !important;
+			color: #FFFFFF !important;
+		}
+
+		.restart-button svg {
+			stroke: #FFFFFF !important;
+		}
+	</style>
 </head>
-<body class="infographic-container">
+<body>
 
+<div class="title-section">
+	<h1 class="main-title">Toronto Collisions Map</h1>
+</div>
 
-<header class="d-flex justify-content-center align-items-center" style="position: relative;">
-	
-	<h1 class="main-title">
-		<span class="title-line-1">Cumulative Pedestrian Collisions</span>
-		<span class="title-line-2">by Location</span>
-	</h1>
-	
-	<button id="infoButton" style="position: absolute; right: 20px; background: none; border: none; cursor: pointer; font-size: 24px; color: #000; padding: 5px 10px; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor='#e0e0e0'" onmouseout="this.style.backgroundColor='transparent'">ℹ</button>
-</header>
+<div class="description-section">
+	This visualization maps traffic collision patterns across Toronto neighborhoods, revealing where and why accidents occur. The severity map uses color intensity to highlight accident hotspots. In the next page, the improvements view shows factors that could be improved with simple road interventions.
+</div>
 
-
-	<div class="description-section">
-		The final visualization translates these behavioral and outcome-based insights into spatial priorities. The Toronto Collisions Map identifies geographic hotspots and neighborhoods where risks converge, providing a blueprint for where Vision Zero interventions and capital investment can deliver the greatest impact.<br><br>
-	</div>
-
-<!-- Filter Bar above map -->
-<div class="container" style="max-width: 1250px; margin: 20px auto 0;">
-	<div class="filter-bar" style="display: flex; gap: 15px; padding: 10px 20px; align-items: center;">
-		<!-- View Mode Toggle -->
-		<div class="tile-group" data-group="view">
-			<span class="tile-label">View</span>
-			<button class="tile active" id="view-mode-map" data-value="map">Map</button>
-			<button class="tile" id="view-mode-improvements" data-value="improvements">Improvements</button>
-		</div>
-
-		<span class="tile-label">Filters</span>
-		<!-- Severity Filter Dropdown -->
-		<div class="filter-dropdown-group">
-			<button class="filter-btn" id="severity-filter-btn">
-				<i class="fas fa-filter"></i>
-				<span>Severity</span>
-			</button>
-			<div class="filter-checkbox-container" id="severity-checkboxes">
-				<label class="filter-checkbox-label">
-					<input type="checkbox" id="filter-fatal" class="severity-checkbox" checked>
-					<span>Fatal</span>
-				</label>
-				<label class="filter-checkbox-label">
-					<input type="checkbox" id="filter-major" class="severity-checkbox" checked>
-					<span>Major</span>
-				</label>
-				<label class="filter-checkbox-label">
-					<input type="checkbox" id="filter-minor" class="severity-checkbox" checked>
-					<span>Minor</span>
-				</label>
-				<label class="filter-checkbox-label">
-					<input type="checkbox" id="filter-minimal" class="severity-checkbox" checked>
-					<span>Minimal</span>
-				</label>
+<div class="filter-buttons">
+	<span class="tile-label">Filters</span>
+	<div class="filter-dropdown-group" style="position: relative;">
+		<button class="filter-btn" id="severity-filter-btn">
+			<span>Severity</span>
+		</button>
+		<div class="filter-checkbox-container" id="severity-checkboxes">
+			<div class="filter-checkbox-item">
+				<input type="checkbox" id="filter-fatal" class="severity-checkbox" checked>
+				<label for="filter-fatal">Fatal</label>
 			</div>
-		</div>
-
-		<!-- Play and Restart Buttons -->
-		<div class="control-buttons">
-			<div class="play-button" id="playButton">
-				<div class="play-triangle"></div>
+			<div class="filter-checkbox-item">
+				<input type="checkbox" id="filter-major" class="severity-checkbox" checked>
+				<label for="filter-major">Major</label>
 			</div>
-			<div class="restart-button" id="restartButton">
-				<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-					<path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-					<path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-				</svg>
+			<div class="filter-checkbox-item">
+				<input type="checkbox" id="filter-minor" class="severity-checkbox" checked>
+				<label for="filter-minor">Minor</label>
+			</div>
+			<div class="filter-checkbox-item">
+				<input type="checkbox" id="filter-minimal" class="severity-checkbox" checked>
+				<label for="filter-minimal">Minimal</label>
 			</div>
 		</div>
 	</div>
 </div>
 
-<!-- Main Container -->
-<div id="main-container" class="container rounded shadow p-3" style="padding-bottom: 80px !important;">
-	<div class="row">
-		<!-- Map Visualization -->
-		<div id="mapDiv" class="col-9 rounded"></div>
-
-		<!-- Options Panel -->
-		<div id="options-panel" class="col-3 rounded shadow-sm p-3">
-			<div class="mt-4">
-				<h6 class="fw-bold">Top Neighborhoods by Collision Count</h6>
-				<div id="locationChart"></div>
-			</div>
-		</div>
-	</div>
-
-	<div class="row mt-3">
-		<div class="col-9">
-			<div id="timelineDiv" class="rounded"></div>
-		</div>
-		<div class="col-3 d-flex align-items-center justify-content-end">
+<div class="main-content-wrapper">
+	<div class="content-top-section">
+		<div id="mapDiv"></div>
+		<div id="options-panel">
+			<h6>Neighborhoods by Collision Count</h6>
+			<div id="locationChart"></div>
 		</div>
 	</div>
 </div>
 
-<!-- bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<div class="timeline-section">
+	<div id="yearScrollContainer"></div>
+	<div class="control-buttons">
+		<div class="play-button" id="playBtn">
+			<div class="play-triangle"></div>
+		</div>
+		<div class="restart-button" id="restartBtn">
+			<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+				<path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		</div>
+	</div>
+</div>
 
-<!-- d3 -->
 <script src="https://d3js.org/d3.v7.min.js"></script>
-
-<!-- Visualization Classes -->
 <script src="js/crashPointsVis.js"></script>
 <script src="js/mapVis.js"></script>
-<script src="js/timelineVis.js"></script>
+<script src="js/yearScroll.js"></script>
+<script src="js/playButton.js"></script>
 <script src="js/locationChart.js"></script>
 <script src="js/improvementsVis.js"></script>
 <script src="js/main.js"></script>
 
-<!-- Dropdown Filter Toggle -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const filterBtn = document.getElementById('severity-filter-btn');
     const checkboxContainer = document.getElementById('severity-checkboxes');
+    const filterGroup = filterBtn ? filterBtn.closest('.filter-dropdown-group') : null;
 
     if (filterBtn && checkboxContainer) {
         filterBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            checkboxContainer.classList.toggle('show');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!filterBtn.contains(e.target) && !checkboxContainer.contains(e.target)) {
-                checkboxContainer.classList.remove('show');
+            if (filterGroup) {
+                filterGroup.classList.toggle('active');
             }
         });
 
-        // Prevent closing when clicking inside the dropdown
-        checkboxContainer.addEventListener('click', function(e) {
-            e.stopPropagation();
+        document.addEventListener('click', function(e) {
+            if (!filterBtn.contains(e.target) && !checkboxContainer.contains(e.target)) {
+                if (filterGroup) {
+                    filterGroup.classList.remove('active');
+                }
+            }
         });
     }
 });
 </script>
+
 </body>
 </html>

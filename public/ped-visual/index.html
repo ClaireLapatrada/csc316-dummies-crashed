@@ -13,8 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS code -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="css/ped-visual.css">
     <link rel="stylesheet" href="css/iframe-override.css">
 </head>
 <body>
@@ -24,7 +23,6 @@
             <h1 class="main-title">
                 <span class="title-line-1">Cumulative Pedestrian Collisions</span>
                 <span class="title-line-2">by Action</span>
-                <a href="https://data.torontopolice.on.ca/datasets/0a1ee9d9436546dcbdc0ee9301e45e83_0/explore?location=3.764176%2C-79.381430%2C0.00&showTable=true" target="_blank" class="title-line-3">Toronto Police Data</a>
             </h1>
 
             <!-- Description -->
@@ -32,104 +30,85 @@
                 Recognizing the heightened fatality risk for pedestrians warrants a closer examination of pedestrian-specific collision dynamics. This visualization uncovers the actions and behaviors most commonly involved, such as crossing without right-of-way, helping inform educational, regulatory, and infrastructure strategies.<br><br>
                 
             </div>
+            
+            <!-- Filter Buttons (Under Text) -->
+            <div class="filter-buttons">
+            <span class="tile-label">View</span>
+            <div class="tile-group" data-group="view">
+                <button class="tile active" id="view-mode-pedestrian" data-mode="pedestrian" data-value="pedestrian">Pedestrian</button>
+                <button class="tile" id="view-mode-driver" data-mode="driver" data-value="driver">Driver</button>
+            </div>
+            <span class="tile-label">Filters</span>
+            <!-- Severity Filter -->
+            <div class="filter-dropdown-group">
+                <button class="filter-btn" id="severity-filter-btn">
+                    <span>Severity</span>
+                </button>
+                <div class="filter-checkbox-container" id="severity-checkboxes">
+                </div>
+            </div>
+            <!-- Pedestrian Action Filter -->
+            <div class="filter-dropdown-group">
+                <button class="filter-btn" id="pedAct-filter-btn">
+                    <span>Pedestrian Action</span>
+                </button>
+                <div class="filter-checkbox-container" id="pedAct-checkboxes">
+                </div>
+            </div>
+            <!-- Driver Action Filter -->
+            <div class="filter-dropdown-group" style="display: none;">
+                <button class="filter-btn" id="drivAct-filter-btn">
+                    <span>Driver Action</span>
+                </button>
+                <div class="filter-checkbox-container" id="drivAct-checkboxes">
+                </div>
+            </div>
+            <!-- Pedestrian Age Filter -->
+            <div class="filter-dropdown-group">
+                <button class="filter-btn" id="pedAge-filter-btn">
+                    <span>Pedestrian Age</span>
+                </button>
+                <div class="filter-checkbox-container" id="pedAge-checkboxes"></div>
+            </div>
+            <!-- Driver Age Filter -->
+            <div class="filter-dropdown-group" style="display: none;">
+                <button class="filter-btn" id="drivAge-filter-btn">
+                    <span>Driver Age</span>
+                </button>
+                <div class="filter-checkbox-container" id="drivAge-checkboxes"></div>
+            </div>
+            <!-- District Filter -->
+            <div class="filter-dropdown-group">
+                <button class="filter-btn" id="district-filter-btn">
+                    <span>District</span>
+                </button>
+                <div class="filter-checkbox-container" id="district-checkboxes">
+                </div>
+            </div>
         </div>
 
         <!-- Main Visualization Area -->
         <div class="visualization-area">
-            <!-- Controls row: filter bar + play/restart buttons -->
-            <div class="controls-row">
-            <!-- Filter tiles -->
-            <div class="filter-bar" id="filter-bar">
-                        
-                    <!-- View Mode Toggle -->
-                    <div class="tile-group" data-group="view">
-                        <span class="tile-label">View</span>
-                        <button class="tile active" id="view-mode-pedestrian" data-mode="pedestrian" data-value="pedestrian">Pedestrian</button>
-                        <button class="tile" id="view-mode-driver" data-mode="driver" data-value="driver">Driver</button>
-                    </div>
-                    
-                    <span class="tile-label">Filters</span>
-
-                    <!-- Severity Filter -->
-                    <div class="filter-dropdown-group">
-                        <button class="filter-btn" id="severity-filter-btn">
-                            <i class="fas fa-filter"></i>
-                            <span>Severity</span>
-                        </button>
-                        <div class="filter-checkbox-container" id="severity-checkboxes">
-                        </div>
-                    </div>
-
-                    <!-- Pedestrian Action Filter -->
-                    <div class="filter-dropdown-group">
-                        <button class="filter-btn" id="pedAct-filter-btn">
-                            <i class="fas fa-filter"></i>
-                            <span>Pedestrian Action</span>
-                        </button>
-                        <div class="filter-checkbox-container" id="pedAct-checkboxes">
-                        </div>
-                    </div>
-
-                    <!-- Driver Action Filter -->
-                    <div class="filter-dropdown-group" style="display: none;">
-                        <button class="filter-btn" id="drivAct-filter-btn">
-                            <i class="fas fa-filter"></i>
-                            <span>Driver Action</span>
-                        </button>
-                        <div class="filter-checkbox-container" id="drivAct-checkboxes">
-                        </div>
-                    </div>
-
-                    <!-- Pedestrian Age Filter -->
-                    <div class="filter-dropdown-group">
-                        <button class="filter-btn" id="pedAge-filter-btn">
-                            <i class="fas fa-filter"></i>
-                            <span>Pedestrian Age</span>
-                        </button>
-                        <div class="filter-checkbox-container" id="pedAge-checkboxes"></div>
-                    </div>
-
-                    <!-- Driver Age Filter -->
-                    <div class="filter-dropdown-group" style="display: none;">
-                        <button class="filter-btn" id="drivAge-filter-btn">
-                            <i class="fas fa-filter"></i>
-                            <span>Driver Age</span>
-                        </button>
-                        <div class="filter-checkbox-container" id="drivAge-checkboxes"></div>
-                    </div>
-
-                    <!-- District Filter -->
-                    <div class="filter-dropdown-group">
-                        <button class="filter-btn" id="district-filter-btn">
-                            <i class="fas fa-filter"></i>
-                            <span>District</span>
-                        </button>
-                        <div class="filter-checkbox-container" id="district-checkboxes">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Play and Restart Buttons -->
-                <div class="control-buttons">
-                    <div class="play-button">
-                        <div class="play-triangle"></div>
-                    </div>
-                    <div class="restart-button">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
             <!-- Road Visualization -->
             <div class="road-container">
                 <div id="bar-chart"></div>
             </div>
-            
-            <!-- Year Slider -->
-            <div id="year-scroll-container" style="margin-top: 50px; padding-top: 0;" >
+        </div>
+        
+        <!-- Timeline Section -->
+        <div class="timeline-section">
+            <div id="year-scroll-container"></div>
+            <div class="control-buttons">
+                <div class="play-button" id="playBtn">
+                    <div class="play-triangle"></div>
+                </div>
+                <div class="restart-button" id="restartBtn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -139,7 +118,8 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <!-- Year Scroll Component -->
-<script src="../../js/yearScroll.js"></script>
+<script src="js/yearScroll.js"></script>
+<script src="../conditions-visual/js/playButton.js"></script>
 
 <!-- Visualization objects -->
 <script src="js/barChart.js"></script>

@@ -1,0 +1,13 @@
+/* Override styles for iframe display */
+body, html {
+    overflow-x: hidden !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.infographic-container {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: 100vh !important;
+}
+

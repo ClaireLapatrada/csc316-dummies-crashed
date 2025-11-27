@@ -16,12 +16,59 @@
     <style>
         body, html {
             overflow-x: hidden !important;
+            background-color: #0A6B4A !important;
         }
+
+        .infographic-container {
+            background-color: #0A6B4A;
+        }
+
+        .title-section {
+            position: relative !important;
+            margin: 20px 40px !important;
+        }
+
+        .main-title {
+            color: #FFFFFF !important;
+            font-family: 'Overpass', sans-serif !important;
+            font-weight: 700 !important;
+            font-style: normal !important;
+            text-align: left !important;
+        }
+
+
         .timeline-section {
+            position: absolute;
+            bottom: 20%;
+            left: auto;
+            right: 10%;
+            width: auto;
+            z-index: 10;
             display: flex;
-            flex-direction: column;
-            width: 100%;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 20px;
+            padding: 0;
+            margin: 0;
             box-sizing: border-box;
+            flex-shrink: 0;
+        }
+
+        .timeline-section > * {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        .description-section {
+            color: #FFFFFF !important;
+            font-family: 'Overpass', sans-serif !important;
+            font-weight: 400 !important;
+            font-size: 1.1rem !important;
+            line-height: 1.6 !important;
+            text-align: left !important;
+            margin-left: 0 !important;
+            margin-right: auto !important;
         }
         .control-buttons {
             display: flex;
@@ -49,82 +96,137 @@
         }
 
 
+        .timeline-section svg {
+            flex: 1;
+            min-width: 0;
+            max-width: 836px;
+        }
+        .control-buttons {
+            position: absolute;
+            margin-top: 10px;
+            right: -10%;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+            flex-shrink: 0;
+            align-items: center;
+        }
+
+        .play-button {
+            background: #FFFFFF !important;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .play-button .play-triangle {
+            border-left: 15px solid #0A6B4A;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            margin-left: 3px;
+        }
+
+
+
+
+        .play-button.playing .play-triangle::before {
+            left: 50%;
+            transform: translateX(-6px) translateY(-50%);
+            top: 50%;
+        }
+
+        .play-button.playing .play-triangle::after {
+            left: 50%;
+            transform: translateX(-2px) translateY(-50%);
+            top: 50%;
+        }
+
+        .restart-button {
+            background: transparent !important;
+            color: #FFFFFF !important;
+        }
+
+        .restart-button svg {
+            stroke: #FFFFFF !important;
+        }
     </style>
 </head>
 <body>
-    <div class="infographic-container">
-        <!-- Title Section -->
-        <div class="title-section">
-            <h1 class="main-title">
-                <span class="title-line-1">Vehicle Injury Analysis</span>
-                <span class="title-line-2">by Type</span>
-            </h1>
+<div class="infographic-container">
+    <!-- Title Section -->
+    <div class="title-section">
+        <h1 class="main-title">
+            <span class="title-line-1">Vehicle Injury Analysis</span>
+            <span class="title-line-2">by Type</span>
+        </h1>
 
-            <div class="description-section">
-                With the magnitude of collisions established, the next focus is on consequences. The Vehicle Injury Analysis visual details the severity and distribution of injuries across different road users and vehicle types during critical peak hours (e.g., 6:30 PM). This grounding in injury patterns helps clarify where risks are concentrated.
-            </div>
-        </div>
-
-        <!-- Main Visualization Area -->
-        <div class="visualization-area">
-            <div class="main-layout">
-                <!-- Left: Time Slider (Clock) -->
-                <div class="left-panel">
-                    <div id="timeSlider"></div>
-                    <div id="timeDisplay" class="display-text">
-                        <p><strong>Time: </strong><span id="currentTimeDisplay">6:30 PM</span></p>
-                        <p><strong>Time Period: </strong> <span id="timePeriodDisplay">Evening</span></p>
-                    </div>
-                </div>
-
-                <!-- Right: Chart and Timeline -->
-                <div class="right-panel">
-                    <!-- Visualization Container (Bar Chart) -->
-                    <div class="viz-container">
-                        <div id="vizContainer"></div>
-                    </div>
-
-                    <!-- Timeline (Year Scroller) -->
-                    <!-- Timeline (Year Scroller) -->
-                    <div class="timeline-section">
-                        <!-- Buttons on top -->
-                        <div class="control-buttons">
-                            <div class="play-button" id="playBtn">
-                                <div class="play-triangle"></div>
-                            </div>
-                            <div class="restart-button" id="restartBtn">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                    <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                        </div>
-
-                        <div class="scroll-row">
-                            <div id="yearScroller" class="year-scroll"></div>
-                            <div id="yearDisplay" class="display-text" style="display: none;">
-                                Selected Year: <span id="currentYearDisplay">2006</span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+        <div class="description-section">
+            With the magnitude of collisions established, the focus is on consequences. The Vehicle Injury Analysis visual details the severity and distribution of injuries across different road users and vehicle types during critical peak hours. This grounding in injury patterns helps clarify where risks are concentrated.
         </div>
     </div>
 
+    <!-- Main Visualization Area -->
+    <div class="visualization-area">
+        <div class="main-layout">
+            <!-- Left: Time Slider (Clock) -->
+            <div class="left-panel">
+                <div id="timeSlider"></div>
+                <div id="timeDisplay">
+                </div>
+            </div>
+
+            <!-- Right: Chart and Timeline -->
+            <div class="right-panel">
+                <!-- Visualization Container (Bar Chart) -->
+                <div class="viz-container">
+                    <div id="vizContainer"></div>
+                </div>
+
+                <!-- Timeline (Year Scroller) -->
+                <div class="timeline-section">
+                    <!-- Buttons on top -->
+                    <div class="control-buttons">
+                        <div class="play-button" id="playBtn">
+                            <div class="play-triangle"></div>
+                        </div>
+                        <div class="restart-button" id="restartBtn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="scroll-row">
+                        <div id="yearScroller" class="year-scroll"></div>
+                        <div id="yearDisplay" class="display-text" style="display: none;">
+                            Selected Year: <span id="currentYearDisplay">2006</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 
-    <!-- Load JS libraries -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
 
-    <!-- Visualization modules -->
-    <script src="js/vehicleChart.js"></script>
-    <script src="js/yearScroll.js"></script>
-    <script src="js/timeSlider.js"></script>
+<!-- Load JS libraries -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
 
-    <!-- Load data, create visualizations -->
-    <script src="js/main.js"></script>
+<!-- Visualization modules -->
+<script src="js/vehicleChart.js"></script>
+<script src="js/yearScroll.js"></script>
+<script src="js/timeSlider.js"></script>
+
+<!-- Load data, create visualizations -->
+<script src="js/main.js"></script>
 </body>
 </html>
 

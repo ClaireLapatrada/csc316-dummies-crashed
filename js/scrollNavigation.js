@@ -6,7 +6,7 @@ let isScrolling = false;
 let scrollTimeout = null;
 let wheelAccumulator = 0;
 let lastWheelTime = 0;
-const totalPages = 6;
+const totalPages = 14;
 const WHEEL_THRESHOLD = 50; // Minimum accumulated wheel delta to trigger navigation
 const WHEEL_RESET_TIME = 150; // Time in ms to reset wheel accumulator
 
@@ -262,10 +262,19 @@ function initScrollNavigation() {
                 targetPage < totalPages &&
                 Math.abs(currentScrollTop - (targetPage * pageHeight)) < pageHeight * 0.3) {
                 isProgrammaticScroll = true;
+                currentPageIndex = targetPage;
+                updateDotNavigation(targetPage);
                 navigateToPage(targetPage);
                 setTimeout(() => {
                     isProgrammaticScroll = false;
                 }, 100);
+            } else {
+                // Update dots even if not navigating (for smooth transitions)
+                const currentPage = Math.round(currentScrollTop / pageHeight);
+                if (currentPage >= 0 && currentPage < totalPages && currentPage !== currentPageIndex) {
+                    currentPageIndex = currentPage;
+                    updateDotNavigation(currentPage);
+                }
             }
             
             lastScrollTop = currentScrollTop;
@@ -289,8 +298,30 @@ function initScrollNavigation() {
         }
     });
 
+    // Setup dot navigation click handlers
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            if (!isScrolling) {
+                navigateToPage(index);
+            }
+        });
+    });
+
     // Initialize on page 0
     navigateToPage(0, false);
+    updateDotNavigation(0);
+}
+
+// Update dot navigation
+function updateDotNavigation(pageIndex) {
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, index) => {
+        dot.classList.remove('active');
+        if (index === pageIndex) {
+            dot.classList.add('active');
+        }
+    });
 }
 
 // Navigate to a specific page
@@ -317,6 +348,9 @@ function navigateToPage(pageIndex, smooth = true) {
         isScrolling = false;
         return;
     }
+
+    // Update dot navigation
+    updateDotNavigation(pageIndex);
 
     // Use requestAnimationFrame for smoother scrolling
     requestAnimationFrame(() => {
