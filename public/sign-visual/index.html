@@ -11,15 +11,214 @@
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="css/iframe-override.css">
     <style>
-        /* Two-column layout */
-        .chart-text-wrapper {
+        body {
+            background-color: #0A6B4A !important;
+            margin: 0;
+            padding: 0;
+        }
+
+        .infographic-container {
+            width: 100%;
+            height: 100vh;
+            background-color: #0A6B4A;
+            padding: 0 !important;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title-section {
+            position: absolute;
+            top: 8%;
+            left: 5%;
+            z-index: 10;
+        }
+
+        .title-section h1.main-title {
+            color: #FFFFFF !important;
+            font-family: 'Overpass', sans-serif !important;
+            font-weight: 700 !important;
+            font-style: normal !important;
             display: flex;
             flex-direction: row;
+            gap: 0.5rem;
+            align-items: baseline;
+        }
+
+        .title-section .title-line-1 {
+            font-size: 2.5rem;
+            display: inline;
+        }
+
+        .title-section .title-line-2 {
+            font-size: 2.5rem;
+            display: inline;
+        }
+
+        /* Main content area */
+        .main-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 0 !important;
+            margin: 0 !important;
+            position: relative;
+        }
+
+        .content-top-section {
+            display: flex;
+            flex-direction: row;
+            flex: 0 1 auto;
+            min-height: 0;
+            padding-top: 100px;
+        }
+
+        /* Left side - rankings */
+        .rankings-container {
+            flex: 0 1 auto;
+            max-width: 60%;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 4rem;
+            padding: 120px 40px 40px 10%;
+        }
+
+        .rank-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .rank-label {
+            color: #FFFFFF;
+            font-family: 'Overpass', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .rank-sign {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: flex-start;
-            gap: 3rem;
-            max-width: 1400px;
-            margin: 0 auto;
+            position: relative;
+        }
+
+        /* 1st - Car: Yellow diamond */
+        .rank-item:nth-child(1) .rank-sign {
+            background: #FFD700;
+            border: 4px solid #000;
+            transform: rotate(45deg);
+            border-radius: 8px;
+        }
+
+        .rank-item:nth-child(1) .rank-sign img {
+            transform: rotate(-45deg);
+            max-width: 60px;
+            max-height: 60px;
+        }
+
+        /* 2nd - Pedestrian: White rectangular */
+        .rank-item:nth-child(2) .rank-sign {
+            background: #FFFFFF;
+            border: 4px solid #000;
+            border-radius: 4px;
+        }
+
+        .rank-item:nth-child(2) .rank-sign img {
+            max-width: 70px;
+            max-height: 70px;
+        }
+
+        /* 3rd - Bike: White square with green circle */
+        .rank-item:nth-child(3) .rank-sign {
+            background: #FFFFFF;
+            border: 8px solid #0A6B4A;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .rank-item:nth-child(3) .rank-sign::before {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 6px solid #0A6B4A;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .rank-item:nth-child(3) .rank-sign img {
+            max-width: 60px;
+            max-height: 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .rank-name {
+            color: #FFFFFF;
+            font-family: 'Overpass', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        .rank-count {
+            color: #FFFFFF;
+            font-family: 'Overpass', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        /* Right side - description */
+        .container-description {
+            flex: 0 0 450px;
+            display: flex;
+            align-items: center;
+            padding: 120px 2rem 40px 0;
+            background: transparent;
+            margin-left: 1rem;
+        }
+
+        .container-description p.description {
+            font-weight: 400;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #FFFFFF;
+            font-family: 'Overpass', sans-serif;
+        }
+
+        /* Timeline at bottom */
+        .timeline-section {
+            position: relative;
+            width: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 5%;
+            margin-top: -20px;
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+
+        .timeline-section svg {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .timeline-section .year-label {
+            fill: #FFFFFF !important;
+            font-family: 'Overpass', sans-serif !important;
         }
 
         .chart-container {
@@ -27,29 +226,60 @@
             min-width: 600px;
         }
 
-        .container-description {
-            flex: 0 0 400px;
+        #signChartContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #cardsRow {
+            display: none; /* Hide the old cards, we'll use new ones */
+        }
+
+        .control-buttons {
+            position: relative;
+            margin-top: 0;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+            flex-shrink: 0;
+        }
+
+        .play-button {
+            background: #FFFFFF !important;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
+            cursor: pointer;
         }
 
-        .container-description p.description {
-            font-weight: 400;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: #000;
+        .play-button .play-triangle {
+            border-left: 15px solid #0A6B4A;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            margin-left: 3px;
         }
 
-        .infographic-container {
-            width: 100%;
-            padding: 40px 60px;
-            overflow-y: auto;
-            height: 100vh;
+        .play-button.playing .play-triangle {
+            margin-left: 0 !important;
+            transform: translateX(-4px) !important;
         }
 
-        .title-section {
-            margin-bottom: 30px;
+        .play-button.playing .play-triangle::after {
+            right: -8px !important;
+        }
+
+        .restart-button {
+            background: transparent !important;
+            color: #FFFFFF !important;
+        }
+
+        .restart-button svg {
+            stroke: #FFFFFF !important;
         }
     </style>
 </head>
@@ -58,21 +288,80 @@
 <div class="infographic-container">
     <div class="title-section">
         <h1 class="main-title">
-            <span class="title-line-1">Fatal Collisions</span>
-            <span class="title-line-2">by Involvement</span>
+            <span class="title-line-1">Fatal Collisions Ranked</span>
+            <span class="title-line-2">By Involvement</span>
         </h1>
     </div>
 
-    <!-- Two-column layout -->
-    <div class="chart-text-wrapper">
-        <div class="chart-container">
-            <div id="signChartContainer">
+    <div class="main-content-wrapper">
+        <div class="content-top-section">
+            <!-- Left side - Rankings -->
+            <div class="rankings-container">
+                <!-- 1st - Car -->
+                <div class="rank-item">
+                    <div class="rank-label">1st</div>
+                    <div class="rank-sign">
+                        <img src="./svg/car.svg" alt="Car">
+                    </div>
+                    <div class="rank-name">Cars</div>
+                    <div class="rank-count" id="carCount">0</div>
+                </div>
+
+                <!-- 2nd - Pedestrian -->
+                <div class="rank-item">
+                    <div class="rank-label">2nd</div>
+                    <div class="rank-sign">
+                        <img src="./svg/pedestrian.svg" alt="Pedestrian">
+                    </div>
+                    <div class="rank-name">Pedestrian</div>
+                    <div class="rank-count" id="pedestrianCount">0</div>
+                </div>
+
+                <!-- 3rd - Bike -->
+                <div class="rank-item">
+                    <div class="rank-label">3rd</div>
+                    <div class="rank-sign">
+                        <img src="./svg/bike.svg" alt="Bike">
+                    </div>
+                    <div class="rank-name">Bike</div>
+                    <div class="rank-count" id="bikeCount">0</div>
+                </div>
+            </div>
+
+            <!-- Right side - Description -->
+            <div class="container-description">
+                <p class="description">
+                    This chart shows the number of <strong>fatal collisions</strong> for different types of <strong>road users</strong> over the years, including <strong>cyclists</strong>, <strong>car drivers</strong>, and <strong>pedestrians</strong>. <br><br>You can use the <strong>interactive slider</strong> to see how these numbers change each year and compare trends for each category.<br><br> This helps spot which categories are at <strong>higher risk</strong> and understand overall <strong>road safety trends</strong>.
+                </p>
+            </div>
+        </div>
+
+        <!-- Timeline at bottom -->
+        <div class="timeline-section">
+            <div id="yearScrollContainer"></div>
+            <!-- Play button -->
+            <div class="control-buttons">
+                <div class="play-button" id="playBtn">
+                    <div class="play-triangle"></div>
+                </div>
+                <div class="restart-button" id="restartBtn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden chart container for data updates -->
+    <div id="signChartContainer" style="display: none;">
                 <div class="row justify-content-center text-center mb-4" id="cardsRow">
                     <div class="col-4 col-md-2 d-flex justify-content-center">
                         <div class="category-card">
                             <div class="rank" id="bikeRank">1</div>
                             <img src="./svg/bike.svg" class="icon" alt="Bike">
-                            <div class="count" id="bikeCount">0</div>
+                    <div class="count" id="bikeCountOld">0</div>
                             <div class="name">Bike</div>
                         </div>
                     </div>
@@ -80,7 +369,7 @@
                         <div class="category-card">
                             <div class="rank" id="carRank">2</div>
                             <img src="./svg/car.svg" class="icon" alt="Car">
-                            <div class="count" id="carCount">0</div>
+                    <div class="count" id="carCountOld">0</div>
                             <div class="name">Car</div>
                         </div>
                     </div>
@@ -88,35 +377,10 @@
                         <div class="category-card">
                             <div class="rank" id="pedestrianRank">3</div>
                             <img src="./svg/pedestrian.svg" class="icon" alt="Pedestrian">
-                            <div class="count" id="pedestrianCount">0</div>
+                    <div class="count" id="pedestrianCountOld">0</div>
                             <div class="name">Pedestrian</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row justify-content-center mt-4">
-                    <div class="col-md-8">
-                        <div class="control-buttons" style="justify-content: center; margin-bottom: 15px;">
-                            <div class="play-button" id="playBtn">
-                                <div class="play-triangle"></div>
-                            </div>
-                            <div class="restart-button" id="restartBtn">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                    <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div id="yearScrollContainer"></div>
-                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="container-description">
-            <p class="description">
-                This chart shows the number of <strong>fatal collisions</strong> for different types of <strong>road users</strong> over the years, including <strong>cyclists</strong>, <strong>car drivers</strong>, and <strong>pedestrians</strong>. <br><br>You can use the <strong>interactive slider</strong> to see how these numbers change each year and compare trends for each category.<br><br> This helps spot which categories are at <strong>higher risk</strong> and understand overall <strong>road safety trends</strong>.
-            </p>
         </div>
     </div>
 </div>

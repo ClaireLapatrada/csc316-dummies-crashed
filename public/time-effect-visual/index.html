@@ -1,0 +1,344 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Time's Effect on Accidents</title>
+
+    <!-- Load Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS code -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="css/iframe-override.css">
+
+    <style>
+        body {
+            background-color: #0A6B4A !important;
+            margin: 0;
+            padding: 0;
+        }
+
+        .infographic-container {
+            width: 100%;
+            height: 100vh;
+            background-color: #0A6B4A;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title-section {
+            position: absolute;
+            top: 8%;
+            left: 5%;
+            right: 25%;
+            z-index: 10;
+        }
+
+        .title-section h1.main-title {
+            color: #FFFFFF !important;
+            font-family: 'Overpass', sans-serif !important;
+            font-weight: 700 !important;
+            font-style: normal !important;
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+            align-items: baseline;
+            margin: 0;
+            text-align: left;
+            justify-content: flex-start;
+        }
+
+        .title-section .title-line-1 {
+            font-size: 2.5rem;
+            display: inline;
+            color: #FFFFFF !important;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+            line-height: 1.2;
+            text-align: left;
+        }
+
+        .main-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 0 !important;
+            margin: 0 !important;
+            position: relative;
+        }
+
+        .content-top-section {
+            display: flex;
+            flex-direction: row;
+            flex: 0 1 auto;
+            min-height: 0;
+            padding-top: 100px;
+        }
+
+        .chart-section {
+            flex: 0 1 auto;
+            max-width: 60%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 100px 40px 40px 10%;
+            min-height: 0;
+        }
+
+        #barChartContainer {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+        }
+
+        .description-section {
+            flex: 0 0 450px;
+            display: flex;
+            align-items: center;
+            padding: 100px 2rem 40px 0;
+            background: transparent;
+            margin-left: 1rem;
+            max-width: 450px;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        .description-section p {
+            color: #FFFFFF;
+            font-family: 'Overpass', sans-serif;
+            font-weight: 400;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 0;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .timeline-section {
+            position: relative;
+            width: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 5%;
+            margin-top: -20px;
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+
+        .timeline-section svg {
+            flex: 1;
+            min-width: 0;
+            max-width: 836px;
+        }
+
+        .control-buttons {
+            position: relative;
+            margin-top: 0;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+            flex-shrink: 0;
+        }
+
+        .play-button {
+            background: #FFFFFF !important;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .play-button .play-triangle {
+            border-left: 15px solid #0A6B4A;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            margin-left: 3px;
+        }
+
+        .play-button.playing .play-triangle {
+            margin-left: 0 !important;
+            transform: translateX(-4px) !important;
+        }
+
+        .restart-button {
+            background: transparent !important;
+            color: #FFFFFF !important;
+        }
+
+        .restart-button svg {
+            stroke: #FFFFFF !important;
+        }
+
+        .filter-buttons {
+            position: absolute;
+            top: 8%;
+            right: 2%;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+            align-items: center;
+        }
+
+        .filter-dropdown-group {
+            position: relative;
+        }
+
+        .filter-btn {
+            background: #0A6B4A;
+            border: 2px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-family: 'Overpass', sans-serif;
+            font-weight: 400;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover {
+            background: #0C7B56;
+        }
+
+        .filter-btn::after {
+            content: '▲';
+            font-size: 0.7rem;
+        }
+
+        .filter-checkbox-container {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+            background: #FFFFFF;
+            border: 2px solid #0A6B4A;
+            border-radius: 4px;
+            padding: 10px;
+            min-width: 200px;
+            max-width: 250px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-dropdown-group.active .filter-checkbox-container {
+            display: block;
+        }
+
+        .filter-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+            color: #333333;
+            font-family: 'Overpass', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .filter-checkbox-item:hover {
+            background-color: rgba(10, 107, 74, 0.05);
+            border-radius: 2px;
+        }
+
+        .filter-checkbox-item input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: #0A6B4A;
+        }
+
+        .filter-checkbox-item label {
+            cursor: pointer;
+            user-select: none;
+            color: #333333;
+        }
+    </style>
+</head>
+<body>
+    <div class="infographic-container">
+        <!-- Filter Buttons -->
+        <div class="filter-buttons">
+            <!-- Severity Filter -->
+            <div class="filter-dropdown-group">
+                <button class="filter-btn" id="severity-filter-btn">
+                    <span>Severity</span>
+                </button>
+                <div class="filter-checkbox-container" id="severity-checkboxes">
+                </div>
+            </div>
+
+            <!-- District Filter -->
+            <div class="filter-dropdown-group">
+                <button class="filter-btn" id="district-filter-btn">
+                    <span>District</span>
+                </button>
+                <div class="filter-checkbox-container" id="district-checkboxes">
+                </div>
+            </div>
+        </div>
+
+        <!-- Title Section -->
+        <div class="title-section">
+            <h1 class="main-title" id="dynamic-title">
+                <span class="title-line-1">Time's Effect on Accidents</span>
+            </h1>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content-wrapper">
+            <div class="content-top-section">
+                <!-- Chart Section -->
+                <div class="chart-section">
+                    <div id="barChartContainer"></div>
+                </div>
+
+                <!-- Description Section -->
+                <div class="description-section">
+                    <p>
+                        This visualization shows the number of injuries by vehicle type for different times of day and years. Use the year slider and time control to explore how injuries vary across different vehicle types throughout the day and over the years. Click on any vehicle circle to see detailed injury breakdown information.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Timeline at bottom -->
+            <div class="timeline-section">
+                <div id="yearScrollContainer"></div>
+                <!-- Play button -->
+                <div class="control-buttons">
+                    <div class="play-button" id="playBtn">
+                        <div class="play-triangle"></div>
+                    </div>
+                    <div class="restart-button" id="restartBtn">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="js/yearScroll.js"></script>
+    <script src="js/playButton.js"></script>
+    <script src="js/barChart.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
+

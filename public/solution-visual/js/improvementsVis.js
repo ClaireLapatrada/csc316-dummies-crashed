@@ -4,12 +4,12 @@
 
 class ImprovementsVis {
 
-    constructor(svg, projection, crashData, timelineVis) {
+    constructor(svg, projection, crashData, yearScroll) {
         let vis = this;
         vis.svg = svg;
         vis.projection = projection;
         vis.crashData = crashData;
-        vis.timelineVis = timelineVis; // Reference to timelineVis
+        vis.yearScroll = yearScroll; // Reference to yearScroll
         
         // Improvement types configuration
         vis.improvementTypes = {
@@ -391,7 +391,7 @@ class ImprovementsVis {
         playButtonElement.style.justifyContent = "center";
         playButtonElement.style.fontSize = "16px";
         playButtonElement.style.cursor = "pointer";
-        playButtonElement.textContent = (vis.timelineVis && vis.timelineVis.isPlaying) ? "⏸" : "▶";
+        playButtonElement.textContent = (vis.yearScroll && vis.yearScroll.isPlaying) ? "⏸" : "▶";
         
         playButtonElement.onmouseover = function() {
             this.style.backgroundColor = "#333";
@@ -401,15 +401,7 @@ class ImprovementsVis {
         };
         
         playButtonElement.onclick = function() {
-            if (vis.timelineVis) {
-                if (vis.timelineVis.isPlaying) {
-                    vis.timelineVis.pause();
-                    this.textContent = "▶";
-                } else {
-                    vis.timelineVis.play();
-                    this.textContent = "⏸";
-                }
-            }
+            // Play/pause is handled by PlayButton class
         };
         
         // Create back button

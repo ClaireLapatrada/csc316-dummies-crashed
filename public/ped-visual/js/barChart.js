@@ -509,7 +509,7 @@ class BarChart {
         vis.yearScroll = new YearScroll('#year-scroll-container', {
             startYear: 2006,
             endYear: 2023,
-            width: Math.min(containerWidth * 0.9, 800),
+            width: 836,
             onYearChange: (year) => {
                 vis.currentYear = year;
                 vis.processData();
@@ -520,13 +520,21 @@ class BarChart {
         
         vis.yearScroll.init();
         vis.yearScroll.setYear(vis.currentYear);
+        
+        // Initialize PlayButton
+        if (typeof PlayButton !== 'undefined') {
+            vis.playButton = new PlayButton('#playBtn', vis.yearScroll);
+        }
     }
     
     /*
-     * Set up play button functionality
+     * Set up play button functionality (legacy - now using PlayButton class)
      */
     setupPlayButton() {
         let vis = this;
+        
+        // If PlayButton class is available, it's already initialized
+        if (vis.playButton) return;
         
         const playButton = document.querySelector('.play-button');
         if (!playButton) return;

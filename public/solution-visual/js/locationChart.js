@@ -10,34 +10,60 @@ class LocationChart {
     initVis() {
         let vis = this;
 
-        vis.margin = { top: 20, right: 50, bottom: 100, left: 50 };
-        vis.width = 280 - vis.margin.left - vis.margin.right;
-        vis.height = 280 - vis.margin.top - vis.margin.bottom;
+        // Get container dimensions - make it bigger like conditions-visual
+        let container = d3.select("#" + vis.parentElement).node();
+        let containerWidth = container ? container.clientWidth : 850;
+        let containerHeight = container ? container.clientHeight : 560;
+
+        vis.margin = { top: 40, right: 10, bottom: 60, left: 60 };
+        vis.width = containerWidth - vis.margin.left - vis.margin.right;
+        vis.height = containerHeight - vis.margin.top - vis.margin.bottom;
 
         vis.svg = d3.select("#" + vis.parentElement)
+            .html("")
             .append("svg")
             .attr("width", vis.width + vis.margin.left + vis.margin.right)
             .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
             .append("g")
             .attr("transform", `translate(${vis.margin.left},${vis.margin.top})`);
 
+        // Y-axis label - WHITE
         vis.svg.append("text")
             .attr("class", "y-axis-label")
             .attr("transform", "rotate(-90)")
             .attr("x", -vis.height / 2)
             .attr("y", -vis.margin.left + 25)
             .attr("text-anchor", "middle")
-            .style("font-size", "10px")
-            .style("fill", "#333")
+            .attr("font-size", "12px")
+            .attr("fill", "#FFFFFF")
+            .style("fill", "#FFFFFF")
+            .attr("font-family", "Overpass, sans-serif")
             .text("Collisions");
 
-        vis.x = d3.scaleBand().range([0, vis.width]).padding(0.05);
+        vis.x = d3.scaleBand().range([0, vis.width]).padding(0.3);
         vis.y = d3.scaleLinear().range([vis.height, 0]);
 
         vis.xAxis = vis.svg.append("g")
+            .attr("class", "x-axis")
             .attr("transform", `translate(0,${vis.height})`);
 
-        vis.yAxis = vis.svg.append("g");
+        vis.yAxis = vis.svg.append("g")
+            .attr("class", "y-axis");
+
+        // Style Y axis - WHITE
+        vis.yAxis.selectAll("text")
+            .attr("fill", "#FFFFFF")
+            .style("fill", "#FFFFFF")
+            .attr("font-family", "Overpass, sans-serif")
+            .attr("font-size", "12px");
+
+        vis.yAxis.selectAll(".domain")
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 1);
+        
+        vis.yAxis.selectAll(".tick line")
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 1);
 
         vis.updateVis();
     }
@@ -80,14 +106,44 @@ class LocationChart {
         vis.xAxis
             .call(d3.axisBottom(vis.x))
             .selectAll("text")
-            .attr("transform", "rotate(-50)")
+            .attr("transform", "rotate(-45)")
             .style("text-anchor", "end")
-            .style("font-size", "8px")
+            .attr("fill", "#FFFFFF")
+            .style("fill", "#FFFFFF")
+            .style("color", "#FFFFFF")
+            .attr("font-family", "Overpass, sans-serif")
+            .attr("font-size", "12px")
             .attr("dx", "-0.5em")
             .attr("dy", "0.75em")
             .call(this.wrap, vis.x.bandwidth());
 
-        vis.yAxis.call(d3.axisLeft(vis.y).ticks(4));
+        // Style X axis lines - WHITE
+        vis.xAxis.selectAll(".domain")
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 1)
+            .style("stroke", "#FFFFFF");
+        
+        vis.xAxis.selectAll(".tick line")
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 1)
+            .style("stroke", "#FFFFFF");
+
+        vis.yAxis.call(d3.axisLeft(vis.y).ticks(8));
+        
+        // Ensure Y axis is white - force all styles
+        vis.yAxis.selectAll("text")
+            .attr("fill", "#FFFFFF")
+            .style("fill", "#FFFFFF")
+            .attr("font-family", "Overpass, sans-serif")
+            .attr("font-size", "12px");
+
+        vis.yAxis.selectAll(".domain")
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 1);
+        
+        vis.yAxis.selectAll(".tick line")
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 1);
 
         const bars = vis.svg.selectAll(".bar")
             .data(vis.displayData, d => d[0]);
@@ -98,13 +154,14 @@ class LocationChart {
             .attr("width", vis.x.bandwidth())
             .attr("y", d => vis.y(d[1]))
             .attr("height", d => vis.height - vis.y(d[1]))
-            .attr("fill", "#f18f8f")
+            .attr("fill", "#FFD700")
             .merge(bars)
             .transition().duration(300)
             .attr("x", d => vis.x(d[0]))
             .attr("width", vis.x.bandwidth())
             .attr("y", d => vis.y(d[1]))
-            .attr("height", d => vis.height - vis.y(d[1]));
+            .attr("height", d => vis.height - vis.y(d[1]))
+            .attr("fill", "#FFD700");
 
         bars.exit().remove();
 
@@ -116,8 +173,10 @@ class LocationChart {
             .attr("x", d => vis.x(d[0]) + vis.x.bandwidth() / 2)
             .attr("y", d => vis.y(d[1]) - 5)
             .attr("text-anchor", "middle")
-            .style("font-size", "11px")
-            .style("fill", "#333")
+            .attr("font-size", "12px")
+            .attr("fill", "#FFFFFF")
+            .style("fill", "#FFFFFF")
+            .attr("font-family", "Overpass, sans-serif")
             .text(d => d[1])
             .merge(labels)
             .transition().duration(300)

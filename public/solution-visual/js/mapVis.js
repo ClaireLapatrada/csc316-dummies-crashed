@@ -27,8 +27,17 @@ class MapVis {
         let vis = this;
 
         vis.margin = {top: 0, right: 0, bottom: 0, left: 0};
-        vis.width = 829 - vis.margin.left - vis.margin.right;
-        vis.height = 560 - vis.margin.top - vis.margin.bottom;
+        // Get actual container dimensions
+        let container = d3.select("#" + vis.parentElement).node();
+        if (container) {
+            // Account for padding
+            const padding = 40; // 20px on each side
+            vis.width = Math.max(850, (container.clientWidth || 1170) - padding);
+            vis.height = Math.max(560, (container.clientHeight || 784) - padding);
+        } else {
+            vis.width = 1170 - vis.margin.left - vis.margin.right;
+            vis.height = 784 - vis.margin.top - vis.margin.bottom;
+        }
 
         // init drawing area
         vis.svgElement = d3.select("#" + vis.parentElement)
@@ -105,7 +114,7 @@ class MapVis {
                 .projection(vis.projection);
 
         // Draw GeoJSON if available
-        if (vis.geoData && vis.geoData.features) {
+        if (vis.geoData && vis.geoData.features && vis.geoData.features.length > 0) {
             // Draw roads
             vis.roads = vis.svg.selectAll(".road")
                 .data(vis.geoData.features)
@@ -115,7 +124,12 @@ class MapVis {
                 .attr("d", vis.path)
                 .attr("fill", "none")
                 .attr("stroke", "#a7a7a7")
-                .attr("stroke-width", 0.3);
+                .attr("stroke-width", 0.3)
+                .style("opacity", 1);
+            
+            console.log("Roads drawn:", vis.roads.size());
+        } else {
+            console.warn("No geoData or features available for roads. geoData:", vis.geoData);
         }
 
         // Define neighborhood labels data
