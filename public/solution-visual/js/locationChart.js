@@ -112,9 +112,9 @@ class LocationChart {
             .style("fill", "#FFFFFF")
             .style("color", "#FFFFFF")
             .attr("font-family", "Overpass, sans-serif")
-            .attr("font-size", "12px")
-            .attr("dx", "-0.5em")
-            .attr("dy", "0.75em")
+            .attr("font-size", "8.3px")
+            .attr("dx", "1.01em")
+            .attr("dy", "1em")
             .call(this.wrap, vis.x.bandwidth());
 
         // Style X axis lines - WHITE
