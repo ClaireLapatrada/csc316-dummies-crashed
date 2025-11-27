@@ -53,6 +53,7 @@
             gap: 20px;
             padding: 20px 5%;
             margin-top: -20px;
+            right: -20%;
             box-sizing: border-box;
             flex-shrink: 0;
         }
@@ -72,10 +73,11 @@
         #year-scroll-container svg {
             width: 100%;
         }
-        
+
         .control-buttons {
-            position: relative;
-            margin-top: 0;
+            position: absolute;
+            margin-top: 50px;
+            right: 20%;
             z-index: 10;
             display: flex;
             gap: 10px;
@@ -99,7 +101,7 @@
             border-left: 15px solid #0A6B4A;
             border-top: 10px solid transparent;
             border-bottom: 10px solid transparent;
-            margin-left: 3px;
+            margin-left: -10px;
         }
         
         .play-button.playing .play-triangle {
@@ -137,13 +139,13 @@
         .restart-button svg {
             stroke: #FFFFFF !important;
         }
-        
+
         .legend-text {
             color: #FFFFFF !important;
             font-family: 'Overpass', sans-serif !important;
             font-style: normal !important;
         }
-        
+
         .legend-label {
             font-family: 'Overpass', sans-serif !important;
             fill: #FFFFFF !important;

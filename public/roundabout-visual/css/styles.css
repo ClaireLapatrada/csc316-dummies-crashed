@@ -9,7 +9,7 @@ body, html, * {
 
 body {
   background-color: #EBEADD;
-  color: #333;
+  color: #ffffff;
   min-height: 100vh;
   padding: 1.5rem 1rem;
 }
@@ -84,7 +84,7 @@ h1 {
   font-weight: 400;
   font-size: 0.85rem;
   line-height: 1.5;
-  color: #000;
+  color: #ffffff;
 }
 
 /* --- Chart SVG --- */
@@ -101,7 +101,7 @@ h1 {
   padding: 8px 12px;
   font-family: 'Roboto', sans-serif;
   font-size: 13px;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgb(255, 255, 255);
   color: white;
   border-radius: 4px;
   pointer-events: none;

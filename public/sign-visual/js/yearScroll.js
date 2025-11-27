@@ -142,12 +142,12 @@ class YearScroll {
         const svgNode = this.svg.node();
         const svgRect = svgNode.getBoundingClientRect();
         const svgPoint = svgNode.createSVGPoint();
-        
+
         // Convert screen coordinates to SVG coordinates
         svgPoint.x = event.x;
         svgPoint.y = event.y;
         const svgCoordinates = svgPoint.matrixTransform(svgNode.getScreenCTM().inverse());
-        
+
         let x = Math.max(this.margin.left, Math.min(this.width - this.margin.right, svgCoordinates.x));
         this.pedIcon.attr("x", x - 20);
 

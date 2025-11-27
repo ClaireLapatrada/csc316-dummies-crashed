@@ -53,15 +53,7 @@ html {
     font-size: 1.2rem;
 }
 
-.section-description,
-.description-section {
-    margin: 20px auto;
-    max-width: 600px;
-    text-align: left;
-    color: #000;
-    font-size: 0.95rem;
-    line-height: 1.6;
-}
+
 
 /* Visualization Area */
 .visualization-area {
@@ -115,7 +107,7 @@ html {
 }
 
 .display-text {
-    color: #000;
+    color: #ffffff;
     font-family: 'Roboto', sans-serif;
     font-size: 0.85rem;
     margin-top: 5px;
@@ -153,7 +145,7 @@ html {
     position: absolute;
     padding: 12px;
     background: rgba(0, 0, 0, 0.85);
-    color: white;
+    color: #190505;
     border-radius: 4px;
     pointer-events: none;
     opacity: 0;
@@ -211,13 +203,6 @@ html {
     color: #0C7B56;
 }
 
-.record {
-    font-size: 11px;
-    margin: 5px 0;
-    padding: 5px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-}
 
 .click-note {
     margin-top: 10px;
@@ -248,7 +233,7 @@ html {
 
 /* Axis and grid styling */
 .axis text {
-    fill: #000;
+    fill: #ffffff;
     font-family: 'Roboto', sans-serif;
     font-size: 12px;
 }

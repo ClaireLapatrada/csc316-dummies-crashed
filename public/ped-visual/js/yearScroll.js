@@ -3,7 +3,7 @@ class YearScroll {
         startYear = 2006,
         endYear = 2023,
         onYearChange = null,
-        width = 800
+        width = 100
     } = {}) {
         this.containerSelector = containerSelector;
         this.startYear = startYear;

@@ -3,12 +3,12 @@
 
 // Pastel color scheme for vehicle types
 const vehicleColors = {
-    "Automobile": "rgba(136,255,0,0.69)",
-    "Motorcycle": "#FFB347",
-    "Truck": "rgba(215,47,237,0.96)",
-    "Transit": "#61ffd5",
-    "Bicycle": "#CB99C9",
-    "Other": "#FDFD96"
+    "Automobile": "rgba(136,255,0,0.47)",
+    "Motorcycle": "rgba(255,179,71,0.63)",
+    "Truck": "rgba(215,47,237,0.76)",
+    "Transit": "rgba(97,255,213,0.68)",
+    "Bicycle": "rgb(235,152,244)",
+    "Other": "rgb(0,111,255)"
 };
 
 class VehicleChart {
@@ -23,8 +23,8 @@ class VehicleChart {
 
         this.svg = null;
         this.width = 0;
-        this.height = 100;
-        this.margin = { top: 50, right: 30, bottom: 40, left: 60 };
+        this.height = 700;
+        this.margin = { top: 70, right: 40, bottom: 110, left: 80 };
         this.yScale = null;
         this.selectedCircle = null;
     }
@@ -40,16 +40,11 @@ class VehicleChart {
         // Make chart responsive to container size
         const containerRect = container.node().getBoundingClientRect();
         this.width = containerRect.width || Math.min(800, window.innerWidth - 100);
-        this.height = Math.min(400, (window.innerHeight - 300) || 400);
+        this.height = Math.min(500, (window.innerHeight - 200) || 500);
 
-        // Create a centered SVG with proper viewBox
         this.svg = container.append("svg")
-            .attr("width", "100%")
-            .attr("height", "100%")
-            .attr("viewBox", `0 0 ${this.width} ${this.height}`)
-            .attr("preserveAspectRatio", "xMidYMid meet")
-            .style("display", "block")
-            .style("margin", "0 auto");
+            .attr("width", this.width)
+            .attr("height", this.height);
 
         console.log("Vehicle chart initialized with dimensions:", this.width, "x", this.height);
     }
@@ -183,10 +178,10 @@ class VehicleChart {
         this.svg.append("text")
             .attr("class", "accident-count-display")
             .attr("x", this.width / 2)
-            .attr("y", 40)
+            .attr("y", 50)
             .attr("text-anchor", "middle")
-            .style("fill", "#0C7B56")
-            .style("font-size", "24px")
+            .style("fill", "#ffffff")
+            .style("font-size", "28px")
             .style("font-weight", "bold")
             .style("font-family", "Playfair Display, serif")
             .text(`Total Accidents: ${totalAccidents}`);
@@ -208,10 +203,10 @@ class VehicleChart {
             .call(yAxis)
             .append("text")
             .attr("transform", "rotate(-90)")
-            .attr("y", -40)
+            .attr("y", -50)
             .attr("x", -this.height / 2)
             .attr("dy", "1em")
-            .attr("fill", "#000")
+            .attr("fill", "#f67171")
             .attr("text-anchor", "middle")
             .style("font-family", "Roboto, sans-serif")
             .text("Number of Injuries");
@@ -256,7 +251,7 @@ class VehicleChart {
             .attr("cy", this.height - this.margin.bottom) // Start from bottom
             .attr("r", 0) // Start with radius 0
             .attr("fill", d => d.color)
-            .attr("stroke", "#000")
+            .attr("stroke", "#ffffff")
             .attr("stroke-width", 2)
             .style("opacity", 0)
             .style("cursor", "pointer")
@@ -265,17 +260,17 @@ class VehicleChart {
         // Animate new circles in
         circlesEnter
             .transition()
-            .duration(1000)
+            .duration(500)
             .delay((d, i) => i * 150)
             .attr("cy", d => this.yScale(d.totalInjuries))
-            .attr("r", d => d.radius)
+            .attr("r", d => (d.radius)/2)
             .style("opacity", 0.95)
             .ease(d3.easeElasticOut.period(0.6));
 
         // UPDATE: Transition existing circles to new positions
         circles
             .transition()
-            .duration(1000)
+            .duration(200)
             .delay((d, i) => i * 100)
             .attr("cx", (d, i) => {
                 // Find the new index for this vehicle type
@@ -290,7 +285,7 @@ class VehicleChart {
         // EXIT: Animate out circles that are no longer in data
         circles.exit()
             .transition()
-            .duration(800)
+            .duration(100)
             .attr("cy", this.height - this.margin.bottom) // Move to bottom
             .attr("r", 0) // Shrink to zero
             .style("opacity", 0)
@@ -339,14 +334,14 @@ class VehicleChart {
             .attr("cy", 0)
             .attr("r", 7)
             .style("fill", d => vehicleColors[d])
-            .style("stroke", "#000")
+            .style("stroke", "#ffffff")
             .style("stroke-width", 1.5);
 
         legend.append("text")
             .attr("x", 15)
             .attr("y", 0)
             .attr("dy", "0.35em")
-            .style("fill", "#000")
+            .style("fill", "#ffffff")
             .style("font-size", "11px")
             .style("text-anchor", "start")
             .style("font-family", "Roboto, sans-serif")
@@ -380,7 +375,7 @@ class VehicleChart {
                 .attr("r", d => d.radius)
                 .style("filter", "drop-shadow(0 2px 6px rgba(0,0,0,0.4))")
                 .style("stroke-width", 2)
-                .style("stroke", "#000");
+                .style("stroke", "#ffffff");
 
             this.selectedCircle = null;
 
