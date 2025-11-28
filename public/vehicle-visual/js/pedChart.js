@@ -8,12 +8,10 @@ class PedestrianInjuryVisual {
             evening: document.getElementById('evening-bubbles'),
             night: document.getElementById('night-bubbles')
         };
-        // Remove tooltip reference since we don't need it
     }
 
     init() {
         this.setupEventListeners();
-        // Remove tooltip setup
     }
 
     setupEventListeners() {

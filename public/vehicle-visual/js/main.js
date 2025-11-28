@@ -42,7 +42,6 @@ class CollisionMain {
         } catch (error) {
             console.error('Error loading data:', error);
             console.log('Falling back to sample data');
-            this.generateSampleData();
         }
     }
 
@@ -98,8 +97,8 @@ class CollisionMain {
                 const injury = d.Injury || 'None';
                 const severity = this.mapSeverity(injury);
 
-                // Extract district
-                const district = this.cleanDistrictName(d.DIVISION || 'Unknown');
+                // Extract district - keep as constant
+                const district = d.DISTRICT || 'Unknown'
 
                 return {
                     year: year,
@@ -108,7 +107,6 @@ class CollisionMain {
                     injury: injury,
                     severity: severity,
                     district: district,
-                    street: d.STREET1 || 'Unknown Street',
                     collisionType: d['Accident Classification'] || 'Unknown'
                 };
             })
@@ -151,20 +149,6 @@ class CollisionMain {
         return severityMap[injury] || 'unknown';
     }
 
-    // Clean district names
-    cleanDistrictName(division) {
-        const districtMap = {
-            'D55': 'Scarborough', 'D54': 'Scarborough', 'D53': 'Scarborough', 'D52': 'Scarborough', 'D51': 'Scarborough',
-            'D41': 'North York', 'D42': 'North York', 'D43': 'North York', 'D44': 'North York', 'D45': 'North York',
-            'D31': 'East York', 'D32': 'East York', 'D33': 'East York',
-            'D21': 'York', 'D22': 'York', 'D23': 'York',
-            'D11': 'Downtown Toronto', 'D12': 'Downtown Toronto', 'D13': 'Downtown Toronto', 'D14': 'Downtown Toronto', 'D15': 'Downtown Toronto',
-            'D61': 'Etobicoke', 'D62': 'Etobicoke', 'D63': 'Etobicoke'
-        };
-
-        const cleanDistricts = ['Scarborough', 'North York', 'East York', 'York', 'Downtown Toronto', 'Etobicoke'];
-        return cleanDistricts.includes(division) ? division : districtMap[division] || 'Unknown';
-    }
 
 
     // Filter methods
