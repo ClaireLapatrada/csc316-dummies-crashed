@@ -7,14 +7,6 @@ class CollisionMain {
         this.currentYear = 2006;
         this.playInterval = null;
 
-        // Available districts from the data
-        this.AVAILABLE_DISTRICTS = [
-            'Scarborough',
-            'North York',
-            'Etobicoke York',
-            'Toronto and East York'
-        ];
-
         this.initializePlayButton();
         this.filters = {
             severity: 'all',
@@ -173,10 +165,6 @@ class CollisionMain {
         });
     }
 
-    // Get available districts for UI components
-    getAvailableDistricts() {
-        return this.AVAILABLE_DISTRICTS;
-    }
 
 
     // Update visualization when year changes
