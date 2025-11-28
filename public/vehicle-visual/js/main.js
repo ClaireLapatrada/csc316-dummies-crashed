@@ -1,6 +1,6 @@
 // Main application controller
 
-class CollisionApp {
+class CollisionMain {
     constructor() {
         this.collisionData = [];
         this.pedestrianData = [];
@@ -214,6 +214,6 @@ class CollisionApp {
 
 // Initialize application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.collisionApp = new CollisionApp();
+    window.collisionApp = new CollisionMain();
     window.collisionApp.init();
 });
