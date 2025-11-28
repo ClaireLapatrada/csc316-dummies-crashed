@@ -4,60 +4,39 @@
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Vehicle Injury Analysis</title>
+    <title>Time's Effect on Accidents for Pedestrian</title>
 
     <!-- Load Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
-    <!-- Custom CSS code -->
-    <link rel="stylesheet" href="../../css/style.css">
-    <link rel="stylesheet" href="css/iframe-override.css">
-
     <style>
+        /* Your existing CSS styles plus the new ones below */
         body, html {
             overflow-x: hidden !important;
             background-color: #0A6B4A !important;
+            margin: 0;
+            padding: 0;
+            font-family: 'Overpass', sans-serif;
+            color: #FFFFFF;
+            height: 100%;
         }
 
         .infographic-container {
             background-color: #0A6B4A;
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .title-section {
-            position: relative !important;
-            margin: 20px 40px !important;
+            margin: 20px 40px 30px 40px;
         }
 
         .main-title {
             color: #FFFFFF !important;
             font-family: 'Overpass', sans-serif !important;
             font-weight: 700 !important;
-            font-style: normal !important;
-            text-align: left !important;
-        }
-
-
-        .timeline-section {
-            position: absolute;
-            bottom: 20%;
-            left: auto;
-            right: 10%;
-            width: auto;
-            z-index: 10;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 20px;
-            padding: 0;
-            margin: 0;
-            box-sizing: border-box;
-            flex-shrink: 0;
-        }
-
-        .timeline-section > * {
-            margin-left: 0 !important;
-            margin-right: 0 !important;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
         }
 
         .description-section {
@@ -66,93 +45,196 @@
             font-weight: 400 !important;
             font-size: 1.1rem !important;
             line-height: 1.6 !important;
-            text-align: left !important;
-            margin-left: 0 !important;
-            margin-right: auto !important;
+            max-width: 800px;
+            opacity: 0.9;
         }
-        .control-buttons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+
+        /* Time Visualization Styles */
+        .time-visualization {
+            margin: 30px 40px;
         }
-        .scroll-row {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            overflow: hidden;
+
+        .time-panels-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
         }
-        .year-scroll {
-            flex: 1;
-            min-width: 0;
+
+        .time-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 300px;
+            transition: all 0.3s ease;
         }
-        .display-text {
-            white-space: nowrap;
+
+        .time-panel:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
         }
-        .right-panel {
-            gap:0;
-        }
-        .section-description{
+
+        .panel-header {
             text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-
-        .timeline-section svg {
-            flex: 1;
-            min-width: 0;
-            max-width: 836px;
+        .time-label {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 5px;
         }
-        .control-buttons {
-            position: absolute;
-            margin-top: 10px;
-            right: -10%;
-            z-index: 10;
+
+        .time-range {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .bubbles-container {
             display: flex;
-            gap: 10px;
-            justify-content: flex-start;
-            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            align-content: flex-start;
+            min-height: 200px;
+            padding: 15px;
+        }
+
+
+        /* Timeline Controls */
+        .timeline-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
             align-items: center;
         }
 
         .play-button {
-            background: #FFFFFF !important;
-            border-radius: 50%;
+            background: #FFFFFF;
+            border-radius: 8px;
             width: 50px;
             height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .play-button .play-triangle {
-            border-left: 15px solid #0A6B4A;
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            margin-left: 3px;
+        .play-button:hover {
+            background: #F0F0F0;
+            transform: scale(1.05);
         }
 
-
-
-
-        .play-button.playing .play-triangle::before {
-            left: 50%;
-            transform: translateX(-6px) translateY(-50%);
-            top: 50%;
+        .play-button.playing {
+            background: #06D6A0;
         }
 
-        .play-button.playing .play-triangle::after {
-            left: 50%;
-            transform: translateX(-2px) translateY(-50%);
-            top: 50%;
+        .play-icon {
+            color: #0A6B4A;
+            font-size: 1.2rem;
+            margin-left: 2px;
         }
 
-        .restart-button {
-            background: transparent !important;
-            color: #FFFFFF !important;
+        .play-button.playing .play-icon {
+            color: #FFFFFF;
         }
 
-        .restart-button svg {
-            stroke: #FFFFFF !important;
+        .filter-dropdown select {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 10px 20px;
+            color: #0A6B4A;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .filter-dropdown select:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            background: #FFFFFF;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            max-width: 300px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .no-data-message {
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            padding: 40px 20px;
+            font-style: italic;
+            font-size: 1rem;
+        }
+
+        @keyframes bubbleAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .time-panels-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .time-panels-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-controls {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .title-section {
+                margin: 20px;
+            }
+
+            .time-visualization {
+                margin: 20px;
+            }
         }
     </style>
 </head>
@@ -160,73 +242,122 @@
 <div class="infographic-container">
     <!-- Title Section -->
     <div class="title-section">
-        <h1 class="main-title">
-            <span class="title-line-1">Vehicle Injury Analysis</span>
-            <span class="title-line-2">by Type</span>
-        </h1>
-
+        <h1 class="main-title">Time's Effect on Accidents for Pedestrian</h1>
         <div class="description-section">
-            With the magnitude of collisions established, the focus is on consequences. The Vehicle Injury Analysis visual details the severity and distribution of injuries across different road users and vehicle types during critical peak hours. This grounding in injury patterns helps clarify where risks are concentrated.
+            This visualization shows the number of injuries by vehicle type for different times of day and years. Use the year slider and time control to explore how injuries vary across different vehicle types throughout the day and over the years.
+            Click on any vehicle circle to see detailed injury breakdown information.
         </div>
     </div>
 
-    <!-- Main Visualization Area -->
-    <div class="visualization-area">
-        <div class="main-layout">
-            <!-- Left: Time Slider (Clock) -->
-            <div class="left-panel">
-                <div id="timeSlider"></div>
-                <div id="timeDisplay">
+
+
+    <!-- Time-of-Day Visualization -->
+    <div class="time-visualization">
+        <!-- Four Time Period Panels -->
+        <div class="time-panels-grid">
+            <!-- Morning Panel -->
+            <div class="time-panel" data-period="morning">
+                <div class="panel-header">
+                    <div class="time-label">Morning</div>
+                    <div class="time-range">8–10 AM</div>
+                </div>
+                <div class="bubbles-container" id="morning-bubbles">
+                    <!-- Vehicle type bubbles will be generated here -->
                 </div>
             </div>
 
-            <!-- Right: Chart and Timeline -->
-            <div class="right-panel">
-                <!-- Visualization Container (Bar Chart) -->
-                <div class="viz-container">
-                    <div id="vizContainer"></div>
+            <!-- Afternoon Panel -->
+            <div class="time-panel" data-period="afternoon">
+                <div class="panel-header">
+                    <div class="time-label">Afternoon</div>
+                    <div class="time-range">10–2 PM</div>
                 </div>
+                <div class="bubbles-container" id="afternoon-bubbles">
+                    <!-- Vehicle type bubbles will be generated here -->
+                </div>
+            </div>
 
-                <!-- Timeline (Year Scroller) -->
-                <div class="timeline-section">
-                    <!-- Buttons on top -->
-                    <div class="control-buttons">
-                        <div class="play-button" id="playBtn">
-                            <div class="play-triangle"></div>
-                        </div>
-                        <div class="restart-button" id="restartBtn">
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
+            <!-- Evening Panel -->
+            <div class="time-panel" data-period="evening">
+                <div class="panel-header">
+                    <div class="time-label">Evening</div>
+                    <div class="time-range">2–6 PM</div>
+                </div>
+                <div class="bubbles-container" id="evening-bubbles">
+                    <!-- Vehicle type bubbles will be generated here -->
+                </div>
+            </div>
+
+            <!-- Night Panel -->
+            <div class="time-panel" data-period="night">
+                <div class="panel-header">
+                    <div class="time-label">Night</div>
+                    <div class="time-range">6–8 PM</div>
+                </div>
+                <div class="bubbles-container" id="night-bubbles">
+                    <!-- Vehicle type bubbles will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Controls -->
+        <div class="timeline-controls">
+            <!-- YearScroll Container - Make sure this exists -->
+            <div class="year-scroll-section">
+                <div id="yearScroller" class="year-scroll-container">
+                    <div class="year-scroll-label" id="currentYearLabel">2016</div>
+                    <div class="year-slider" id="yearSlider">
+                        <div class="year-slider-track" id="yearSliderTrack"></div>
+                        <div class="year-slider-thumb" id="yearSliderThumb"></div>
                     </div>
-
-                    <div class="scroll-row">
-                        <div id="yearScroller" class="year-scroll"></div>
-                        <div id="yearDisplay" class="display-text" style="display: none;">
-                            Selected Year: <span id="currentYearDisplay">2006</span>
-                        </div>
+                    <div class="year-markers">
+                        <div class="year-marker">2016</div>
+                        <div class="year-marker">2022</div>
                     </div>
                 </div>
-
+            </div>
+            <div class="control-buttons">
+                <div class="play-button" id="playBtn">
+                    <div class="play-icon">▶</div>
+                </div>
+                <div class="filter-dropdown">
+                    <select id="severityFilter">
+                        <option value="all">Severity</option>
+                        <option value="fatal">Fatal</option>
+                        <option value="major">Major</option>
+                        <option value="minor">Minor</option>
+                        <option value="minimal">Minimal</option>
+                    </select>
+                </div>
+                <div class="filter-dropdown">
+                    <select id="districtFilter">
+                        <option value="all">District</option>
+                        <option value="Scarborough">Scarborough</option>
+                        <option value="North York">North York</option>
+                        <option value="East York">East York</option>
+                        <option value="York">York</option>
+                        <option value="Downtown Toronto">Downtown Toronto</option>
+                        <option value="Etobicoke">Etobicoke</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
+
 </div>
 
+<div id="tooltip" class="tooltip"></div>
 
 
 <!-- Load JS libraries -->
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <!-- Visualization modules -->
-<script src="js/vehicleChart.js"></script>
 <script src="js/yearScroll.js"></script>
-<script src="js/timeSlider.js"></script>
 
-<!-- Load data, create visualizations -->
+<script src="js/pedChart.js"></script>
 <script src="js/main.js"></script>
+
+
 </body>
 </html>
-

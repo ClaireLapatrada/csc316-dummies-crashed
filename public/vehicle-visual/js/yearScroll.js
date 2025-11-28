@@ -3,7 +3,7 @@ class YearScroll {
         startYear = 2006,
         endYear = 2023,
         onYearChange = null,
-        width = 100
+        width = 800
     } = {}) {
         this.containerSelector = containerSelector;
         this.startYear = startYear;
@@ -21,7 +21,7 @@ class YearScroll {
         console.log('Initializing Pedestrian-Style YearScroll for:', this.containerSelector);
 
         const self = this;
-        const trackY = 40;
+        const trackY = 30;
         const trackHeight = 12;
         const trackWidth = this.width - this.margin.left - this.margin.right;
 
@@ -162,7 +162,7 @@ class YearScroll {
     _onDragEnd() {
         const snappedX = this.xScale(this.currentYear);
         this.pedIcon.transition()
-            .duration(500)
+            .duration(200)
             .ease(d3.easeBackOut)
             .attr("x", snappedX - 20);
         this._updateYearLabels();
@@ -191,7 +191,47 @@ class YearScroll {
     setPlaying(playing) {
         this.isPlaying = playing;
     }
+
+    togglePlay() {
+        if (this.isPlaying) {
+            this.stop();
+        } else {
+            this.play();
+        }
+    }
+
+    play() {
+        this.isPlaying = true;
+        const playBtn = document.getElementById('playBtn');
+        if (playBtn) {
+            playBtn.classList.add('playing');
+        }
+
+        // Start animation
+        this.playInterval = setInterval(() => {
+            let nextYear = this.currentYear + 1;
+            if (nextYear > this.endYear) {
+                nextYear = this.startYear;
+            }
+            this.setYear(nextYear);
+        }, 1000); // Change year every second
+    }
+
+    stop() {
+        this.isPlaying = false;
+        const playBtn = document.getElementById('playBtn');
+        if (playBtn) {
+            playBtn.classList.remove('playing');
+        }
+
+        if (this.playInterval) {
+            clearInterval(this.playInterval);
+            this.playInterval = null;
+        }
+    }
 }
+
+
 
 
 window.YearScroll = YearScroll;
