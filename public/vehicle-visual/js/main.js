@@ -7,6 +7,14 @@ class CollisionMain {
         this.currentYear = 2006;
         this.playInterval = null;
 
+        // Available districts from the data
+        this.AVAILABLE_DISTRICTS = [
+            'Scarborough',
+            'North York',
+            'Etobicoke York',
+            'Toronto and East York'
+        ];
+
         this.initializePlayButton();
         this.filters = {
             severity: 'all',
@@ -31,7 +39,6 @@ class CollisionMain {
         }
     }
 
-
     // Load collision data from CSV
     async loadData() {
         try {
@@ -44,7 +51,6 @@ class CollisionMain {
             console.log('Falling back to sample data');
         }
     }
-
 
     initializePlayButton() {
         const playBtn = document.getElementById('playBtn');
@@ -79,7 +85,6 @@ class CollisionMain {
         console.log('YearScroll initialized successfully');
     }
 
-
     // Process CSV data for visualization
     processData() {
         this.pedestrianData = this.collisionData
@@ -98,7 +103,7 @@ class CollisionMain {
                 const severity = this.mapSeverity(injury);
 
                 // Extract district - keep as constant
-                const district = d.DISTRICT || 'Unknown'
+                const district = d.DISTRICT || 'Unknown';
 
                 return {
                     year: year,
@@ -149,8 +154,6 @@ class CollisionMain {
         return severityMap[injury] || 'unknown';
     }
 
-
-
     // Filter methods
     filterBySeverity(severity) {
         this.filters.severity = severity;
@@ -169,6 +172,12 @@ class CollisionMain {
             return severityMatch && districtMatch;
         });
     }
+
+    // Get available districts for UI components
+    getAvailableDistricts() {
+        return this.AVAILABLE_DISTRICTS;
+    }
+
 
     // Update visualization when year changes
     updateVisualization() {
