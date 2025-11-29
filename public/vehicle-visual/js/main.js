@@ -13,7 +13,6 @@ class CollisionMain {
             district: 'all'
         };
 
-        // Initialize modules - YearController is now in separate file
         this.yearController = null;
         this.visualization = new PedestrianInjuryVisual(this);
     }
