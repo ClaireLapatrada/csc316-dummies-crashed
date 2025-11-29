@@ -56,7 +56,7 @@ class PedestrianInjuryVisual {
         const circle = document.createElement('div');
 
         // All circles are the same size and yellow
-        const size = 35;
+        const size = 15;
 
         circle.className = 'injury-circle';
         circle.style.width = `${size}px`;
