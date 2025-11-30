@@ -4,7 +4,7 @@ let playButton;
 let globalData = [];
 
 // Load data and initialize
-d3.csv("data/dataset.csv").then(function(data) {
+d3.csv("/data/dataset.csv").then(function(data) {
     globalData = data;
     console.log("CSV data loaded:", globalData.length, "records");
     console.log("Sample record:", globalData[0]);

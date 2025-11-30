@@ -311,6 +311,15 @@ function initScrollNavigation() {
     // Initialize on page 0
     navigateToPage(0, false);
     updateDotNavigation(0);
+    
+    // Animate initial page content
+    setTimeout(() => {
+        const initialPage = document.getElementById('page-0');
+        if (initialPage) {
+            initialPage.classList.add('page-active');
+            animatePageContent(initialPage);
+        }
+    }, 100);
 }
 
 // Update dot navigation
@@ -354,6 +363,15 @@ function navigateToPage(pageIndex, smooth = true) {
 
     // Use requestAnimationFrame for smoother scrolling
     requestAnimationFrame(() => {
+        // Add animation classes to the target page
+        const allPages = document.querySelectorAll('.page');
+        allPages.forEach(page => {
+            page.classList.remove('page-entering', 'page-active');
+        });
+        
+        // Add entering animation to target page
+        targetPage.classList.add('page-entering');
+        
         // Scroll to the target page
         targetPage.scrollIntoView({
             behavior: smooth ? 'smooth' : 'auto',
@@ -367,6 +385,12 @@ function navigateToPage(pageIndex, smooth = true) {
 
         // Initialize page-specific content
         initializePageContent(pageIndex);
+        
+        // Trigger text animations on the new page
+        setTimeout(() => {
+            targetPage.classList.add('page-active');
+            animatePageContent(targetPage);
+        }, 100);
 
         // Reset scrolling flag after animation (reduced timeout for faster response)
         const animationDuration = smooth ? 600 : 50;
@@ -374,6 +398,30 @@ function navigateToPage(pageIndex, smooth = true) {
             isScrolling = false;
             scrollTimeout = null;
         }, animationDuration);
+    });
+}
+
+// Animate page content elements
+function animatePageContent(page) {
+    // Animate all text elements with staggered delays
+    const textElements = page.querySelectorAll('h1, h2, h3, h4, h5, h6, p, .intro-title, .safety-box, .viz-container-full');
+    textElements.forEach((el, index) => {
+        el.style.animation = 'none';
+        // Force reflow
+        void el.offsetWidth;
+        el.style.animation = `fadeInUp 0.8s ease-out ${index * 0.1}s both`;
+    });
+    
+    // Animate iframes with a slight delay
+    const iframes = page.querySelectorAll('.viz-iframe');
+    iframes.forEach((iframe, index) => {
+        iframe.style.opacity = '0';
+        iframe.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            iframe.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            iframe.style.opacity = '1';
+            iframe.style.transform = 'scale(1)';
+        }, 200 + index * 100);
     });
 }
 

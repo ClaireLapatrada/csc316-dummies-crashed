@@ -56,14 +56,16 @@ class YearScroll {
             .domain([this.startYear, this.endYear])
             .range([this.margin.left, this.width - this.margin.right]);
 
-        // White horizontal bar with rounded ends
-        this.svg.append("rect")
+        // White horizontal bar with rounded ends (make it draggable)
+        this.track = this.svg.append("rect")
             .attr("x", this.margin.left)
             .attr("y", trackY - trackHeight/2)
             .attr("width", trackWidth)
             .attr("height", trackHeight)
             .attr("rx", trackHeight/2)
-            .attr("fill", "#FFFFFF");
+            .attr("fill", "#FFFFFF")
+            .style("cursor", "pointer")
+            .style("pointer-events", "all");
 
         // Dark green segments creating dashed appearance
         const segmentWidth = 8;
@@ -77,7 +79,8 @@ class YearScroll {
                 .attr("y", trackY - trackHeight/2 + 2)
                 .attr("width", segmentWidth)
                 .attr("height", trackHeight - 4)
-                .attr("fill", "#0A6B4A");
+                .attr("fill", "#0A6B4A")
+                .style("pointer-events", "none"); // Don't block track interactions
         }
 
         // Pedestrian icon at the start
@@ -115,7 +118,45 @@ class YearScroll {
                 self._onDragEnd();
             });
 
+        // Make pedestrian icon draggable
         this.pedIcon.call(dragBehavior);
+        
+        // Create an invisible larger hit area for easier dragging
+        this.trackHitArea = this.svg.append("rect")
+            .attr("x", this.margin.left - 10)
+            .attr("y", trackY - trackHeight/2 - 15)
+            .attr("width", trackWidth + 20)
+            .attr("height", trackHeight + 30)
+            .attr("fill", "transparent")
+            .style("cursor", "pointer")
+            .style("pointer-events", "all");
+        
+        // Make track clickable/draggable - clicking anywhere on track moves the icon
+        const trackDragBehavior = d3.drag()
+            .on("start", function() {
+                self.track.style("cursor", "grabbing");
+                self.trackHitArea.style("cursor", "grabbing");
+            })
+            .on("drag", function(event) { 
+                self._onTrackDrag(event); 
+            })
+            .on("end", function() {
+                self.track.style("cursor", "pointer");
+                self.trackHitArea.style("cursor", "pointer");
+                self._onDragEnd();
+            });
+        
+        this.track.call(trackDragBehavior);
+        this.trackHitArea.call(trackDragBehavior);
+        
+        // Also allow clicking on track to jump to that position
+        this.track.on("click", function(event) {
+            self._onTrackClick(event);
+        });
+        
+        this.trackHitArea.on("click", function(event) {
+            self._onTrackClick(event);
+        });
 
         // Update position initially
         this._updatePedPosition();
@@ -157,6 +198,47 @@ class YearScroll {
             this.currentYear = newYear;
             this._updateYearLabels();
             if (this.onYearChange) this.onYearChange(this.currentYear);
+        }
+    }
+
+    _onTrackDrag(event) {
+        // Same logic as _onDrag but for track dragging
+        event.sourceEvent.stopPropagation(); // Prevent event bubbling
+        
+        const svgNode = this.svg.node();
+        const svgPoint = svgNode.createSVGPoint();
+        
+        svgPoint.x = event.x;
+        svgPoint.y = event.y;
+        const svgCoordinates = svgPoint.matrixTransform(svgNode.getScreenCTM().inverse());
+        
+        let x = Math.max(this.margin.left, Math.min(this.width - this.margin.right, svgCoordinates.x));
+        this.pedIcon.attr("x", x - 20);
+
+        const newYear = Math.round(this.xScale.invert(x));
+        if (newYear !== this.currentYear && newYear >= this.startYear && newYear <= this.endYear) {
+            this.currentYear = newYear;
+            this._updateYearLabels();
+            if (this.onYearChange) this.onYearChange(this.currentYear);
+        }
+    }
+    
+    _onTrackClick(event) {
+        // Handle click on track to jump to that position
+        event.stopPropagation(); // Prevent event bubbling
+        
+        const svgNode = this.svg.node();
+        const svgPoint = svgNode.createSVGPoint();
+        
+        svgPoint.x = event.x;
+        svgPoint.y = event.y;
+        const svgCoordinates = svgPoint.matrixTransform(svgNode.getScreenCTM().inverse());
+        
+        let x = Math.max(this.margin.left, Math.min(this.width - this.margin.right, svgCoordinates.x));
+        const newYear = Math.round(this.xScale.invert(x));
+        
+        if (newYear >= this.startYear && newYear <= this.endYear) {
+            this.setYear(newYear);
         }
     }
 
