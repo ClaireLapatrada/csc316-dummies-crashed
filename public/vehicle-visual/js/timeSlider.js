@@ -272,9 +272,10 @@ class TimeSliderWithHours {
                 .attr("y", position.y)
                 .attr("text-anchor", "middle")
                 .attr("dominant-baseline", "middle")
-                .attr("fill", "#000")
+                .attr("fill", "#FFFFFF")
                 .style("font-size", "14px")
                 .style("font-weight", "bold")
+                .style("font-family", "Overpass, sans-serif")
                 .style("cursor", "pointer")
                 .style("pointer-events", "all")
                 .on("click", function(event) {
@@ -429,14 +430,16 @@ class TimeSliderWithHours {
                     .transition()
                     .duration(300)
                     .style("font-size", "16px")
-                    .style("fill", "#fff")
+                    .style("fill", "#FFFFFF")
+                    .style("font-family", "Overpass, sans-serif")
                     .style("text-shadow", "0 0 5px rgba(0,0,0,0.8)");
             } else {
                 label.element
                     .transition()
                     .duration(300)
                     .style("font-size", "14px")
-                    .style("fill", "#000")
+                    .style("fill", "#FFFFFF")
+                    .style("font-family", "Overpass, sans-serif")
                     .style("text-shadow", "none");
             }
         });
@@ -509,3 +512,6 @@ class TimeSliderWithHours {
         }
     }
 }
+
+// Expose to global scope
+window.TimeSliderWithHours = TimeSliderWithHours;

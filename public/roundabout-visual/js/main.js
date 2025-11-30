@@ -87,7 +87,7 @@ function prop(arr, fn){
 // --- 3. Main Data Loading and Chart Init Function ---
 
 function loadData(){
-  d3.csv('data/collisions.csv', parseRow).then(rows => {
+  d3.csv('/data/collisions.csv', parseRow).then(rows => {
     const data = rows.filter(r => r.accNum && r.date);
 
     // Basic cumulative slice: 2006–2023
@@ -188,6 +188,6 @@ function loadData(){
       .style('color', 'red')
       .style('padding', '2rem')
       .style('text-align', 'center')
-      .text('Error: Could not load data/collisions.csv. Please check the file path and format.');
+      .text('Error: Could not load /data/collisions.csv. Please check the file path and format.');
   });
 }

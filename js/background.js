@@ -11,7 +11,7 @@ const body = d3.select("body");
 
 function initBackground() {
     // Set solid background color to match first page
-    body.style("background", "#EBEADD");
+    body.style("background", "#0A6B4A");
     body.style("background-size", "auto");
     // Disable gradient animation
     // animateGradientShift();
@@ -39,7 +39,7 @@ function animateGradientShift() {
 // update gradient with smooth transition (disabled - using solid color)
 function updateGradient(newColors) {
     // Keep solid background color
-    body.style("background", "#EBEADD");
+    body.style("background", "#0A6B4A");
     body.style("background-size", "auto");
     currentColors = newColors;
 }

@@ -24,7 +24,7 @@ class VehicleChart {
         this.svg = null;
         this.width = 0;
         this.height = 100;
-        this.margin = { top: 50, right: 30, bottom: 40, left: 60 };
+        this.margin = { top: 50, right: 150, bottom: 40, left: 40 };
         this.yScale = null;
         this.selectedCircle = null;
     }
@@ -185,10 +185,10 @@ class VehicleChart {
             .attr("x", this.width / 2)
             .attr("y", 40)
             .attr("text-anchor", "middle")
-            .style("fill", "#0C7B56")
+            .style("fill", "#FFFFFF")
             .style("font-size", "24px")
             .style("font-weight", "bold")
-            .style("font-family", "Playfair Display, serif")
+            .style("font-family", "Overpass, sans-serif")
             .text(`Total Accidents: ${totalAccidents}`);
 
         // Create Y scale
@@ -202,18 +202,26 @@ class VehicleChart {
             .ticks(Math.min(10, Math.max(5, maxInjuries)))
             .tickFormat(d3.format("d"));
 
-        this.svg.append("g")
+        const yAxisGroup = this.svg.append("g")
             .attr("class", "axis")
             .attr("transform", `translate(${this.margin.left},0)`)
-            .call(yAxis)
-            .append("text")
+            .call(yAxis);
+        
+        yAxisGroup.selectAll("text")
+            .style("fill", "#FFFFFF")
+            .style("font-family", "Overpass, sans-serif");
+        
+        yAxisGroup.selectAll(".axis path, .axis line")
+            .style("stroke", "#FFFFFF");
+        
+        yAxisGroup.append("text")
             .attr("transform", "rotate(-90)")
             .attr("y", -40)
             .attr("x", -this.height / 2)
             .attr("dy", "1em")
-            .attr("fill", "#000")
+            .attr("fill", "#FFFFFF")
             .attr("text-anchor", "middle")
-            .style("font-family", "Roboto, sans-serif")
+            .style("font-family", "Overpass, sans-serif")
             .text("Number of Injuries");
 
         // Add horizontal grid lines
@@ -332,7 +340,7 @@ class VehicleChart {
             .enter()
             .append("g")
             .attr("class", "legend")
-            .attr("transform", (d, i) => `translate(${this.width - 120}, ${this.margin.top + 60 + i * 20})`);
+            .attr("transform", (d, i) => `translate(${this.width - 130}, ${this.margin.top + 60 + i * 20})`);
 
         legend.append("circle")
             .attr("cx", 0)
@@ -346,10 +354,10 @@ class VehicleChart {
             .attr("x", 15)
             .attr("y", 0)
             .attr("dy", "0.35em")
-            .style("fill", "#000")
+            .style("fill", "#FFFFFF")
             .style("font-size", "11px")
             .style("text-anchor", "start")
-            .style("font-family", "Roboto, sans-serif")
+            .style("font-family", "Overpass, sans-serif")
             .text(d => d);
     }
 
@@ -488,4 +496,7 @@ class VehicleChart {
         tooltip.classList.remove('show', 'injury-breakdown-tooltip');
     }
 }
+
+// Expose to global scope
+window.VehicleChart = VehicleChart;
 
