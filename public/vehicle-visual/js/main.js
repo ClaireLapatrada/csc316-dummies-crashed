@@ -43,7 +43,7 @@ function getTimePeriod(hours) {
 }
 
 // Load data and initialize
-d3.csv("data/dataset.csv").then(function(data) {
+d3.csv("/data/dataset.csv").then(function(data) {
     globalData = data;
     console.log("CSV data loaded:", globalData.length, "records");
 
@@ -186,7 +186,7 @@ d3.csv("data/dataset.csv").then(function(data) {
         .style("color", "red")
         .style("padding", "2rem")
         .style("text-align", "center")
-        .text("Error: Could not load data/dataset.csv. Please check the file path and format.");
+        .text("Error: Could not load /data/dataset.csv. Please check the file path and format.");
 });
 
 function updateDisplay() {

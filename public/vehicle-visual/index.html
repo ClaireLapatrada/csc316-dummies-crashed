@@ -74,6 +74,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-top: -10px;
         }
         .scroll-row {
             display: flex;
@@ -87,6 +88,15 @@
         }
         .display-text {
             white-space: nowrap;
+            color: #FFFFFF !important;
+            font-family: 'Overpass', sans-serif !important;
+        }
+        
+        #currentYearDisplay,
+        #currentTimeDisplay,
+        #timePeriodDisplay {
+            color: #FFFFFF !important;
+            font-family: 'Overpass', sans-serif !important;
         }
         .right-panel {
             gap:0;
@@ -222,7 +232,7 @@
 
 <!-- Visualization modules -->
 <script src="js/vehicleChart.js"></script>
-<script src="js/yearScroll.js"></script>
+<script src="../shared/js/yearScroll.js"></script>
 <script src="js/timeSlider.js"></script>
 
 <!-- Load data, create visualizations -->
