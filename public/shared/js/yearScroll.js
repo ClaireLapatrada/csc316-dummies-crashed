@@ -81,6 +81,7 @@ class YearScroll {
         }
 
         // Pedestrian icon at the start
+        // Path from public/[visual]/index.html to imgs/ is ../../imgs/
         this.pedIcon = this.svg.append("image")
             .attr("xlink:href", "../../imgs/ped.png")
             .attr("x", this.margin.left - 25)
@@ -195,3 +196,4 @@ class YearScroll {
 
 
 window.YearScroll = YearScroll;
+

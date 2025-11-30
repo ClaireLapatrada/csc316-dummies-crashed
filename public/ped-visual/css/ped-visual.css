@@ -163,7 +163,7 @@ html {
 /* Control Buttons */
 .control-buttons {
     position: relative;
-    margin-top: 0;
+    margin-top: -10px;
     z-index: 10;
     display: flex;
     gap: 10px;
