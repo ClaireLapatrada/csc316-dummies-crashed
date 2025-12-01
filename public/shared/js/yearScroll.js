@@ -3,7 +3,8 @@ class YearScroll {
         startYear = 2006,
         endYear = 2023,
         onYearChange = null,
-        width = 800
+        width = 800,
+        margin = { left: 60, right: 60, top: 40, bottom: 40 }
     } = {}) {
         this.containerSelector = containerSelector;
         this.startYear = startYear;
@@ -14,6 +15,7 @@ class YearScroll {
         this.width = width;
         this.height = 100;
         this.margin = { left: 60, right: 60, top: 40, bottom: 40 };
+        this.margin = { ...this.margin, ...margin };
         this.isPlaying = false;
     }
 
@@ -23,7 +25,6 @@ class YearScroll {
         const self = this;
         const trackY = 30;
         const trackHeight = 12;
-        const trackWidth = this.width - this.margin.left - this.margin.right;
 
         d3.select(this.containerSelector).html("");
 
@@ -51,6 +52,9 @@ class YearScroll {
                 this.svg.attr("viewBox", `0 0 ${this.width} ${this.height}`);
             }
         }
+
+        // Recompute track width now that we know the final rendered width
+        const trackWidth = this.width - this.margin.left - this.margin.right;
 
         this.xScale = d3.scaleLinear()
             .domain([this.startYear, this.endYear])
@@ -174,9 +178,20 @@ class YearScroll {
         }
     }
 
-    _updatePedPosition() {
+    _updatePedPosition(animate = false, duration = 400) {
+        if (!this.pedIcon) return;
+
         const x = this.xScale(this.currentYear);
-        this.pedIcon.attr("x", x - 20);
+        this.pedIcon.interrupt();
+
+        if (animate) {
+            this.pedIcon.transition()
+                .duration(duration)
+                .ease(d3.easeCubicInOut)
+                .attr("x", x - 20);
+        } else {
+            this.pedIcon.attr("x", x - 20);
+        }
     }
 
     _onDrag(event) {
@@ -252,10 +267,10 @@ class YearScroll {
         if (this.onYearChange) this.onYearChange(this.currentYear);
     }
 
-    setYear(year) {
+    setYear(year, { animate = false, duration = 400 } = {}) {
         if (year >= this.startYear && year <= this.endYear) {
             this.currentYear = year;
-            this._updatePedPosition();
+            this._updatePedPosition(animate, duration);
             this._updateYearLabels();
             if (this.onYearChange) this.onYearChange(this.currentYear);
         }

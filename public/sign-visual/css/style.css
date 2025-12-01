@@ -2,15 +2,15 @@ html, body {
     background: #0A6B4A !important;
     color: #000;
     font-family: 'Overpass', sans-serif;
-}
+} */
 
 /* Title */
-.title-section {
+ .title-section {
     text-align: center;
 }
 
 /* Category Cards */
-.category-card {
+ .category-card {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,7 +24,7 @@ html, body {
 .category-card .icon {
     width: 80px;
     height: 105px;
-}
+} 
 
 /* LEFT + RIGHT Layout */
 .viz-box {
@@ -64,7 +64,7 @@ html, body {
 }
 
 /* Infographic container */
-.infographic-container {
+ .infographic-container {
     width: 100%;
     padding: 40px 60px;
     overflow-y: auto;
@@ -73,7 +73,7 @@ html, body {
 
 .title-section {
     margin-bottom: 30px;
-}
+} 
 
 /* Two-column layout */
 .chart-text-wrapper {

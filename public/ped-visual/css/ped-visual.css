@@ -94,6 +94,7 @@ html {
     align-items: flex-start;
     justify-content: flex-start;
     padding: 0 40px;
+    padding-bottom: clamp(60px, 8vh, 140px);
     min-height: auto;
 }
 
@@ -123,16 +124,23 @@ html {
 /* Timeline Section */
 .timeline-section {
     position: relative;
-    width: 100%;
+    width: 80%;
+    max-width: 1000px;
     z-index: 10;
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 20px;
-    padding: 20px 5%;
-    margin-top: 60px;
+    gap: 24px;
+    padding: 20px 24px;
+    margin-top: clamp(50px, 8vh, 140px);
+    margin-left: auto;
+    margin-right: auto;
     box-sizing: border-box;
     flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
 }
 
 .timeline-section svg {
@@ -142,14 +150,7 @@ html {
 }
 
 #year-scroll-container {
-    flex: 0 0 auto;
-    min-width: 0;
-    max-width: 836px;
-    margin: 0;
-    padding: 0;
-}
-
-#year-scroll-container svg {
+    flex: 1 1 auto;
     width: 100%;
     margin: 0;
     padding: 0;
@@ -161,76 +162,29 @@ html {
 }
 
 /* Control Buttons */
+.timeline-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    min-width: 160px;
+}
+
+#currentYearDisplay {
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 1.05rem;
+    text-align: right;
+}
+
 .control-buttons {
     position: relative;
-    margin-top: -10px;
+    margin-top: 0;
     z-index: 10;
     display: flex;
     gap: 10px;
-    justify-content: flex-start;
+    justify-content: center;
     flex-shrink: 0;
-}
-
-.play-button {
-    background: #FFFFFF;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.play-button .play-triangle {
-    border-left: 15px solid #0A6B4A;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    margin-left: 3px;
-}
-
-.play-button.playing .play-triangle {
-    margin-left: 0;
-    transform: translateX(-4px);
-    border-left: none;
-}
-
-.play-button.playing .play-triangle::before,
-.play-button.playing .play-triangle::after {
-    content: '';
-    position: absolute;
-    width: 4px;
-    height: 12px;
-    background: #0A6B4A;
-    border-radius: 2px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.play-button.playing .play-triangle::before {
-    left: 50%;
-    transform: translateX(-6px) translateY(-50%);
-}
-
-.play-button.playing .play-triangle::after {
-    left: 50%;
-    transform: translateX(-2px) translateY(-50%);
-}
-
-.restart-button {
-    background: transparent;
-    color: #FFFFFF;
-    cursor: pointer;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-
-.restart-button svg {
-    stroke: #FFFFFF;
 }
 
 /* Legend Styling */

@@ -153,7 +153,8 @@ class CollisionMain {
 
             // Update YearScroll if the change didn't come from it
             if (!fromYearScroll && this.yearController && this.yearController.setYear) {
-                this.yearController.setYear(year);
+                const animateDuration = Math.max(this.animationSpeed - 100, 300);
+                this.yearController.setYear(year, { animate: true, duration: animateDuration });
             }
 
             this.updateVisualization();
