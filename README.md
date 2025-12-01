@@ -50,12 +50,10 @@ This project is a comprehensive interactive data visualization website that pres
 ## 🌐 Project URLs
 
 ### Live Website
-**URL:** [Add your deployed website URL here]
-- Example: `https://your-username.github.io/csc316-dummies-crashed/` or your hosting URL
+**URL:** (https://clairelapatrada.github.io/csc316-dummies-crashed/)
 
 ### Screencast Videos
 **Main Demo Video:** [Add link to your main screencast video here]
-- Example: YouTube, Vimeo, or other video hosting URL
 
 **Additional Videos (if any):** [Add links to any supplementary videos]
 
