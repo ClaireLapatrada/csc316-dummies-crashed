@@ -10,9 +10,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
     <style>
+        /* Global font override - exclude Font Awesome icons */
+        *:not(.fas):not(.fa):not(.far):not(.fal):not(.fab):not([class*="fa-"]):not(i) {
+            font-family: 'Overpass', sans-serif !important;
+        }
+
+        body {
+            font-family: 'Overpass', sans-serif !important;
+        }
+
+        /* Ensure Font Awesome icons use their own font */
+        i[class*="fa-"],
+        .fas,
+        .far,
+        .fal,
+        .fab,
+        .fa {
+            font-family: "Font Awesome 6 Free" !important;
+        }
 
         .infographic-container {
             background-color: #0A6B4A;
@@ -42,6 +60,10 @@
             opacity: 0.9;
         }
 
+        .description-section p {
+            font-family: 'Overpass', sans-serif !important;
+        }
+
         /* Time Visualization Styles */
         .time-visualization {
             margin: 20px 30px; /* Reduced margins */
@@ -61,6 +83,8 @@
             padding: 15px; /* Reduced from 20px */
             min-height: 250px; /* Reduced from 300px */
             transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
         }
 
         .time-panel:hover {
@@ -74,6 +98,40 @@
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+
+        .info-icon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: rgba(255, 255, 255, 0.7) !important;
+            font-size: 1.1rem !important;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+            z-index: 10;
+            display: inline-block !important;
+            width: 1.1rem !important;
+            height: 1.1rem !important;
+            line-height: 1 !important;
+        }
+
+        .info-icon:hover {
+            color: rgba(255, 255, 255, 1) !important;
+            transform: scale(1.1);
+        }
+
+        /* Ensure Font Awesome icons display correctly */
+        .info-icon.fas,
+        .info-icon.fa-info-circle {
+            font-family: "Font Awesome 6 Free" !important;
+            font-weight: 900 !important;
+        }
+
+        .info-icon.fas::before,
+        .info-icon.fa-info-circle::before {
+            font-family: "Font Awesome 6 Free" !important;
+            font-weight: 900 !important;
         }
 
         .time-label {
@@ -81,20 +139,31 @@
             font-weight: 700;
             color: #FFFFFF;
             margin-bottom: 3px;
+            font-family: 'Overpass', sans-serif !important;
         }
 
         .time-range {
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.8);
+            font-family: 'Overpass', sans-serif !important;
         }
 
         .bubbles-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 11px; /* Reduced from 12px */
+            gap: 6px; /* Reduced spacing between dots */
             justify-content: center;
             align-content: flex-start;
             padding: 11px; /* Reduced from 15px */
+        }
+
+        .no-data-message {
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Overpass', sans-serif !important;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
         }
 
 
@@ -144,22 +213,84 @@
             font-size: 1rem; /* Reduced from 1.2rem */
         }
 
-        .filter-dropdown select {
+        .filter-dropdown-group {
+            position: relative;
+        }
+
+        .filter-btn {
             background: rgba(255, 255, 255, 0.9);
             border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px; /* Reduced from 25px */
-            padding: 8px 16px; /* Reduced from 10px 20px */
+            border-radius: 20px;
+            padding: 8px 20px 8px 16px; /* Added right padding */
             color: #0A6B4A;
             font-weight: 600;
             cursor: pointer;
             outline: none;
             transition: all 0.3s ease;
-            font-size: 0.9rem; /* Reduced */
+            font-size: 0.9rem;
+            font-family: 'Overpass', sans-serif !important;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .filter-dropdown select:hover {
+        .filter-btn:hover {
             border-color: rgba(255, 255, 255, 0.6);
             background: #FFFFFF;
+        }
+
+        .filter-btn::after {
+            content: '▲';
+            font-size: 0.7rem;
+            color: #0A6B4A;
+        }
+
+        .filter-checkbox-container {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+            background: #FFFFFF;
+            border: 2px solid #0A6B4A;
+            border-radius: 4px;
+            padding: 10px;
+            min-width: 200px;
+            max-width: 250px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-dropdown-group.active .filter-checkbox-container {
+            display: block;
+        }
+
+        .filter-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+            color: #333333;
+            font-family: 'Overpass', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .filter-checkbox-item:hover {
+            background-color: rgba(10, 107, 74, 0.05);
+            border-radius: 2px;
+        }
+
+        .filter-checkbox-item input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: #0A6B4A;
+        }
+
+        .filter-checkbox-item label {
+            cursor: pointer;
+            user-select: none;
+            color: #333333;
         }
 
         .tooltip {
@@ -180,6 +311,140 @@
 
         .tooltip.show {
             opacity: 1;
+        }
+
+        /* Time period tooltip */
+        .time-period-tooltip {
+            position: fixed;
+            background: rgba(10, 107, 74, 0.95);
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 2000;
+            min-width: 220px;
+            max-width: 300px;
+            font-family: 'Overpass', sans-serif;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transform: translateY(-10px);
+        }
+
+        .time-period-tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .time-period-tooltip .tooltip-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #FFD166;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 6px;
+            font-family: 'Overpass', sans-serif !important;
+        }
+
+        .time-period-tooltip .tooltip-stat {
+            margin: 6px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Overpass', sans-serif !important;
+        }
+
+        .time-period-tooltip .tooltip-stat-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Overpass', sans-serif !important;
+        }
+
+        .time-period-tooltip .tooltip-stat-value {
+            font-weight: 700;
+            color: #FFD166;
+            font-family: 'Overpass', sans-serif !important;
+        }
+
+        .time-period-tooltip .tooltip-severity {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-family: 'Overpass', sans-serif !important;
+        }
+
+        .time-period-tooltip .tooltip-severity-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 0;
+            font-size: 0.85rem;
+            font-family: 'Overpass', sans-serif !important;
+        }
+
+        /* Circle tooltip for individual collisions */
+        .circle-tooltip {
+            position: fixed;
+            background: rgba(10, 107, 74, 0.98);
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 3000;
+            min-width: 200px;
+            max-width: 280px;
+            font-family: 'Overpass', sans-serif !important;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .circle-tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .circle-tooltip-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            color: #FFD166;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 4px;
+            font-family: 'Overpass', sans-serif !important;
+        }
+
+        .circle-tooltip-item {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-family: 'Overpass', sans-serif !important;
+        }
+
+        .circle-tooltip-label {
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+            margin-right: 10px;
+            font-family: 'Overpass', sans-serif !important;
+        }
+
+        .circle-tooltip-value {
+            font-weight: 600;
+            color: #FFD166;
+            text-align: right;
+            flex-shrink: 0;
+            font-family: 'Overpass', sans-serif !important;
+        }
+
+        /* Circle hover effect */
+        .injury-circle {
+            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
         }
 
         /* Year Scroll Styles */
@@ -265,13 +530,13 @@
             }
 
             .bubbles-container {
-                gap: 6px;
+                gap: 4px; /* Smaller gap for mobile */
                 padding: 8px;
             }
 
             .injury-circle {
-                width: 6px !important;
-                height: 6px !important;
+                width: 5px !important;
+                height: 5px !important;
             }
         }
 
@@ -306,7 +571,7 @@
     <div class="title-section">
         <h1 class="main-title">Time's Effect on Accidents for Pedestrian</h1>
         <div class="description-section">
-            <p style="margin-right: -500px;">Use the year slider and time control to explore how injuries vary across different vehicle types throughout the day and over the years. Click on any vehicle circle to see detailed injury breakdown information. The size of each circle represents the relative number of injuries for that vehicle type during the selected time period.</p>
+            <p style="margin-right: -500px; font-family: 'Overpass', sans-serif !important;">Use the year slider and time control to explore how injuries vary across different vehicle types throughout the day and over the years. Click on any vehicle circle to see detailed injury breakdown information. The size of each circle represents the relative number of injuries for that vehicle type during the selected time period.</p>
         </div>
     </div>
 
@@ -317,6 +582,7 @@
             <!-- Morning Panel -->
             <div class="time-panel" data-period="morning">
                 <div class="panel-header">
+                    <i class="fas fa-info-circle info-icon" data-period="morning"></i>
                     <div class="time-label">Morning</div>
                     <div class="time-range">5AM – 11AM</div>
                 </div>
@@ -328,6 +594,7 @@
             <!-- Afternoon Panel -->
             <div class="time-panel" data-period="afternoon">
                 <div class="panel-header">
+                    <i class="fas fa-info-circle info-icon" data-period="afternoon"></i>
                     <div class="time-label">Afternoon</div>
                     <div class="time-range">11AM – 4PM</div>
                 </div>
@@ -339,6 +606,7 @@
             <!-- Evening Panel -->
             <div class="time-panel" data-period="evening">
                 <div class="panel-header">
+                    <i class="fas fa-info-circle info-icon" data-period="evening"></i>
                     <div class="time-label">Evening</div>
                     <div class="time-range">4PM – 8PM</div>
                 </div>
@@ -350,6 +618,7 @@
             <!-- Night Panel -->
             <div class="time-panel" data-period="night">
                 <div class="panel-header">
+                    <i class="fas fa-info-circle info-icon" data-period="night"></i>
                     <div class="time-label">Night</div>
                     <div class="time-range">8PM – 5AM</div>
                 </div>
@@ -372,23 +641,22 @@
                 <button class="restart-button" id="restartBtn">
                     <i class="fas fa-redo restart-icon"></i>
                 </button>
-                <div class="filter-dropdown">
-                    <select id="severityFilter">
-                        <option value="all">Severity</option>
-                        <option value="fatal">Fatal</option>
-                        <option value="major">Major</option>
-                        <option value="minor">Minor</option>
-                        <option value="minimal">Minimal</option>
-                    </select>
+                <!-- Severity Filter -->
+                <div class="filter-dropdown-group">
+                    <button class="filter-btn" id="severity-filter-btn">
+                        <span>Severity</span>
+                    </button>
+                    <div class="filter-checkbox-container" id="severity-checkboxes">
+                    </div>
                 </div>
-                <div class="filter-dropdown">
-                    <select id="districtFilter">
-                        <option value="all">District</option>
-                        <option value="Scarborough">Scarborough</option>
-                        <option value="North York">North York</option>
-                        <option value="Toronto and East York">Toronto and East York</option>
-                        <option value="Etobicoke York">Etobicoke York</option>
-                    </select>
+
+                <!-- District Filter -->
+                <div class="filter-dropdown-group">
+                    <button class="filter-btn" id="district-filter-btn">
+                        <span>District</span>
+                    </button>
+                    <div class="filter-checkbox-container" id="district-checkboxes">
+                    </div>
                 </div>
             </div>
         </div>
@@ -396,6 +664,7 @@
 </div>
 
 <div id="tooltip" class="tooltip"></div>
+<div id="timePeriodTooltip" class="time-period-tooltip"></div>
 
 <!-- Load JS libraries -->
 <script src="https://d3js.org/d3.v7.min.js"></script>

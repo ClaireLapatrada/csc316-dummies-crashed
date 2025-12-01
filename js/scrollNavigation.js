@@ -6,7 +6,7 @@ let isScrolling = false;
 let scrollTimeout = null;
 let wheelAccumulator = 0;
 let lastWheelTime = 0;
-const totalPages = 14;
+const totalPages = 11;
 const WHEEL_THRESHOLD = 50; // Minimum accumulated wheel delta to trigger navigation
 const WHEEL_RESET_TIME = 150; // Time in ms to reset wheel accumulator
 
@@ -240,12 +240,20 @@ function initScrollNavigation() {
     // Handle scroll events only for edge cases (when user drags scrollbar or uses touch)
     let scrollDebounceTimeout = null;
     let lastScrollTop = pageContainer.scrollTop;
+    let lastUpdateTime = 0;
+    const UPDATE_THROTTLE = 16; // ~60fps
     
     pageContainer.addEventListener('scroll', function() {
         // Ignore scroll events during programmatic scrolling
         if (isProgrammaticScroll || isScrolling) {
             return;
         }
+
+        const now = performance.now();
+        if (now - lastUpdateTime < UPDATE_THROTTLE) {
+            return; // Throttle updates
+        }
+        lastUpdateTime = now;
 
         clearTimeout(scrollDebounceTimeout);
         
@@ -256,29 +264,26 @@ function initScrollNavigation() {
             const pageHeight = window.innerHeight;
             const targetPage = Math.round(currentScrollTop / pageHeight);
             
+            // Update dots immediately for responsive feel
+            if (targetPage >= 0 && targetPage < totalPages && targetPage !== currentPageIndex) {
+                currentPageIndex = targetPage;
+                updateDotNavigation(targetPage);
+            }
+            
             // Only navigate if significantly different from current page
             if (targetPage !== currentPageIndex && 
                 targetPage >= 0 && 
                 targetPage < totalPages &&
                 Math.abs(currentScrollTop - (targetPage * pageHeight)) < pageHeight * 0.3) {
                 isProgrammaticScroll = true;
-                currentPageIndex = targetPage;
-                updateDotNavigation(targetPage);
                 navigateToPage(targetPage);
                 setTimeout(() => {
                     isProgrammaticScroll = false;
                 }, 100);
-            } else {
-                // Update dots even if not navigating (for smooth transitions)
-                const currentPage = Math.round(currentScrollTop / pageHeight);
-                if (currentPage >= 0 && currentPage < totalPages && currentPage !== currentPageIndex) {
-                    currentPageIndex = currentPage;
-                    updateDotNavigation(currentPage);
-                }
             }
             
             lastScrollTop = currentScrollTop;
-        }, 50);
+        }, 10); // Reduced debounce for faster response
     }, { passive: true });
 
     // Handle keyboard navigation
@@ -322,14 +327,23 @@ function initScrollNavigation() {
     }, 100);
 }
 
-// Update dot navigation
+// Update dot navigation - optimized for performance
+let dotsCache = null;
 function updateDotNavigation(pageIndex) {
-    const dots = document.querySelectorAll('.dot');
-    dots.forEach((dot, index) => {
-        dot.classList.remove('active');
-        if (index === pageIndex) {
-            dot.classList.add('active');
-        }
+    // Cache dots on first call
+    if (!dotsCache) {
+        dotsCache = Array.from(document.querySelectorAll('.dot'));
+    }
+    
+    // Use requestAnimationFrame for smooth updates
+    requestAnimationFrame(() => {
+        dotsCache.forEach((dot, index) => {
+            if (index === pageIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
     });
 }
 
@@ -358,7 +372,7 @@ function navigateToPage(pageIndex, smooth = true) {
         return;
     }
 
-    // Update dot navigation
+    // Update dot navigation immediately
     updateDotNavigation(pageIndex);
 
     // Use requestAnimationFrame for smoother scrolling

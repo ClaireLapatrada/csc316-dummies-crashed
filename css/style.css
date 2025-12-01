@@ -7,27 +7,39 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Overpass', sans-serif !important;
 }
 
 html, body {
     background: #0A6B4A !important;
     color: #000;
     overflow: hidden !important;
+    font-family: 'Overpass', sans-serif !important;
 }
 
 html {
     overflow: hidden;
+    font-family: 'Overpass', sans-serif !important;
 }
 
 body {
     height: 100%;
     margin: 0;
     overflow: hidden;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif !important;
     font-weight: 300;
     position: fixed;
     width: 100%;
     background: #0A6B4A !important;
+}
+
+/* Override Bootstrap and any other font declarations */
+body *, 
+html *,
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, button, input, select, textarea,
+label, li, ul, ol, td, th, table {
+    font-family: 'Overpass', sans-serif !important;
 }
 
 /* Override for visualization pages (inside iframes) - allow scrolling */
@@ -51,7 +63,7 @@ html:has(.infographic-container) {
 
 h1 {
     color: #0C7B56;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 700;
     font-size: 2rem;
     text-align: center;
@@ -63,7 +75,7 @@ h1 {
 
 h2 {
     color: #0C7B56;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 700;
     font-size: 1rem;
     text-align: center;
@@ -74,14 +86,14 @@ h2 {
 
 h3, h4, h5, h6 {
     color: #0C7B56;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 700;
     text-shadow: none;
 }
 
 p {
     color: #000;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 400;
     font-size: 0.85rem;
     line-height: 1.5;
@@ -90,7 +102,7 @@ p {
 
 /* Highway Gothic font for road signs */
 .highway-font {
-    font-family: 'Inter', 'Arial Black', 'Arial Bold', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 900;
     font-style: normal;
     letter-spacing: 0.1em;
@@ -107,7 +119,7 @@ p {
 .page h6,
 .page span,
 .page div:not(.highway-font):not(.sign-text) {
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Overpass', sans-serif;
     font-style: italic;
 }
 
@@ -317,61 +329,20 @@ p {
     border-radius: 50%;
     background: #FFFFFF;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease-out;
     opacity: 0.5;
-    animation: fadeIn 0.5s ease-out both;
+    will-change: transform, opacity;
 }
 
 .dot:hover {
     opacity: 0.8;
-    transform: scale(1.3);
-    transition: all 0.2s ease-out;
+    transform: scale(1.2);
 }
 
 .dot.active {
-    opacity: 1;
-    animation: scaleIn 0.3s ease-out;
-}
-
-/* Progressive dot scaling based on page index */
-.dot[data-page="0"].active {
-    width: 10px;
-    height: 10px;
-}
-
-.dot[data-page="1"].active {
     width: 12px;
     height: 12px;
-}
-
-.dot[data-page="2"].active {
-    width: 14px;
-    height: 14px;
-}
-
-.dot[data-page="3"].active {
-    width: 16px;
-    height: 16px;
-}
-
-.dot[data-page="4"].active {
-    width: 18px;
-    height: 18px;
-}
-
-.dot[data-page="5"].active {
-    width: 20px;
-    height: 20px;
-}
-
-.dot[data-page="6"].active {
-    width: 22px;
-    height: 22px;
-}
-
-.dot[data-page="7"].active {
-    width: 24px;
-    height: 24px;
+    opacity: 1;
 }
 
 /* Visualization Pages */
@@ -515,7 +486,7 @@ p {
 }
 
 .main-title-text {
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Overpass', sans-serif;
     font-style: italic;
     font-size: 3.2rem;
     color: #0C7B56;
@@ -526,7 +497,7 @@ p {
 }
 
 .subtitle-text {
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Overpass', sans-serif;
     font-style: italic;
     font-size: 2rem;
     color: #0C7B56;
@@ -585,7 +556,7 @@ p {
 
 
 .question-text {
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Overpass', sans-serif;
     color: #0C7B56;
     font-style: italic;
     font-size: 2.5rem;
@@ -608,7 +579,7 @@ p {
 
 .control-label {
     color: #0C7B56;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     margin: 0;
@@ -616,7 +587,7 @@ p {
 
 .display-text {
     color: #000;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 0.85rem;
     margin-top: 5px;
 }
@@ -709,7 +680,7 @@ p {
     backdrop-filter: blur(10px);
     cursor: pointer;
     transition: all 0.3s ease;
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: 'Overpass', sans-serif;
 }
 
 .nav-button:hover {
@@ -855,7 +826,7 @@ p {
 .side-sign-year-item {
     padding: 0.8rem 0;
     color: rgba(255, 255, 255, 0.5);
-    font-family: 'Inter', 'Arial Black', 'Arial Bold', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 400;
     font-size: 1.4rem;
     transition: all 0.3s ease;
@@ -884,7 +855,7 @@ p {
     top: 55%;
     left: 60%;
     transform: translate(-50%, -50%);
-    font-family: 'Inter', 'Arial Black', 'Arial Bold', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 900;
     font-style: normal;
     font-size: 2rem;
@@ -1041,7 +1012,7 @@ p {
 
 /* Text styling - Times New Roman Italic */
 .question-text {
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Overpass', sans-serif;
     color: #0C7B56;
     font-style: italic;
     font-size: 2.5rem;
@@ -1059,7 +1030,7 @@ p {
 
 /* Highway Gothic for signs */
 .highway-font {
-    font-family: 'Inter', 'Arial Black', 'Arial Bold', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 900;
     font-style: normal;
     letter-spacing: 0.1em;
@@ -1097,7 +1068,7 @@ p {
     font-size: 2.5rem;
     line-height: 1.4;
     margin: 0.5rem 0;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Overpass', sans-serif;
     font-style: italic;
 }
 
@@ -1266,7 +1237,7 @@ p {
 }
 
 .tile-label {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-style: italic;
     font-weight: 700;
     color: #0C7B56;
@@ -1277,7 +1248,7 @@ p {
     border: 1px solid rgba(12,123,86,.45);
     background: rgba(255,255,255,.55);
     color: #000;
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 13px;
     line-height: 1;
     padding: 8px 12px;
@@ -1322,7 +1293,7 @@ p {
     border: 1px solid rgba(12,123,86,.45);
     background: rgba(255,255,255,.55);
     color: #000;
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 13px;
     border-radius: 999px;
     cursor: pointer;
@@ -1350,7 +1321,7 @@ p {
     border: 1px solid rgba(12,123,86,.45);
     border-radius: 5px;
     background: #fff;
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
     display: none;
     z-index: 1000;
@@ -1405,7 +1376,7 @@ p {
 
 .filter-checkbox-item label {
     cursor: pointer;
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
     color: #333;
     flex: 1;
@@ -1450,7 +1421,7 @@ p {
 }
 
 .filter-label {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 500;
     font-size: 20px;
     color: #000;
@@ -1583,7 +1554,7 @@ p {
 }
 
 .timeline-label {
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 14px;
     color: #000;
     position: absolute;
@@ -1635,7 +1606,7 @@ p {
 }
 
 .marker-label {
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 16px;
     color: #0C7B56;
     font-weight: 700;
@@ -1732,7 +1703,7 @@ p {
 }
 
 .bar-label {
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
     fill: #FFFFFF;
     font-weight: 700;
@@ -1741,7 +1712,7 @@ p {
 }
 
 .emoji-icon {
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 24px;
     fill: #000;
     pointer-events: none;
@@ -1756,13 +1727,13 @@ p {
 }
 
 .axis {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
 }
 
 .axis text {
     fill: #000;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
 }
 
@@ -1798,7 +1769,7 @@ p {
 }
 
 .axis-label {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
     font-weight: 500;
     fill: #111;
@@ -1823,7 +1794,7 @@ p {
 }
 
 .circle-count {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: bold;
     text-anchor: middle;
     pointer-events: none;
@@ -1831,7 +1802,7 @@ p {
 }
 
 .vehicle-label {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: bold;
     text-anchor: middle;
     pointer-events: none;
@@ -1875,7 +1846,7 @@ p {
 
 .legend-text {
     color: #0C7B56;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 14px;
     line-height: 1.2;
     word-wrap: break-word;
@@ -1883,7 +1854,7 @@ p {
 }
 
 .legend-label {
-    font-family: 'Playfair Display', serif !important;
+    font-family: 'Overpass', sans-serif !important;
     font-size: 16px !important;
     fill: #000000 !important;
     font-style: italic !important;
@@ -1894,7 +1865,7 @@ p {
 
 .legend text {
     fill: #000;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 11px;
 }
 
@@ -1911,7 +1882,7 @@ p {
     border: 1px solid #0C7B56;
     border-radius: 8px;
     pointer-events: none;
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
     line-height: 1.4;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -2100,7 +2071,7 @@ p {
 .main-viz-page h1,
 .main-viz-page h5,
 .main-viz-page p {
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Overpass', sans-serif;
     font-style: italic;
 }
 
@@ -2169,7 +2140,7 @@ p {
     align-items: center;
     justify-content: center;
     color: #0C7B56;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Overpass', sans-serif;
     font-style: italic;
     font-size: 1.5rem;
 }
@@ -2312,7 +2283,7 @@ p {
 }
 
 .options-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 700;
     font-size: 25px;
     color: #0C7B56;
@@ -2320,7 +2291,7 @@ p {
 }
 
 #options-panel h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 700;
     color: #0C7B56;
 }
@@ -2349,7 +2320,7 @@ p {
 }
 
 #improvement-modal {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
 }
 
 #improvement-modal h2 {
@@ -2691,7 +2662,7 @@ header {
 
 header h1 {
     color: #0C7B56 !important;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 700;
 }
 
