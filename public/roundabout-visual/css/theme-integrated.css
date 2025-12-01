@@ -2,7 +2,7 @@
 
 /* Base */
 html, body {
-  font-family: 'Roboto', sans-serif !important;
+    font-family: 'Overpass', sans-serif !important;
   background: transparent !important;           /* let parent gradient show through */
   color: rgba(255,255,255,0.85);
   overflow: hidden;                              /* preserve original behavior */
@@ -12,7 +12,7 @@ html, body {
 .title-section { top: 24px !important; left: 24px !important; }
 .main-title {
   color: rgba(255,255,255,0.9) !important;
-  font-family: 'Roboto', sans-serif !important;
+    font-family: 'Overpass', sans-serif !important;
   font-weight: 700 !important;
   font-style: normal !important;
   letter-spacing: .2px;
@@ -55,7 +55,7 @@ html, body {
 /* Bars, labels, dividers */
 .bar { rx: 10px !important; ry: 10px !important; }
 .bar-label {
-  font-family: 'Roboto', sans-serif !important;
+    font-family: 'Overpass', sans-serif !important;
   font-weight: 700 !important;
   fill: #fff !important;
   text-shadow: 0 1px 2px rgba(0,0,0,0.6) !important;
@@ -71,7 +71,7 @@ html, body {
   box-shadow: 0 6px 24px rgba(0,0,0,0.25);
 }
 .legend-text {
-  font-family: 'Roboto', sans-serif !important;
+    font-family: 'Overpass', sans-serif !important;
   color: rgba(255,255,255,0.85) !important;
   font-style: normal !important;
 }
@@ -84,13 +84,13 @@ html, body {
 /* Timeline + slider in white */
 .timeline-line { background: rgba(255,255,255,0.4) !important; }
 .timeline-label {
-  font-family: 'Roboto', sans-serif !important;
+    font-family: 'Overpass', sans-serif !important;
   color: rgba(255,255,255,0.8) !important;
   font-style: normal !important;
 }
 .marker-dot { background: #fff !important; }
 .marker-label {
-  font-family: 'Roboto', sans-serif !important;
+    font-family: 'Overpass', sans-serif !important;
   color: #fff !important;
   font-weight: 700 !important;
   font-style: normal !important;
@@ -100,7 +100,7 @@ html, body {
 
 /* Axes/text defaults */
 .axis, .x-axis .tick text, .y-axis .tick text {
-  font-family: 'Roboto', sans-serif !important;
+    font-family: 'Overpass', sans-serif !important;
   fill: rgba(255,255,255,0.8) !important;
 }
 .x-axis .domain, .y-axis .domain,
@@ -113,7 +113,7 @@ html, body {
 .filter-bar .tile.active { background: #fff !important; color: #4b1e7a !important; }
 
 /* Prevent inherited serif anywhere */
-* { font-family: 'Roboto', sans-serif; }
+* { font-family: 'Overpass', sans-serif; }
 
 /* Scoped filter tiles — place in the file that loads last */
 .filter-bar {

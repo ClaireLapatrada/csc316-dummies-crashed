@@ -36,10 +36,7 @@ function countFatalAccidentsByType(yearData, year) {
 }
 
 function updateCountsAndRanks(year) {
-    const yearDisplay = document.getElementById('currentYearDisplay');
-    if (yearDisplay) {
-        yearDisplay.textContent = year;
-    }
+    // Removed yearDisplay - not needed with new timeline structure
 
     categories.forEach(cat => {
         const cardElement = document.getElementById(`${cat.id}Card`);
@@ -108,20 +105,15 @@ d3.csv('/data/dataset.csv').then(csvData => {
         console.log(`Year ${year}:`, data[year]);
     });
 
-    const timelineSection = document.querySelector('.timeline-section');
-    const computedWidth = timelineSection
-        ? Math.max(timelineSection.getBoundingClientRect().width - 220, 600)
-        : 900;
-
     const signScroll = new YearScroll("#yearScrollContainer", {
         startYear: actualStartYear,
         endYear: actualEndYear,
         onYearChange: updateCountsAndRanks,
-        width: computedWidth
+        width: 836
     });
     signScroll.init();
 
-    const playButton = new PlayButton('#playBtn', signScroll, 600, 400);
+    const playButton = new PlayButton('#playBtn', signScroll);
 
     updateCountsAndRanks(signScroll.getCurrentYear());
 

@@ -20,19 +20,20 @@
 
         .infographic-container {
             width: 100%;
-            min-height: 100vh;
+            height: 100vh;
             background-color: #0A6B4A;
-            padding: clamp(30px, 5vh, 60px) clamp(60px, 7vw, 110px) 60px clamp(100px, 9vw, 160px);
-            box-sizing: border-box;
+            padding: 0 !important;
+            overflow: hidden;
+            position: relative;
             display: flex;
             flex-direction: column;
-            gap: clamp(18px, 3vh, 36px);
         }
 
         .title-section {
-            position: relative;
+            position: absolute;
+            top: 8%;
+            left: 5%;
             z-index: 10;
-            max-width: 760px;
         }
 
         .title-section h1.main-title {
@@ -60,34 +61,30 @@
         .main-content-wrapper {
             display: flex;
             flex-direction: column;
-            gap: clamp(20px, 2vh, 32px);
-            flex: 1 1 auto;
-        }
-
-        .content-top-section,
-        .timeline-section,
-        .description-panel {
-            width: 100%;
-            max-width: 1100px;
-            margin: 0 auto;
+            height: 100vh;
+            padding: 0 !important;
+            margin: 0 !important;
+            position: relative;
         }
 
         .content-top-section {
             display: flex;
-            justify-content: center;
-            padding: 0;
+            flex-direction: row;
+            flex: 0 1 auto;
+            min-height: 0;
+            padding-top: 100px;
         }
 
-        /* Left side - rankings */
+        /* Left side - rankings (smaller) */
         .rankings-container {
+            flex: 0 1 auto;
+            max-width: 50%;
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: flex-start;
-            gap: clamp(1.2rem, 3vw, 3rem);
-            padding: 0;
-            width: 100%;
-            max-width: 1100px;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 3rem;
+            padding: 120px 40px 40px 10%;
         }
 
         .rank-item {
@@ -103,13 +100,13 @@
             color: #FFFFFF;
             font-family: 'Overpass', sans-serif;
             font-weight: 700;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             margin-bottom: 0.5rem;
         }
 
         .rank-sign {
-            width: 110px;
-            height: 110px;
+            width: 90px;
+            height: 90px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -126,8 +123,8 @@
 
         .rank-item:nth-child(1) .rank-sign img {
             transform: rotate(-45deg);
-            max-width: 60px;
-            max-height: 60px;
+            max-width: 50px;
+            max-height: 50px;
         }
 
         /* 2nd - Pedestrian: White rectangular */
@@ -138,8 +135,8 @@
         }
 
         .rank-item:nth-child(2) .rank-sign img {
-            max-width: 70px;
-            max-height: 70px;
+            max-width: 55px;
+            max-height: 55px;
         }
 
         /* 3rd - Bike: White square with green circle */
@@ -153,8 +150,8 @@
         .rank-item:nth-child(3) .rank-sign::before {
             content: '';
             position: absolute;
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             border: 6px solid #0A6B4A;
             border-radius: 50%;
             top: 50%;
@@ -163,8 +160,8 @@
         }
 
         .rank-item:nth-child(3) .rank-sign img {
-            max-width: 60px;
-            max-height: 60px;
+            max-width: 50px;
+            max-height: 50px;
             position: relative;
             z-index: 1;
         }
@@ -173,7 +170,7 @@
             color: #FFFFFF;
             font-family: 'Overpass', sans-serif;
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1rem;
             margin-top: 0.5rem;
         }
 
@@ -181,121 +178,137 @@
             color: #FFFFFF;
             font-family: 'Overpass', sans-serif;
             font-weight: 700;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
         }
 
-        .description-panel {
-            padding: clamp(1.5rem, 3vw, 2.5rem) 0;
+        /* Right side - description */
+        .description-section {
+            flex: 0 0 450px;
+            display: flex;
+            align-items: center;
+            padding: 120px 2rem 40px 0;
+            background: transparent;
+            margin-left: 1rem;
+            max-width: 450px;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        .description-section p {
             color: #FFFFFF;
             font-family: 'Overpass', sans-serif;
+            font-weight: 400;
+            font-size: 1.1rem;
             line-height: 1.6;
-        }
-
-        .description-panel p {
             margin: 0;
-            font-size: 1.05rem;
-            color: #FFFFFF;
-        }
-
-        /* Timeline at bottom */
-        .timeline-section {
             width: 100%;
-            display: flex;
-            justify-content: center;
+            max-width: 100%;
         }
 
-        .timeline-card {
-            width: min(100%, 1100px);
+        /* Timeline at bottom - same as vehicle-visual */
+        .timeline-section {
+            position: relative;
+            width: 100%;
+            z-index: 10;
             display: flex;
             flex-direction: row;
             align-items: center;
-            gap: 24px;
-            padding: 20px 24px;
-            margin-top: clamp(30px, 5vh, 60px);
+            gap: 20px;
+            padding: 20px 5%;
+            margin-top: -20px;
             box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
         }
 
-        #yearScrollContainer {
-            flex: 1 1 auto;
-            min-width: 0;
-            width: 100%;
-        }
-
-        .timeline-card svg {
+        .timeline-section svg {
             flex: 1;
             min-width: 0;
+            max-width: 836px;
         }
 
-        .timeline-card .year-label {
+        .timeline-section .year-label {
             fill: #FFFFFF !important;
             font-family: 'Overpass', sans-serif !important;
         }
 
-        .chart-container {
-            flex: 1 1 auto;
-            min-width: 600px;
-        }
-
-        #signChartContainer {
+        .control-buttons {
             display: flex;
-            flex-direction: column;
+            gap: 12px;
             align-items: center;
         }
 
-        #cardsRow {
-            display: none; /* Hide the old cards, we'll use new ones */
-        }
-
-        .timeline-actions {
+        .play-button, .restart-button {
+            background: #FFFFFF;
+            border-radius: 6px;
+            width: 45px;
+            height: 45px;
             display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 12px;
-            min-width: 160px;
-        }
-
-        .year-display {
-            color: #FFFFFF;
-            font-weight: 600;
-            font-size: 1.05rem;
-            text-align: right;
-        }
-
-        .control-buttons {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            gap: 10px;
+            align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: #0A6B4A;
+        }
+
+        .play-button:hover, .restart-button:hover {
+            background: #F0F0F0;
+            transform: scale(1.05);
+        }
+
+        .play-button.playing {
+            background: #06D6A0;
+            color: white;
+        }
+
+        .play-button .play-icon, .restart-button .restart-icon {
+            font-size: 1rem;
+        }
+
+        #signChartContainer {
+            display: none; /* Hide the old chart container */
+        }
+
+        #cardsRow {
+            display: none; /* Hide the old cards */
         }
 
         @media (max-width: 1200px) {
-            .infographic-container {
-                padding-left: clamp(70px, 10vw, 120px);
-                padding-right: clamp(30px, 6vw, 80px);
+            .rankings-container {
+                max-width: 45%;
+                gap: 2rem;
             }
 
-            .description-panel {
-                max-width: none;
+            .description-section {
+                flex: 0 0 400px;
+                max-width: 400px;
             }
         }
 
         @media (max-width: 768px) {
+            .content-top-section {
+                flex-direction: column;
+                padding-top: 80px;
+            }
+
+            .rankings-container {
+                max-width: 100%;
+                padding: 40px 20px;
+                justify-content: center;
+            }
+
+            .description-section {
+                flex: 1 1 auto;
+                max-width: 100%;
+                padding: 20px 2rem;
+            }
+
             .timeline-section {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 12px;
+                padding: 20px;
             }
-
-            .rankings-container {
-                gap: 1.2rem;
-            }
-
         }
 
         @media (max-width: 700px) {
@@ -308,7 +321,6 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="../shared/css/play-controls.css">
 </head>
 <body>
 
@@ -322,6 +334,7 @@
 
     <div class="main-content-wrapper">
         <div class="content-top-section">
+            <!-- Left side - rankings (smaller) -->
             <div class="rankings-container">
                 <!-- 1st - Car -->
                 <div class="rank-item">
@@ -353,30 +366,27 @@
                     <div class="rank-count" id="bikeCount">0</div>
                 </div>
             </div>
-        </div>
 
-        <!-- Timeline directly beneath visuals -->
-        <div class="timeline-section">
-            <div class="timeline-card">
-                <div id="yearScrollContainer"></div>
-                <div class="timeline-actions">
-                    <div id="currentYearDisplay" class="year-display"></div>
-                    <div class="control-buttons">
-                        <button class="play-button" id="playBtn" type="button">
-                            <i class="fas fa-play play-icon"></i>
-                        </button>
-                        <button class="restart-button" id="restartBtn" type="button">
-                            <i class="fas fa-redo restart-icon"></i>
-                        </button>
-                    </div>
-                </div>
+            <!-- Right side - description -->
+            <div class="description-section">
+                <p>
+                    This chart shows the number of <strong>fatal collisions</strong> for different types of <strong>road users</strong> over the years, including <strong>cyclists</strong>, <strong>car drivers</strong>, and <strong>pedestrians</strong>. <br><br>You can use the <strong>interactive slider</strong> to see how these numbers change each year and compare trends for each category.<br><br> This helps spot which categories are at <strong>higher risk</strong> and understand overall <strong>road safety trends</strong>.
+                </p>
             </div>
         </div>
 
-        <div class="description-panel">
-            <p>
-                This chart shows the number of <strong>fatal collisions</strong> for different types of <strong>road users</strong> over the years, including <strong>cyclists</strong>, <strong>car drivers</strong>, and <strong>pedestrians</strong>. <br><br>You can use the <strong>interactive slider</strong> to see how these numbers change each year and compare trends for each category.<br><br> This helps spot which categories are at <strong>higher risk</strong> and understand overall <strong>road safety trends</strong>.
-            </p>
+        <!-- Timeline at bottom - same as vehicle-visual -->
+        <div class="timeline-section">
+            <div id="yearScrollContainer"></div>
+            <!-- Play button -->
+            <div class="control-buttons">
+                <button class="play-button" id="playBtn" type="button">
+                    <i class="fas fa-play play-icon"></i>
+                </button>
+                <button class="restart-button" id="restartBtn" type="button">
+                    <i class="fas fa-redo restart-icon"></i>
+                </button>
+            </div>
         </div>
     </div>
 

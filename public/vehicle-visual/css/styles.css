@@ -108,7 +108,7 @@ html {
 
 .control-label {
     color: #0C7B56;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     margin: 0;
@@ -116,7 +116,7 @@ html {
 
 .display-text {
     color: #000;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 0.85rem;
     margin-top: 5px;
 }
@@ -159,7 +159,7 @@ html {
     opacity: 0;
     transition: opacity 0.2s;
     z-index: 1000;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 13px;
     max-width: 300px;
 }
@@ -175,7 +175,7 @@ html {
 .injury-breakdown h3 {
     margin-top: 0;
     color: #0C7B56;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
 }
 
 .injury-stats {
@@ -249,7 +249,7 @@ html {
 /* Axis and grid styling */
 .axis text {
     fill: #000;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
 }
 

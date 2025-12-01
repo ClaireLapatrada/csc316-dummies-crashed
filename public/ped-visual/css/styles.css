@@ -7,7 +7,7 @@
 
 body {
     background-color: #0A6B4A; /* Match main page background */
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     overflow-x: hidden;
     overflow-y: hidden;
     height: 100vh;
@@ -40,7 +40,7 @@ html {
 
 .main-title {
     color: #0C7B56; /* Match main page color */
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 700;
     line-height: 1.2;
     font-style: italic;
@@ -286,7 +286,7 @@ html {
 
 .legend-text {
     color: #0C7B56;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 14px;
     line-height: 1.2;
     word-wrap: break-word;
@@ -412,7 +412,7 @@ html {
 }
 
 .timeline-label {
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 14px;
     color: #000;
     position: absolute;
@@ -464,7 +464,7 @@ html {
 }
 
 .marker-label {
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 16px;
     color: #0C7B56;
     font-weight: 700;
@@ -499,7 +499,7 @@ html {
 }
 
 .bar-label {
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
     fill: #FFFFFF;
     font-weight: 700;
@@ -508,7 +508,7 @@ html {
 }
 
 .emoji-icon {
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 24px;
     fill: #000;
     pointer-events: none;
@@ -521,7 +521,7 @@ html {
 
 /* Axis styling */
 .axis {
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
 }
 
@@ -563,7 +563,7 @@ html {
 }
 
 .tile-label{
-  font-family:'Playfair Display', serif;
+  font-family: 'Overpass', sans-serif;
   font-style:italic;
   font-weight:700;
   color:#0C7B56;
@@ -575,7 +575,7 @@ html {
   border:1px solid rgba(12,123,86,.45); /* #0C7B56 with transparency */
   background:rgba(255,255,255,.55);
   color:#000;
-  font-family:Arial, sans-serif;
+  font-family: 'Overpass', sans-serif;
   font-size:13px;
   line-height:1;
   padding:8px 12px;
@@ -641,7 +641,7 @@ html {
     border: 1px solid rgba(12,123,86,.45);
     background: rgba(255,255,255,.55);
     color: #000;
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 13px;
     border-radius: 999px;
     cursor: pointer;
@@ -669,7 +669,7 @@ html {
     border: 1px solid rgba(12,123,86,.45);
     border-radius: 5px;
     background: #fff;
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
     display: none;
     z-index: 1000;
@@ -740,7 +740,7 @@ html {
 
 .filter-checkbox-item label {
     cursor: pointer;
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
     color: #333;
     flex: 1;
@@ -775,7 +775,7 @@ html {
     border: 1px solid #0C7B56;
     border-radius: 8px;
     pointer-events: none;
-    font-family: Arial, sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 12px;
     line-height: 1.4;
     color: #333;

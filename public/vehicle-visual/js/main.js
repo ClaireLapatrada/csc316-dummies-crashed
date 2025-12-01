@@ -6,8 +6,8 @@ class CollisionMain {
         this.currentYear = 2006;
 
         this.filters = {
-            severity: 'all',
-            district: 'all'
+            severity: 'all', // Can be 'all' or array of selected values
+            district: 'all'  // Can be 'all' or array of selected values
         };
 
         this.yearController = null;
@@ -39,9 +39,42 @@ class CollisionMain {
     async loadData() {
         try {
             this.collisionData = await d3.csv("/data/dataset.csv");
-            this.processData();
             console.log('Data loaded:', this.collisionData.length, 'records');
-            console.log('Pedestrian incidents:', this.pedestrianData.length, 'records');
+            
+            // Debug: Check for pedestrian field names
+            if (this.collisionData.length > 0) {
+                const sampleKeys = Object.keys(this.collisionData[0]);
+                const pedFields = sampleKeys.filter(k => 
+                    k.toLowerCase().includes('pedestrian') || 
+                    k === 'PEDESTRIAN'
+                );
+                console.log('Pedestrian-related fields found:', pedFields);
+                
+                // Check sample values
+                const samplePedValues = this.collisionData.slice(0, 10).map(d => ({
+                    'Pedestrian Involved': d['Pedestrian Involved'],
+                    'PEDESTRIAN': d['PEDESTRIAN'],
+                    'Pedestrian': d['Pedestrian']
+                }));
+                console.log('Sample pedestrian field values:', samplePedValues);
+            }
+            
+            this.processData();
+            console.log('Pedestrian incidents after processing:', this.pedestrianData.length, 'records');
+            
+            // Debug: Show time period distribution
+            if (this.pedestrianData.length > 0) {
+                const timePeriodCounts = {};
+                this.pedestrianData.forEach(d => {
+                    timePeriodCounts[d.timePeriod] = (timePeriodCounts[d.timePeriod] || 0) + 1;
+                });
+                console.log('Time period distribution:', timePeriodCounts);
+            }
+
+            // Setup filters after data is loaded
+            if (this.visualization) {
+                this.visualization.refreshFilters();
+            }
         } catch (error) {
             console.error('Error loading data:', error);
             console.log('Falling back to sample data');
@@ -171,22 +204,28 @@ class CollisionMain {
     // Process CSV data for visualization
     processData() {
         this.pedestrianData = this.collisionData
-            .filter(d => d['Pedestrian Involved'] === 'Yes')
+            .filter(d => {
+                // Check multiple possible field names for pedestrian involvement
+                const pedInvolved = d['Pedestrian Involved'] || 
+                                   d['PEDESTRIAN'] || 
+                                   d['Pedestrian'] || '';
+                return pedInvolved === 'Yes' || pedInvolved === 'yes' || pedInvolved === 'Y' || pedInvolved === 'y';
+            })
             .map(d => {
                 // Extract year
                 const year = d.Year ? parseInt(d.Year) :
                     d['Year of collision'] ? parseInt(d['Year of collision']) : 2006;
 
                 // Extract time and determine period
-                const timeStr = d['Time of Collision'] || '';
+                const timeStr = d['Time of Collision'] || d['Time'] || d['TIME'] || '';
                 const timePeriod = this.getTimePeriodFromTime(timeStr);
 
                 // Extract injury severity
-                const injury = d.Injury || 'None';
+                const injury = d.Injury || d['Injury Severity'] || 'None';
                 const severity = this.mapSeverity(injury);
 
                 // Extract district - keep as constant
-                const district = d.DISTRICT || 'Unknown';
+                const district = d.DISTRICT || d['District Name'] || d['District'] || 'Unknown';
 
                 return {
                     year: year,
@@ -206,20 +245,44 @@ class CollisionMain {
         if (!timeStr) return 'unknown';
 
         try {
-            const [time, period] = timeStr.split(' ');
-            let hours = parseInt(time.split(':')[0]);
+            // Handle different time formats
+            let hours = 0;
+            
+            // Check if it's already in 24-hour format (e.g., "18:30" or just "18")
+            if (timeStr.includes(':')) {
+                const parts = timeStr.split(' ');
+                const timePart = parts[0];
+                const period = parts[1];
+                
+                hours = parseInt(timePart.split(':')[0]);
+                
+                // Convert to 24-hour format if AM/PM is present
+                if (period) {
+                    if (period.toUpperCase() === 'PM' && hours !== 12) hours += 12;
+                    if (period.toUpperCase() === 'AM' && hours === 12) hours = 0;
+                }
+            } else {
+                // Try to parse as number
+                hours = parseInt(timeStr);
+            }
+            
+            // Normalize hours to 0-23 range
+            if (hours >= 24) hours = hours % 24;
+            if (hours < 0) hours = 0;
 
-            // Convert to 24-hour format
-            if (period === 'PM' && hours !== 12) hours += 12;
-            if (period === 'AM' && hours === 12) hours = 0;
-
+            // Map to time periods based on HTML definitions:
+            // Morning: 5AM – 11AM (5 <= hours < 11)
+            // Afternoon: 11AM – 4PM (11 <= hours < 16)
+            // Evening: 4PM – 8PM (16 <= hours < 20)
+            // Night: 8PM – 5AM (hours >= 20 || hours < 5)
             if (hours >= 5 && hours < 11) return 'morning';
             if (hours >= 11 && hours < 16) return 'afternoon';
             if (hours >= 16 && hours < 20) return 'evening';
-            if (hours >= 5 && hours < 24) return 'night';
+            if (hours >= 20 || hours < 5) return 'night';
 
             return 'unknown';
         } catch (error) {
+            console.error('Error parsing time:', timeStr, error);
             return 'unknown';
         }
     }
@@ -236,7 +299,7 @@ class CollisionMain {
         return severityMap[injury] || 'unknown';
     }
 
-    // Filter methods
+    // Filter methods - now accept 'all' or array of values
     filterBySeverity(severity) {
         this.filters.severity = severity;
         this.updateVisualization();
@@ -249,8 +312,80 @@ class CollisionMain {
 
     getFilteredData() {
         return this.pedestrianData.filter(d => {
-            const severityMatch = this.filters.severity === 'all' || d.severity === this.filters.severity;
-            const districtMatch = this.filters.district === 'all' || d.district === this.filters.district;
+            // Handle severity filter - can be 'all' or array
+            let severityMatch = true;
+            if (this.filters.severity !== 'all') {
+                if (Array.isArray(this.filters.severity)) {
+                    // Map display names back to filter values
+                    const severityMap = {
+                        'Fatal': 'fatal',
+                        'Major': 'major',
+                        'Minor': 'minor',
+                        'Minimal': 'minimal'
+                    };
+                    const filterValues = this.filters.severity.map(s => severityMap[s] || s.toLowerCase());
+                    severityMatch = filterValues.includes(d.severity);
+                } else {
+                    const severityMap = {
+                        'Fatal': 'fatal',
+                        'Major': 'major',
+                        'Minor': 'minor',
+                        'Minimal': 'minimal'
+                    };
+                    const filterValue = severityMap[this.filters.severity] || this.filters.severity.toLowerCase();
+                    severityMatch = d.severity === filterValue;
+                }
+            }
+            
+            // Handle district matching with normalization
+            let districtMatch = true;
+            if (this.filters.district !== 'all') {
+                const dataDistrict = (d.district || '').trim();
+                
+                if (Array.isArray(this.filters.district)) {
+                    // Check if data district matches any selected district
+                    districtMatch = this.filters.district.some(filterDistrict => {
+                        const dataDistrictLower = dataDistrict.toLowerCase();
+                        const filterDistrictLower = filterDistrict.toLowerCase();
+                        
+                        // Handle combined district names
+                        if (filterDistrictLower === 'toronto and east york') {
+                            return dataDistrictLower.includes('toronto') || 
+                                   dataDistrictLower.includes('east york') ||
+                                   dataDistrictLower === 'toronto' ||
+                                   dataDistrictLower === 'east york';
+                        } else if (filterDistrictLower === 'etobicoke york') {
+                            return dataDistrictLower.includes('etobicoke') || 
+                                   dataDistrictLower.includes('york') ||
+                                   dataDistrictLower === 'etobicoke' ||
+                                   dataDistrictLower === 'york';
+                        } else {
+                            return dataDistrictLower.includes(filterDistrictLower) || 
+                                   filterDistrictLower.includes(dataDistrictLower);
+                        }
+                    });
+                } else {
+                    const filterDistrict = this.filters.district.toLowerCase();
+                    const dataDistrictLower = dataDistrict.toLowerCase();
+                    
+                    // Handle combined district names
+                    if (filterDistrict === 'toronto and east york') {
+                        districtMatch = dataDistrictLower.includes('toronto') || 
+                                      dataDistrictLower.includes('east york') ||
+                                      dataDistrictLower === 'toronto' ||
+                                      dataDistrictLower === 'east york';
+                    } else if (filterDistrict === 'etobicoke york') {
+                        districtMatch = dataDistrictLower.includes('etobicoke') || 
+                                      dataDistrictLower.includes('york') ||
+                                      dataDistrictLower === 'etobicoke' ||
+                                      dataDistrictLower === 'york';
+                    } else {
+                        districtMatch = dataDistrictLower.includes(filterDistrict) || 
+                                       filterDistrict.includes(dataDistrictLower);
+                    }
+                }
+            }
+            
             return severityMatch && districtMatch;
         });
     }

@@ -29,6 +29,7 @@ html {
     position: relative;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 }
 
 /* Title Section */
@@ -87,15 +88,16 @@ html {
 
 /* Visualization Area */
 .visualization-area {
-    margin-top: 30px;
+    margin-top: 20px;
     padding-top: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
     padding: 0 40px;
-    padding-bottom: clamp(60px, 8vh, 140px);
+    padding-bottom: 60px;
     min-height: auto;
+    flex: 0 1 auto;
 }
 
 .road-container {
@@ -104,8 +106,8 @@ html {
     flex: 0 0 auto;
     width: 100%;
     max-width: 75%;
-    height: 42vh;
-    max-height: 44vh;
+    height: 32vh;
+    max-height: 34vh;
     position: relative;
     background-color: transparent;
     border-radius: 0;
@@ -121,26 +123,19 @@ html {
     display: none;
 }
 
-/* Timeline Section */
+/* Timeline Section - same as sign-visual/vehicle-visual */
 .timeline-section {
     position: relative;
-    width: 80%;
-    max-width: 1000px;
+    width: 100%;
     z-index: 10;
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 24px;
-    padding: 20px 24px;
-    margin-top: clamp(50px, 8vh, 140px);
-    margin-left: auto;
-    margin-right: auto;
+    gap: 20px;
+    padding: 20px 5%;
+    margin-top: 50px;
     box-sizing: border-box;
     flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
 }
 
 .timeline-section svg {
@@ -149,42 +144,52 @@ html {
     max-width: 836px;
 }
 
+.timeline-section .year-label {
+    fill: #FFFFFF !important;
+    font-family: 'Overpass', sans-serif !important;
+}
+
 #year-scroll-container {
-    flex: 1 1 auto;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.timeline-section > * {
-    margin-left: 0;
-    margin-right: 0;
-}
-
-/* Control Buttons */
-.timeline-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 12px;
-    min-width: 160px;
-}
-
-#currentYearDisplay {
-    color: #FFFFFF;
-    font-weight: 600;
-    font-size: 1.05rem;
-    text-align: right;
+    flex: 1;
+    min-width: 0;
 }
 
 .control-buttons {
     position: relative;
-    margin-top: 0;
+    margin-top: -10px;
     z-index: 10;
     display: flex;
     gap: 10px;
-    justify-content: center;
+    justify-content: flex-start;
     flex-shrink: 0;
+}
+
+.play-button, .restart-button {
+    background: #FFFFFF;
+    border-radius: 6px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    color: #0A6B4A;
+}
+
+.play-button:hover, .restart-button:hover {
+    background: #F0F0F0;
+    transform: scale(1.05);
+}
+
+.play-button.playing {
+    background: #06D6A0;
+    color: white;
+}
+
+.play-button .play-icon, .restart-button .restart-icon {
+    font-size: 1rem;
 }
 
 /* Legend Styling */

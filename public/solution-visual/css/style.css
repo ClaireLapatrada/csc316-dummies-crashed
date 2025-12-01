@@ -32,7 +32,7 @@
 }
 
 .options-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 700;
     font-size: 25px;
     color: #0C7B56;
@@ -76,7 +76,7 @@
 }
 
 .filter-label {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 500;
     font-size: 20px;
     color: #000;
@@ -112,7 +112,7 @@
 
 body {
     margin: 0;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
     background-color: #0A6B4A !important;
     overflow: visible;
 }
@@ -139,7 +139,7 @@ body {
 }
 
 #options-panel h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 700;
     color: #0C7B56;
 }
@@ -159,7 +159,7 @@ header {
 
 header h1 {
     color: #0C7B56 !important;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 700;
 }
 
@@ -198,7 +198,7 @@ header h1 {
 
 /* Improvement modal */
 #improvement-modal {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Overpass', sans-serif;
 }
 
 #improvement-modal h2 {
