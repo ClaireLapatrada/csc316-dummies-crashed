@@ -206,7 +206,7 @@ class LocationChart {
             .attr("x2", vis.width)
             .attr("y1", vis.y(vis.avgCollisions))
             .attr("y2", vis.y(vis.avgCollisions))
-            .attr("stroke", "steelblue")
+            .attr("stroke", "white")
             .attr("stroke-dasharray", "4 2")
             .attr("stroke-width", 2);
 
@@ -217,7 +217,7 @@ class LocationChart {
             .attr("y", vis.y(vis.avgCollisions) - 5)
             .attr("text-anchor", "end")
             .style("font-size", "10px")
-            .style("fill", "steelblue")
+            .style("fill", "white")
             .text(`Avg: ${Math.round(vis.avgCollisions)}`);
 
         labels.exit().remove();

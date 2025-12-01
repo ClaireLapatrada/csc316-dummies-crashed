@@ -25,7 +25,7 @@
 
 		.title-section {
 			position: absolute;
-			top: 8%;
+			top: 3%;
 			left: 5%;
 			right: 25%;
 			z-index: 10;
@@ -42,7 +42,7 @@
 
 		.description-section {
 			position: absolute;
-			top: 20%;
+			top: 10%;
 			left: 5%;
 			right: 25%;
 			z-index: 10;
@@ -55,7 +55,7 @@
 
 		.filter-buttons {
 			position: absolute;
-			top: 8%;
+			top: 3%;
 			right: 2%;
 			z-index: 10;
 			display: flex;
@@ -74,7 +74,6 @@
 			background: #0A6B4A;
 			border: 2px solid #FFFFFF;
 			color: #FFFFFF;
-			padding: 8px 16px;
 			border-radius: 4px;
 			font-family: 'Overpass', sans-serif;
 			font-weight: 400;
@@ -180,10 +179,10 @@
 
 		.main-content-wrapper {
 			position: absolute;
-			top: 35%;
+			top: 22%;
 			left: 5%;
 			right: 3%;
-			bottom: 12%;
+			bottom: 14%;
 			display: flex;
 			flex-direction: column;
 			padding: 0 !important;
@@ -203,7 +202,7 @@
 			flex: 1 1 auto;
 			min-width: 0;
 			display: block;
-			padding: 20px;
+			padding: 0;
 			height: 100%;
 			background: #FFFFFF;
 			border-radius: 8px;
@@ -248,7 +247,7 @@
 		.timeline-section {
 			position: absolute;
 			bottom: 1%;
-			left: 5%;
+			left: 3%;
 			right: auto;
 			width: auto;
 			z-index: 10;
@@ -286,8 +285,35 @@
 			gap: 10px;
 			margin-top: -10px;
 		}
+
+		.play-button, .restart-button {
+			background: #FFFFFF;
+			border-radius: 6px;
+			width: 45px;
+			height: 45px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			border: none;
+			color: #0A6B4A;
+		}
+
+		.play-button:hover, .restart-button:hover {
+			background: #F0F0F0;
+			transform: scale(1.05);
+		}
+
+		.play-button.playing {
+			background: #06D6A0;
+			color: white;
+		}
+
+		.play-button .play-icon, .restart-button .restart-icon {
+			font-size: 1rem;
+		}
 	</style>
-	<link rel="stylesheet" href="../shared/css/play-controls.css">
 </head>
 <body>
 

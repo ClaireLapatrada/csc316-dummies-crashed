@@ -35,6 +35,11 @@ class PlayButton {
 
     start() {
         this.button.classList.add('playing');
+        const icon = this.button.querySelector('i');
+        if (icon) {
+            icon.classList.remove('fa-play');
+            icon.classList.add('fa-pause');
+        }
 
         this.playInterval = setInterval(() => {
             let nextYear = this.yearScroll.getCurrentYear() + 1;
@@ -63,6 +68,11 @@ class PlayButton {
         clearInterval(this.playInterval);
         this.playInterval = null;
         this.button.classList.remove('playing');
+        const icon = this.button.querySelector('i');
+        if (icon) {
+            icon.classList.remove('fa-pause');
+            icon.classList.add('fa-play');
+        }
     }
     
     restart() {
