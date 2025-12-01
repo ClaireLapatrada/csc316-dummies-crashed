@@ -13,10 +13,10 @@ let globalCrashData = null; // Store crash data globally for access in view swit
 
 // Load data using promises
 // Try to load GeoJSON, but continue without it if it fails
-d3.csv("/data/dataset.csv")
+d3.csv("../../data/dataset.csv")
     .then(function(csvData) {
         // Try to load GeoJSON, but don't fail if it's missing
-        d3.json("/data/Centreline - Version 2 - 4326.geojson")
+        d3.json("../../data/Centreline - Version 2 - 4326.geojson")
             .then(function(geoData) {
                 initMainPage(csvData, geoData);
             })

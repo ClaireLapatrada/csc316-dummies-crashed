@@ -38,7 +38,7 @@ class CollisionMain {
 
     async loadData() {
         try {
-            this.collisionData = await d3.csv("/data/dataset.csv");
+            this.collisionData = await d3.csv("../../data/dataset.csv");
             console.log('Data loaded:', this.collisionData.length, 'records');
             
             // Debug: Check for pedestrian field names
