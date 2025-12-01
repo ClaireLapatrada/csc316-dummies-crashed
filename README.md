@@ -102,25 +102,7 @@ This project is a comprehensive interactive data visualization website that pres
 - Allows independent scrolling within visualizations
 - Main navigation handles iframe scroll boundaries intelligently
 
-### 7. **Responsive Design**
-- All visualizations adapt to different screen sizes
-- Timeline and controls adjust for mobile/tablet/desktop
-- Filter panels collapse appropriately on smaller screens
-- Touch-friendly interactions on mobile devices
-
-### 8. **Data Aggregation and Processing**
-- Real-time data filtering and aggregation
-- Time-based categorization (morning, afternoon, evening, night)
-- Geographic clustering for map visualizations
-- Statistical calculations for rankings and comparisons
-
-### 9. **Map Visualizations**
-- Interactive Toronto map with district boundaries
-- Color-coded collision intensity
-- Clickable neighborhoods show detailed statistics
-- Bar chart updates based on selected year and filters
-
-### 10. **Animation and Transitions**
+### 7. **Animation and Transitions**
 - Smooth page transitions with fade-in effects
 - Staggered animations for text elements
 - Scale animations for interactive elements
