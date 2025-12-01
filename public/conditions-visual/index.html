@@ -8,6 +8,7 @@
 
     <!-- Load Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS code -->
     <link rel="stylesheet" href="../../css/style.css">
@@ -150,38 +151,6 @@
             flex-shrink: 0;
         }
 
-        .play-button {
-            background: #FFFFFF !important;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .play-button .play-triangle {
-            border-left: 15px solid #0A6B4A;
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            margin-left: 3px;
-        }
-
-        .play-button.playing .play-triangle {
-            margin-left: 0 !important;
-            transform: translateX(-4px) !important;
-        }
-
-        .restart-button {
-            background: transparent !important;
-            color: #FFFFFF !important;
-        }
-
-        .restart-button svg {
-            stroke: #FFFFFF !important;
-        }
-
         .filter-buttons {
             position: absolute;
             top: 8%;
@@ -269,6 +238,7 @@
             color: #333333;
         }
     </style>
+    <link rel="stylesheet" href="../shared/css/play-controls.css">
 </head>
 <body>
     <div class="infographic-container">
@@ -330,15 +300,12 @@
                 <div id="yearScrollContainer"></div>
                 <!-- Play button -->
                 <div class="control-buttons">
-                    <div class="play-button" id="playBtn">
-                        <div class="play-triangle"></div>
-                    </div>
-                    <div class="restart-button" id="restartBtn">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
+                    <button class="play-button" id="playBtn" type="button">
+                        <i class="fas fa-play play-icon"></i>
+                    </button>
+                    <button class="restart-button" id="restartBtn" type="button">
+                        <i class="fas fa-redo restart-icon"></i>
+                    </button>
                 </div>
             </div>
         </div>

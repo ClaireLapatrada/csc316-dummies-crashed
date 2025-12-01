@@ -36,6 +36,11 @@ function countFatalAccidentsByType(yearData, year) {
 }
 
 function updateCountsAndRanks(year) {
+    const yearDisplay = document.getElementById('currentYearDisplay');
+    if (yearDisplay) {
+        yearDisplay.textContent = year;
+    }
+
     categories.forEach(cat => {
         const cardElement = document.getElementById(`${cat.id}Card`);
         if (cardElement) cardElement.style.display = 'flex';
@@ -103,12 +108,16 @@ d3.csv('/data/dataset.csv').then(csvData => {
         console.log(`Year ${year}:`, data[year]);
     });
 
+    const timelineSection = document.querySelector('.timeline-section');
+    const computedWidth = timelineSection
+        ? Math.max(timelineSection.getBoundingClientRect().width - 220, 600)
+        : 900;
+
     const signScroll = new YearScroll("#yearScrollContainer", {
         startYear: actualStartYear,
         endYear: actualEndYear,
         onYearChange: updateCountsAndRanks,
-        width: window.innerWidth * 0.9,
-        width: 836
+        width: computedWidth
     });
     signScroll.init();
 

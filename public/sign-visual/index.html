@@ -7,8 +7,9 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/iframe-override.css">
     <style>
         body {
@@ -19,20 +20,19 @@
 
         .infographic-container {
             width: 100%;
-            height: 100vh;
+            min-height: 100vh;
             background-color: #0A6B4A;
-            padding: 0 !important;
-            overflow: hidden;
-            position: relative;
+            padding: clamp(30px, 5vh, 60px) clamp(60px, 7vw, 110px) 60px clamp(100px, 9vw, 160px);
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
+            gap: clamp(18px, 3vh, 36px);
         }
 
         .title-section {
-            position: absolute;
-            top: 8%;
-            left: 5%;
+            position: relative;
             z-index: 10;
+            max-width: 760px;
         }
 
         .title-section h1.main-title {
@@ -60,37 +60,43 @@
         .main-content-wrapper {
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            padding: 0 !important;
-            margin: 0 !important;
-            position: relative;
+            gap: clamp(20px, 2vh, 32px);
+            flex: 1 1 auto;
+        }
+
+        .content-top-section,
+        .timeline-section,
+        .description-panel {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
         }
 
         .content-top-section {
             display: flex;
-            flex-direction: row;
-            flex: 0 1 auto;
-            min-height: 0;
-            padding-top: 100px;
+            justify-content: center;
+            padding: 0;
         }
 
         /* Left side - rankings */
         .rankings-container {
-            flex: 0 1 auto;
-            max-width: 60%;
             display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 4rem;
-            padding: 120px 40px 40px 10%;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: clamp(1.2rem, 3vw, 3rem);
+            padding: 0;
+            width: 100%;
+            max-width: 1100px;
         }
 
         .rank-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1rem;
+            gap: 0.9rem;
+            flex: 1 1 160px;
+            max-width: 200px;
         }
 
         .rank-label {
@@ -102,8 +108,8 @@
         }
 
         .rank-sign {
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -178,45 +184,53 @@
             font-size: 1.5rem;
         }
 
-        /* Right side - description */
-        .container-description {
-            flex: 0 0 450px;
-            display: flex;
-            align-items: center;
-            padding: 120px 2rem 40px 0;
-            background: transparent;
-            margin-left: 1rem;
-        }
-
-        .container-description p.description {
-            font-weight: 400;
-            font-size: 1.1rem;
-            line-height: 1.6;
+        .description-panel {
+            padding: clamp(1.5rem, 3vw, 2.5rem) 0;
             color: #FFFFFF;
             font-family: 'Overpass', sans-serif;
+            line-height: 1.6;
+        }
+
+        .description-panel p {
+            margin: 0;
+            font-size: 1.05rem;
+            color: #FFFFFF;
         }
 
         /* Timeline at bottom */
         .timeline-section {
-            position: relative;
             width: 100%;
-            z-index: 10;
+            display: flex;
+            justify-content: center;
+        }
+
+        .timeline-card {
+            width: min(100%, 1100px);
             display: flex;
             flex-direction: row;
             align-items: center;
-            gap: 20px;
-            padding: 20px 5%;
-            margin-top: -20px;
+            gap: 24px;
+            padding: 20px 24px;
+            margin-top: clamp(30px, 5vh, 60px);
             box-sizing: border-box;
-            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
         }
 
-        .timeline-section svg {
+        #yearScrollContainer {
+            flex: 1 1 auto;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .timeline-card svg {
             flex: 1;
             min-width: 0;
         }
 
-        .timeline-section .year-label {
+        .timeline-card .year-label {
             fill: #FFFFFF !important;
             font-family: 'Overpass', sans-serif !important;
         }
@@ -236,52 +250,65 @@
             display: none; /* Hide the old cards, we'll use new ones */
         }
 
+        .timeline-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+            min-width: 160px;
+        }
+
+        .year-display {
+            color: #FFFFFF;
+            font-weight: 600;
+            font-size: 1.05rem;
+            text-align: right;
+        }
+
         .control-buttons {
             position: relative;
-            margin-top: -10px;
             z-index: 10;
             display: flex;
             gap: 10px;
-            justify-content: flex-start;
+            justify-content: center;
             flex-shrink: 0;
         }
 
-        .play-button {
-            background: #FFFFFF !important;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+        @media (max-width: 1200px) {
+            .infographic-container {
+                padding-left: clamp(70px, 10vw, 120px);
+                padding-right: clamp(30px, 6vw, 80px);
+            }
+
+            .description-panel {
+                max-width: none;
+            }
         }
 
-        .play-button .play-triangle {
-            border-left: 15px solid #0A6B4A;
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            margin-left: 3px;
+        @media (max-width: 768px) {
+            .timeline-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .rankings-container {
+                gap: 1.2rem;
+            }
+
         }
 
-        .play-button.playing .play-triangle {
-            margin-left: 0 !important;
-            transform: translateX(-4px) !important;
-        }
+        @media (max-width: 700px) {
+            .rankings-container {
+                gap: 1.5rem;
+            }
 
-        .play-button.playing .play-triangle::after {
-            right: -8px !important;
-        }
-
-        .restart-button {
-            background: transparent !important;
-            color: #FFFFFF !important;
-        }
-
-        .restart-button svg {
-            stroke: #FFFFFF !important;
+            .rank-item {
+                flex: 1 1 130px;
+            }
         }
     </style>
+    <link rel="stylesheet" href="../shared/css/play-controls.css">
 </head>
 <body>
 
@@ -295,7 +322,6 @@
 
     <div class="main-content-wrapper">
         <div class="content-top-section">
-            <!-- Left side - Rankings -->
             <div class="rankings-container">
                 <!-- 1st - Car -->
                 <div class="rank-item">
@@ -327,30 +353,30 @@
                     <div class="rank-count" id="bikeCount">0</div>
                 </div>
             </div>
+        </div>
 
-            <!-- Right side - Description -->
-            <div class="container-description">
-                <p class="description">
-                    This chart shows the number of <strong>fatal collisions</strong> for different types of <strong>road users</strong> over the years, including <strong>cyclists</strong>, <strong>car drivers</strong>, and <strong>pedestrians</strong>. <br><br>You can use the <strong>interactive slider</strong> to see how these numbers change each year and compare trends for each category.<br><br> This helps spot which categories are at <strong>higher risk</strong> and understand overall <strong>road safety trends</strong>.
-                </p>
+        <!-- Timeline directly beneath visuals -->
+        <div class="timeline-section">
+            <div class="timeline-card">
+                <div id="yearScrollContainer"></div>
+                <div class="timeline-actions">
+                    <div id="currentYearDisplay" class="year-display"></div>
+                    <div class="control-buttons">
+                        <button class="play-button" id="playBtn" type="button">
+                            <i class="fas fa-play play-icon"></i>
+                        </button>
+                        <button class="restart-button" id="restartBtn" type="button">
+                            <i class="fas fa-redo restart-icon"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Timeline at bottom -->
-        <div class="timeline-section">
-            <div id="yearScrollContainer"></div>
-            <!-- Play button -->
-            <div class="control-buttons">
-                <div class="play-button" id="playBtn">
-                    <div class="play-triangle"></div>
-                </div>
-                <div class="restart-button" id="restartBtn">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M17.5 2.5V7.5H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C7.64367 2.5 5.50732 3.55357 4.0625 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-            </div>
+        <div class="description-panel">
+            <p>
+                This chart shows the number of <strong>fatal collisions</strong> for different types of <strong>road users</strong> over the years, including <strong>cyclists</strong>, <strong>car drivers</strong>, and <strong>pedestrians</strong>. <br><br>You can use the <strong>interactive slider</strong> to see how these numbers change each year and compare trends for each category.<br><br> This helps spot which categories are at <strong>higher risk</strong> and understand overall <strong>road safety trends</strong>.
+            </p>
         </div>
     </div>
 
@@ -394,3 +420,4 @@
 
 </body>
 </html>
+

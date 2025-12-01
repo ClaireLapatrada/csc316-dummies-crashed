@@ -26,7 +26,7 @@
         .infographic-container {
             background-color: #0A6B4A;
             min-height: 100vh;
-            padding: 20px;
+            padding: 20px clamp(60px, 8vw, 120px) 40px clamp(90px, 8vw, 140px);
         }
 
         .title-section {
@@ -118,43 +118,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .control-buttons {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .play-button, .restart-button {
-            background: #FFFFFF;
-            border-radius: 8px;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            color: #0A6B4A;
-        }
-
-        .play-button:hover, .restart-button:hover {
-            background: #F0F0F0;
-            transform: scale(1.05);
-        }
-
-        .play-button.playing {
-            background: #06D6A0;
-            color: white;
-        }
-
-        .play-button .play-icon, .restart-button .restart-icon {
-            font-size: 1.2rem;
-        }
-
-        .play-button.playing .play-icon {
-            color: #FFFFFF;
-        }
 
         .filter-dropdown select {
             background: rgba(255, 255, 255, 0.9);
@@ -246,6 +209,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="../shared/css/play-controls.css">
 </head>
 <body>
 <div class="infographic-container">
@@ -313,10 +277,10 @@
                 <div id="yearScroller"></div>
             </div>
             <div class="control-buttons">
-                <button class="play-button" id="playBtn">
+                <button class="play-button" id="playBtn" type="button">
                     <i class="fas fa-play play-icon"></i>
                 </button>
-                <button class="restart-button" id="restartBtn">
+                <button class="restart-button" id="restartBtn" type="button">
                     <i class="fas fa-redo restart-icon"></i>
                 </button>
                 <div class="filter-dropdown">
