@@ -36,7 +36,6 @@ class CollisionMain {
         }
     }
 
-    // Load collision data from CSV
     async loadData() {
         try {
             this.collisionData = await d3.csv("/data/dataset.csv");
@@ -71,7 +70,6 @@ class CollisionMain {
         console.log('YearScroll initialized successfully');
     }
 
-    // Initialize play button functionality
     initializePlayButton() {
         const playBtn = document.getElementById('playBtn');
         const restartBtn = document.getElementById('restartBtn');
@@ -145,7 +143,6 @@ class CollisionMain {
     }
 
     setYear(year, fromYearScroll = false) {
-        // Prevent infinite loop
         if (this.updatingYear) return;
 
         console.log('Setting year to:', year, 'fromYearScroll:', fromYearScroll);
@@ -161,7 +158,6 @@ class CollisionMain {
 
             this.updateVisualization();
 
-            // Update any year display element if it exists
             const yearDisplay = document.getElementById('currentYearDisplay');
             if (yearDisplay) {
                 yearDisplay.textContent = year;
