@@ -130,9 +130,7 @@ function loadData(){
           { axis: 'Aggressive/Distracted', value: aggdistr },
           { axis: 'Alcohol Related', value: alcohol },
           { axis: 'Night-time', value: night },
-          { axis: 'Poor Weather', value: poorWeather },
-          { axis: 'Pedestrian Involved', value: pedInvolved },
-          { axis: 'Cyclist Involved', value: cycInvolved }
+          { axis: 'Poor Weather', value: poorWeather }
         ]
       }];
     }
