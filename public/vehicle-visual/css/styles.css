@@ -549,7 +549,7 @@ html {
 
 .year-scroller-ped .year-label {
     font-family: 'Overpass', sans-serif;
-    font-size: 12px;
+    font-size: 5px;
     fill: #FFFFFF;
 }
 
@@ -580,7 +580,7 @@ html {
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    font-size: 24px;
+    font-size: 5px;
     cursor: grab;
     z-index: 10;
     transition: left 0.3s ease;
@@ -590,16 +590,8 @@ html {
     display: flex;
     justify-content: space-between;
     color: rgba(255, 255, 255, 0.8);
-    font-size: 12px;
+    font-size: 5px;
     margin-bottom: 10px;
-}
-
-.current-year-display {
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    color: #FFFFFF;
-    margin-top: 10px;
 }
 
 
