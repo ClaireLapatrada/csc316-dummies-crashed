@@ -10,6 +10,7 @@ class ImprovementsVis {
         vis.projection = projection;
         vis.crashData = crashData;
         vis.yearScroll = yearScroll; // Reference to yearScroll
+        vis.mapVis = null; // Will be set by main.js
         
         // Improvement types configuration
         vis.improvementTypes = {
@@ -228,23 +229,50 @@ class ImprovementsVis {
             .attr("stroke", "#fff")
             .attr("stroke-width", 1)
             .style("pointer-events", "all")
+            .style("cursor", "pointer")
             .style("display", "block")
             .style("z-index", "10")
             .raise() // Move to front
             .on("mouseover", function(event, d) {
                 vis.showTooltip(event, d);
+                d3.select(this).attr("stroke-width", 2).attr("stroke", "#0066cc");
             })
             .on("mousemove", function(event) {
                 vis.moveTooltip(event);
             })
             .on("mouseout", function() {
                 vis.hideTooltip();
+                d3.select(this).attr("stroke-width", 1).attr("stroke", "#fff");
+            })
+            .on("click", function(event, d) {
+                event.stopPropagation();
+                if (vis.mapVis) {
+                    vis.mapVis.zoomToLocation(d.lat, d.lng);
+                }
             });
 
         // Merge - Combine enter and update selections, set final state
         let merge = enter.merge(improvementCircles);
 
         merge
+            .style("cursor", "pointer")
+            .on("mouseover", function(event, d) {
+                vis.showTooltip(event, d);
+                d3.select(this).attr("stroke-width", 2).attr("stroke", "#0066cc");
+            })
+            .on("mousemove", function(event) {
+                vis.moveTooltip(event);
+            })
+            .on("mouseout", function() {
+                vis.hideTooltip();
+                d3.select(this).attr("stroke-width", 1).attr("stroke", "#fff");
+            })
+            .on("click", function(event, d) {
+                event.stopPropagation();
+                if (vis.mapVis) {
+                    vis.mapVis.zoomToLocation(d.lat, d.lng);
+                }
+            })
             .transition()
             .duration(300)
             .attr("cx", getX)
@@ -519,6 +547,11 @@ class ImprovementsVis {
                     return 0;
                 });
         }
+    }
+
+    setMapVis(mapVis) {
+        let vis = this;
+        vis.mapVis = mapVis;
     }
 }
 window.ImprovementsVis = ImprovementsVis;

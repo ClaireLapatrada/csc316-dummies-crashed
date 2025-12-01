@@ -158,6 +158,17 @@ class MapVis {
             .attr("stroke", "white")
             .attr("stroke-width", "0.3px")
             .attr("paint-order", "stroke")
+            .style("cursor", "pointer")
+            .on("mouseenter", function() {
+                d3.select(this).attr("fill", "#0066cc").attr("font-size", "13px");
+            })
+            .on("mouseleave", function() {
+                d3.select(this).attr("fill", "#333").attr("font-size", "12px");
+            })
+            .on("click", function(event, d) {
+                event.stopPropagation();
+                vis.zoomToNeighborhood(d);
+            })
             .text(d => d.name);
 
         // CrashPointsVis will be created and initialized from main.js
@@ -257,6 +268,10 @@ class MapVis {
                                 initialCenter[1] + deltaLat
                             ]);
                         }
+                    } else if (vis.programmaticCenter) {
+                        // Handle programmatic center changes (from neighborhood clicks)
+                        vis.projection.center(vis.programmaticCenter);
+                        vis.programmaticCenter = null; // Clear after use
                     }
                     
                     // Update all map elements
@@ -409,6 +424,64 @@ class MapVis {
         let vis = this;
         vis.activeFilters = filters;
         vis.wrangleData();
+    }
+
+    zoomToNeighborhood(neighborhood) {
+        let vis = this;
+        
+        // Calculate zoom scale to show the neighborhood area
+        // Use a scale that shows about 1/3 of the map area centered on the neighborhood
+        let zoomLevel = 2.5; // Zoom in 2.5x
+        
+        // Update projection center immediately
+        vis.projection.center([neighborhood.lng, neighborhood.lat]);
+        
+        // Store the target center for the zoom handler to maintain during transition
+        vis.programmaticCenter = [neighborhood.lng, neighborhood.lat];
+        
+        // Calculate the transform that matches our projection changes
+        // The transform scale factor is relative to initial scale
+        let transform = d3.zoomIdentity
+            .scale(zoomLevel);
+        
+        // Apply the zoom transform with transition
+        vis.svgElement
+            .transition()
+            .duration(750)
+            .ease(d3.easeCubicOut)
+            .call(vis.zoom.transform, transform)
+            .on("end", function() {
+                // Clear programmatic center flag after transition
+                vis.programmaticCenter = null;
+            });
+    }
+
+    zoomToLocation(lat, lng) {
+        let vis = this;
+        
+        // Calculate zoom scale to show the location area
+        let zoomLevel = 3.0; // Zoom in 3x for improvement circles
+        
+        // Update projection center immediately
+        vis.projection.center([lng, lat]);
+        
+        // Store the target center for the zoom handler to maintain during transition
+        vis.programmaticCenter = [lng, lat];
+        
+        // Calculate the transform that matches our projection changes
+        let transform = d3.zoomIdentity
+            .scale(zoomLevel);
+        
+        // Apply the zoom transform with transition
+        vis.svgElement
+            .transition()
+            .duration(750)
+            .ease(d3.easeCubicOut)
+            .call(vis.zoom.transform, transform)
+            .on("end", function() {
+                // Clear programmatic center flag after transition
+                vis.programmaticCenter = null;
+            });
     }
 }
 

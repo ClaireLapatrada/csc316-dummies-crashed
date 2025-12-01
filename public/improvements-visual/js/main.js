@@ -101,6 +101,7 @@ function initMainPage(crashData, geoData) {
     // Create and initialize ImprovementsVis with MapVis's SVG and projection
     myImprovementsVis = new ImprovementsVis(myMapVis.svg, myMapVis.projection, crashData, yearScroll);
     myMapVis.improvementsVis = myImprovementsVis; // Store reference in MapVis
+    myImprovementsVis.setMapVis(myMapVis); // Connect mapVis for zoom functionality
     myImprovementsVis.initVis();
     myImprovementsVis.onBackClick = function() {
         switchToMapView();
