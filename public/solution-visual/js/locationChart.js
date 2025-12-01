@@ -150,12 +150,26 @@ class LocationChart {
 
         bars.enter().append("rect")
             .attr("class", "bar")
+            .style("cursor", "pointer")
             .attr("x", d => vis.x(d[0]))
             .attr("width", vis.x.bandwidth())
             .attr("y", d => vis.y(d[1]))
             .attr("height", d => vis.height - vis.y(d[1]))
             .attr("fill", "#FFD700")
             .merge(bars)
+            .style("cursor", "pointer")
+            .on("mouseenter", function(event, d) {
+                d3.select(this).attr("fill", "#FFA500").attr("opacity", 0.9);
+            })
+            .on("mouseleave", function(event, d) {
+                d3.select(this).attr("fill", "#FFD700").attr("opacity", 1);
+            })
+            .on("click", function(event, d) {
+                event.stopPropagation();
+                if (vis.mapVis) {
+                    vis.mapVis.zoomToDistrict(d[0]);
+                }
+            })
             .transition().duration(300)
             .attr("x", d => vis.x(d[0]))
             .attr("width", vis.x.bandwidth())
@@ -219,6 +233,10 @@ class LocationChart {
         this.updateVis();
     }
 
+    setMapVis(mapVis) {
+        this.mapVis = mapVis;
+    }
+
     wrap(text, width) {
         text.each(function() {
             const textSel = d3.select(this);
@@ -242,5 +260,84 @@ class LocationChart {
                 textSel.text(original);
             }
         });
+    }
+
+    highlightDistrict(neighborhoodName) {
+        let vis = this;
+        
+        // Map neighborhood names to possible district names
+        // This is a best-effort mapping since we don't know exact district names
+        const neighborhoodToDistrictMap = {
+            "Downtown Toronto": ["Downtown", "Downtown Toronto", "51", "52", "53"],
+            "Etobicoke": ["Etobicoke", "22", "23", "31", "32", "33"],
+            "North York": ["North York", "32", "33", "41", "42", "43"],
+            "East York": ["East York", "54", "55"],
+            "York": ["York", "12", "13", "14"],
+            "Scarborough": ["Scarborough", "41", "42", "43", "44"]
+        };
+        
+        // Try to find matching district
+        let possibleDistricts = neighborhoodToDistrictMap[neighborhoodName] || [];
+        let matchingDistrict = null;
+        
+        // Check if any of the possible districts exist in displayData
+        for (let district of possibleDistricts) {
+            let found = vis.displayData.find(d => 
+                d[0] && (
+                    d[0].toString().includes(district) || 
+                    district.toString().includes(d[0].toString())
+                )
+            );
+            if (found) {
+                matchingDistrict = found[0];
+                break;
+            }
+        }
+        
+        // If no exact match, try to find by name similarity
+        if (!matchingDistrict && vis.displayData.length > 0) {
+            // Try to find a district that contains part of the neighborhood name
+            let nameParts = neighborhoodName.toLowerCase().split(/\s+/);
+            for (let data of vis.displayData) {
+                let districtName = (data[0] || "").toLowerCase();
+                if (nameParts.some(part => districtName.includes(part) || part.includes(districtName))) {
+                    matchingDistrict = data[0];
+                    break;
+                }
+            }
+        }
+        
+        // Highlight the matching bar
+        vis.svg.selectAll(".bar")
+            .attr("opacity", d => {
+                if (matchingDistrict && d[0] === matchingDistrict) {
+                    return 1;
+                } else if (matchingDistrict) {
+                    return 0.3; // Dim other bars
+                }
+                return 1; // No highlight, show all normally
+            })
+            .attr("stroke", d => {
+                if (matchingDistrict && d[0] === matchingDistrict) {
+                    return "#0066cc";
+                }
+                return "none";
+            })
+            .attr("stroke-width", d => {
+                if (matchingDistrict && d[0] === matchingDistrict) {
+                    return 3;
+                }
+                return 0;
+            });
+        
+        // Reset highlight after 3 seconds
+        if (matchingDistrict) {
+            setTimeout(() => {
+                vis.svg.selectAll(".bar")
+                    .attr("opacity", 1)
+                    .attr("stroke", "none")
+                    .attr("stroke-width", 0);
+            }, 3000);
+        }
     }
 }

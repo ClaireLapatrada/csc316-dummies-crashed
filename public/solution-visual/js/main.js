@@ -63,6 +63,11 @@ function initMainPage(crashData, geoData) {
     myMapVis = new MapVis('mapDiv', crashData, geoData);
     myMapVis.currentView = 'map'; // Initialize current view
     myLocationChart = new LocationChart('locationChart', crashData);
+    
+    // Connect locationChart to mapVis for neighborhood click interactions
+    myMapVis.setLocationChart(myLocationChart);
+    // Connect mapVis to locationChart for bar click interactions
+    myLocationChart.setMapVis(myMapVis);
 
     // Initialize MapVis first (needed for SVG and projection)
     myMapVis.initVis();

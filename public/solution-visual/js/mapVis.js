@@ -158,6 +158,17 @@ class MapVis {
             .attr("stroke", "white")
             .attr("stroke-width", "0.3px")
             .attr("paint-order", "stroke")
+            .style("cursor", "pointer")
+            .on("mouseenter", function() {
+                d3.select(this).attr("fill", "#0066cc").attr("font-size", "13px");
+            })
+            .on("mouseleave", function() {
+                d3.select(this).attr("fill", "#333").attr("font-size", "12px");
+            })
+            .on("click", function(event, d) {
+                event.stopPropagation();
+                vis.zoomToNeighborhood(d);
+            })
             .text(d => d.name);
 
         // CrashPointsVis will be created and initialized from main.js
@@ -257,6 +268,10 @@ class MapVis {
                                 initialCenter[1] + deltaLat
                             ]);
                         }
+                    } else if (vis.programmaticCenter) {
+                        // Handle programmatic center changes (from neighborhood clicks)
+                        vis.projection.center(vis.programmaticCenter);
+                        vis.programmaticCenter = null; // Clear after use
                     }
                     
                     // Update all map elements
@@ -404,6 +419,142 @@ class MapVis {
         let vis = this;
         vis.activeFilters = filters;
         vis.wrangleData();
+    }
+
+    zoomToNeighborhood(neighborhood) {
+        let vis = this;
+        
+        // Calculate zoom scale to show the neighborhood area
+        // Use a scale that shows about 1/3 of the map area centered on the neighborhood
+        let zoomLevel = 2.5; // Zoom in 2.5x
+        
+        // Update projection center immediately
+        vis.projection.center([neighborhood.lng, neighborhood.lat]);
+        
+        // Store the target center for the zoom handler to maintain during transition
+        vis.programmaticCenter = [neighborhood.lng, neighborhood.lat];
+        
+        // Calculate the transform that matches our projection changes
+        // The transform scale factor is relative to initial scale
+        let transform = d3.zoomIdentity
+            .scale(zoomLevel);
+        
+        // Apply the zoom transform with transition
+        vis.svgElement
+            .transition()
+            .duration(750)
+            .ease(d3.easeCubicOut)
+            .call(vis.zoom.transform, transform)
+            .on("end", function() {
+                // Clear programmatic center flag after transition
+                vis.programmaticCenter = null;
+            });
+        
+        // Try to highlight corresponding district in location chart
+        if (vis.locationChart) {
+            vis.locationChart.highlightDistrict(neighborhood.name);
+        }
+    }
+
+    setLocationChart(locationChart) {
+        let vis = this;
+        vis.locationChart = locationChart;
+    }
+
+    zoomToDistrict(districtName) {
+        let vis = this;
+        
+        // Map district names/numbers to neighborhood names
+        // This is a best-effort mapping since district names may vary
+        const districtToNeighborhoodMap = {
+            // Downtown Toronto districts
+            "Downtown": "Downtown Toronto",
+            "Downtown Toronto": "Downtown Toronto",
+            "51": "Downtown Toronto",
+            "52": "Downtown Toronto",
+            "53": "Downtown Toronto",
+            "54": "Downtown Toronto",
+            "55": "Downtown Toronto",
+            
+            // Etobicoke districts
+            "Etobicoke": "Etobicoke",
+            "22": "Etobicoke",
+            "23": "Etobicoke",
+            "31": "Etobicoke",
+            "32": "Etobicoke",
+            "33": "Etobicoke",
+            
+            // North York districts
+            "North York": "North York",
+            "32": "North York", // Some overlap possible
+            "33": "North York",
+            "41": "North York",
+            "42": "North York",
+            "43": "North York",
+            
+            // East York districts
+            "East York": "East York",
+            "54": "East York", // Some overlap possible
+            "55": "East York",
+            
+            // York districts
+            "York": "York",
+            "12": "York",
+            "13": "York",
+            "14": "York",
+            
+            // Scarborough districts
+            "Scarborough": "Scarborough",
+            "41": "Scarborough", // Some overlap possible
+            "42": "Scarborough",
+            "43": "Scarborough",
+            "44": "Scarborough"
+        };
+        
+        // Try to find matching neighborhood
+        let neighborhoodName = null;
+        
+        // First try exact match
+        if (districtToNeighborhoodMap[districtName]) {
+            neighborhoodName = districtToNeighborhoodMap[districtName];
+        } else {
+            // Try case-insensitive match
+            let districtLower = (districtName || "").toString().toLowerCase();
+            for (let [key, value] of Object.entries(districtToNeighborhoodMap)) {
+                if (key.toLowerCase() === districtLower || 
+                    districtLower.includes(key.toLowerCase()) ||
+                    key.toLowerCase().includes(districtLower)) {
+                    neighborhoodName = value;
+                    break;
+                }
+            }
+        }
+        
+        // If still no match, try to find by name similarity
+        if (!neighborhoodName) {
+            let districtStr = (districtName || "").toString().toLowerCase();
+            for (let neighborhood of vis.neighborhoods) {
+                let neighborhoodLower = neighborhood.name.toLowerCase();
+                if (districtStr.includes(neighborhoodLower) || 
+                    neighborhoodLower.includes(districtStr) ||
+                    districtStr.includes(neighborhoodLower.split(" ")[0])) {
+                    neighborhoodName = neighborhood.name;
+                    break;
+                }
+            }
+        }
+        
+        // If we found a matching neighborhood, zoom to it
+        if (neighborhoodName) {
+            let neighborhood = vis.neighborhoods.find(n => n.name === neighborhoodName);
+            if (neighborhood) {
+                vis.zoomToNeighborhood(neighborhood);
+            }
+        } else {
+            // If no match found, try to zoom to a central location based on district
+            // This is a fallback - we could also just do nothing
+            console.log("Could not find neighborhood for district:", districtName);
+        }
     }
 }
 
