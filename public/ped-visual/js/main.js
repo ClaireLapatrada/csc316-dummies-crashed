@@ -54,7 +54,7 @@ function timeBandFromNUM(t){
 loadData();
 
 function loadData() {
-  d3.csv("/data/collisions.csv", d => {
+  d3.csv("../../data/collisions.csv", d => {
     if (d.PEDESTRIAN === "Yes") {
       return {
         index: +d.OBJECTID,
