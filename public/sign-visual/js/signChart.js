@@ -74,7 +74,7 @@ function updateCountsAndRanks(year) {
 
 let actualStartYear, actualEndYear;
 
-d3.csv('data/dataset.csv').then(csvData => {
+d3.csv('/data/dataset.csv').then(csvData => {
     rawData = csvData;
     const validYears = [...new Set(csvData.map(d => +d['Year of collision']))].filter(year => year >= 2006 && year <= 2023).sort();
     actualStartYear = Math.min(...validYears);

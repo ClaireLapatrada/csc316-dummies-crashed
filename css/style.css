@@ -10,7 +10,7 @@
 }
 
 html, body {
-    background: #EBEADD !important;
+    background: #0A6B4A !important;
     color: #000;
     overflow: hidden !important;
 }
@@ -58,6 +58,7 @@ h1 {
     margin-bottom: 0.25rem;
     margin-top: 0.5rem;
     text-shadow: none;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 h2 {
@@ -68,6 +69,7 @@ h2 {
     text-align: center;
     margin-top: 0;
     margin-bottom: 0.75rem;
+    animation: fadeInUp 0.8s ease-out 0.3s both;
 }
 
 h3, h4, h5, h6 {
@@ -83,6 +85,7 @@ p {
     font-weight: 400;
     font-size: 0.85rem;
     line-height: 1.5;
+    animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
 /* Highway Gothic font for road signs */
@@ -260,6 +263,10 @@ p {
     margin-bottom: 3rem;
 }
 
+.page.intro-page .intro-title .main-title {
+    animation: fadeInLeft 1s ease-out 0.3s both;
+}
+
 .page.intro-page .intro-title .main-title,
 .intro-page .intro-title h1.main-title {
     font-family: 'Overpass', sans-serif !important;
@@ -278,6 +285,7 @@ p {
     border-radius: 12px;
     padding: 1rem 1.5rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    animation: fadeInRight 1s ease-out 0.5s both, scaleIn 0.8s ease-out 0.5s both;
 }
 
 .intro-page .safety-box .safety-text,
@@ -311,15 +319,18 @@ p {
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     opacity: 0.5;
+    animation: fadeIn 0.5s ease-out both;
 }
 
 .dot:hover {
     opacity: 0.8;
     transform: scale(1.3);
+    transition: all 0.2s ease-out;
 }
 
 .dot.active {
     opacity: 1;
+    animation: scaleIn 0.3s ease-out;
 }
 
 /* Progressive dot scaling based on page index */
@@ -365,7 +376,7 @@ p {
 
 /* Visualization Pages */
 .viz-page {
-    background: #EBEADD;
+    background: #0A6B4A;
     padding: 0;
     position: relative;
 }
@@ -380,6 +391,7 @@ p {
     box-shadow: none;
     z-index: 10;
     overflow: hidden;
+    animation: fadeIn 0.8s ease-out 0.3s both;
 }
 
 .viz-iframe {
@@ -389,6 +401,7 @@ p {
     display: block;
     backface-visibility: hidden;
     transform: translateZ(0);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     will-change: transform;
     pointer-events: auto;
 }
@@ -927,17 +940,6 @@ p {
     display: block;
 }
 
-.foreground-image {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    z-index: 1;
-    pointer-events: none;
-    will-change: transform;
-}
 
 .cars-container {
     position: fixed;
@@ -987,7 +989,7 @@ p {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: #EBEADD;
+    background: #0A6B4A;
     will-change: transform;
     transform: translateZ(0);
     /* Optimize for smooth scrolling */
@@ -995,6 +997,8 @@ p {
     -webkit-backface-visibility: hidden;
     perspective: 1000px;
     -webkit-perspective: 1000px;
+    animation: pageFadeIn 0.6s ease-out;
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
 .page-content {
@@ -1004,6 +1008,43 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.page-entering {
+    animation: pageFadeIn 0.6s ease-out;
+}
+
+.page-active .page-content > * {
+    animation: fadeInUp 0.8s ease-out both;
+}
+
+.page-active .page-content > *:nth-child(1) { animation-delay: 0.1s; }
+.page-active .page-content > *:nth-child(2) { animation-delay: 0.2s; }
+.page-active .page-content > *:nth-child(3) { animation-delay: 0.3s; }
+.page-active .page-content > *:nth-child(4) { animation-delay: 0.4s; }
+.page-active .page-content > *:nth-child(5) { animation-delay: 0.5s; }
+
+/* Animate text elements when page becomes active */
+.page-active h1,
+.page-active h2,
+.page-active h3,
+.page-active h4,
+.page-active h5,
+.page-active h6 {
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.page-active p {
+    animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+
+.page-active .intro-title {
+    animation: fadeInLeft 1s ease-out 0.3s both;
+}
+
+.page-active .safety-box {
+    animation: fadeInRight 1s ease-out 0.5s both, scaleIn 0.8s ease-out 0.5s both;
 }
 
 .page-background {
@@ -2514,6 +2555,112 @@ p {
     0% { background-position: 0 50% }
     50% { background-position: 100% 50%; }
     100% { background-position: 0 50%; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 /* =============================================================================

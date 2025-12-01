@@ -6,7 +6,7 @@
 }
 
 body {
-    background-color: #EBEADD; /* Match main page background */
+    background-color: #0A6B4A; /* Match main page background */
     font-family: 'Playfair Display', serif;
     overflow-x: hidden;
     overflow-y: hidden;
@@ -94,7 +94,7 @@ html {
     align-items: center;
     margin-left: auto;
     margin-right: 45px;
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 /* Play Button */
@@ -209,7 +209,7 @@ html {
 
 
 .controls-row .control-buttons {
-        margin-top: 0;
+        margin-top: -10px;
 }
 
 /* Road Container */
