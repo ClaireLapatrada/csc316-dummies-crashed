@@ -528,6 +528,7 @@ class BarChart {
             // Override PlayButton's start and stop methods to sync with barChart's isPlaying state
             const originalStart = vis.playButton.start.bind(vis.playButton);
             const originalStop = vis.playButton.stop.bind(vis.playButton);
+            const originalRestart = vis.playButton.restart.bind(vis.playButton);
             
             vis.playButton.start = function() {
                 vis.isPlaying = true;
@@ -537,6 +538,14 @@ class BarChart {
             vis.playButton.stop = function() {
                 vis.isPlaying = false;
                 originalStop();
+            };
+            
+            vis.playButton.restart = function() {
+                originalRestart();
+                // Start playing after restart
+                setTimeout(() => {
+                    vis.playButton.start();
+                }, 100);
             };
         }
     }
