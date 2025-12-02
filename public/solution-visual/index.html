@@ -262,11 +262,27 @@
 			position: relative;
 			box-sizing: border-box;
 		}
+		
+		#mapYearDisplay {
+			position: absolute;
+			top: 30px;
+			right: 30px;
+			background: transparent;
+			color: #000000;
+			padding: 10px 20px;
+			font-family: 'Overpass', sans-serif;
+			font-size: 1.5rem;
+			font-weight: 700;
+			z-index: 1000;
+			pointer-events: none;
+		}
 
 		#mapDiv svg {
 			width: 100%;
 			height: 100%;
 			display: block;
+			position: relative;
+			z-index: 1;
 		}
 
 
@@ -391,7 +407,9 @@
 <div class="main-content-wrapper">
 	<div class="content-left-section">
 		<div class="content-top-section">
-			<div id="mapDiv"></div>
+			<div id="mapDiv">
+				<div id="mapYearDisplay"></div>
+			</div>
 		</div>
 		
 		<div class="timeline-section">
