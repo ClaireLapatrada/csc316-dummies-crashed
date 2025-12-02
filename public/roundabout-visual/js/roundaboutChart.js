@@ -27,6 +27,8 @@ class RoundaboutChart {
     this.numAxes = this.axes.length;
     this.angleSlice = (Math.PI * 2) / this.numAxes;
     this.angleOffset = -Math.PI / 2; // Start at 12 o'clock
+    // Rotation offset for labels only (to prevent overlap)
+    this.labelOffset = 0.4; // Applied only to label positions
 
     // Set default options and merge with user-provided ones
     this.opts = {
@@ -144,65 +146,36 @@ class RoundaboutChart {
       return formatPercent(proportion);
     };
     
-    // Top labels (positive y-axis)
-    this.g.selectAll('.level-label-top')
-      .data(allLevels)
-      .enter()
-      .append('text')
-      .attr('class', 'level-label')
-      .attr('x', 0)
-      .attr('y', d => -this.rScale(d / this.opts.levels))
-      .attr('dy', '0.35em')
-      .text(d => getLabelText(d))
-      .style('font-size', '10px')
-      .style('fill', '#ffffff')
-      .style('font-weight', '500')
-      .style('text-anchor', 'middle');
+    // Create level labels at 4 cardinal directions, offset counterclockwise per level (like runners on a track)
+    const cardinalAngles = [
+      -Math.PI / 2,  // Top
+      0,              // Right
+      Math.PI / 2,    // Bottom
+      Math.PI         // Left
+    ];
     
-    // Bottom labels (negative y-axis)
-    this.g.selectAll('.level-label-bottom')
-      .data(allLevels)
-      .enter()
-      .append('text')
-      .attr('class', 'level-label')
-      .attr('x', 0)
-      .attr('y', d => this.rScale(d / this.opts.levels))
-      .attr('dy', '0.35em')
-      .text(d => getLabelText(d))
-      .style('font-size', '10px')
-      .style('fill', '#ffffff')
-      .style('font-weight', '500')
-      .style('text-anchor', 'middle');
-    
-    // Right labels (positive x-axis)
-    this.g.selectAll('.level-label-right')
-      .data(allLevels)
-      .enter()
-      .append('text')
-      .attr('class', 'level-label')
-      .attr('x', d => this.rScale(d / this.opts.levels))
-      .attr('y', 0)
-      .attr('dy', '0.35em')
-      .text(d => getLabelText(d))
-      .style('font-size', '10px')
-      .style('fill', '#ffffff')
-      .style('font-weight', '500')
-      .style('text-anchor', 'middle');
-    
-    // Left labels (negative x-axis)
-    this.g.selectAll('.level-label-left')
-      .data(allLevels)
-      .enter()
-      .append('text')
-      .attr('class', 'level-label')
-      .attr('x', d => -this.rScale(d / this.opts.levels))
-      .attr('y', 0)
-      .attr('dy', '0.35em')
-      .text(d => getLabelText(d))
-      .style('font-size', '10px')
-      .style('fill', '#ffffff')
-      .style('font-weight', '500')
-      .style('text-anchor', 'middle');
+    // Create labels for each level at each cardinal direction
+    allLevels.forEach(level => {
+      cardinalAngles.forEach((baseAngle, dirIndex) => {
+        // Offset counterclockwise: each level gets progressively more offset
+        // Higher levels (larger radius) are offset more counterclockwise
+        const levelOffset = (level - 1) * 0.08; // Counterclockwise offset per level
+        const angle = baseAngle + levelOffset;
+        const radius = this.rScale(level / this.opts.levels);
+        
+        this.g.append('text')
+          .attr('class', 'level-label')
+          .attr('x', radius * Math.cos(angle))
+          .attr('y', radius * Math.sin(angle))
+          .attr('dy', '0.35em')
+          .text(getLabelText(level))
+          .style('font-size', '10px')
+          .style('fill', '#ffffff')
+          .style('font-weight', '500')
+          .style('text-anchor', 'middle')
+          .style('dominant-baseline', 'middle');
+      });
+    });
       
     // --- 3. Draw the Axis Spokes ---
     this.g.selectAll('.axis-spoke')
@@ -216,20 +189,35 @@ class RoundaboutChart {
       .attr('y2', (d, i) => this.rScale(1) * Math.sin(this.angleSlice * i + this.angleOffset));
 
     // --- 4. Draw the Axis Labels ---
-    this.g.selectAll('.axis-label')
+    const chartInstance = this;
+    const axisLabels = this.g.selectAll('.axis-label')
       .data(this.axes)
       .enter()
       .append('text')
       .attr('class', 'axis-label')
-      .attr('x', (d, i) => this.rScale(this.opts.labelFactor) * Math.cos(this.angleSlice * i + this.angleOffset))
-      .attr('y', (d, i) => this.rScale(this.opts.labelFactor) * Math.sin(this.angleSlice * i + this.angleOffset))
-      .attr('dy', '0.35em') // Vertical alignment
       .text(d => d)
       .style('font-family', 'Overpass, sans-serif')
       .style('font-size', '14px')
       .style('font-weight', '500')
       .style('fill', '#FFFFFF')
-      .call(this.wrapText, 100); // Wrap long labels
+      .style('dominant-baseline', 'middle') // Center text vertically
+      .each(function(d, i) {
+        // Set initial position before wrapText runs
+        // Apply labelOffset only to labels to prevent overlap
+        const angle = chartInstance.angleSlice * i + chartInstance.angleOffset;
+        const baseRadius = chartInstance.rScale(chartInstance.opts.labelFactor);
+        const centerX = baseRadius * Math.cos(angle);
+        const centerY = baseRadius * Math.sin(angle);
+        d3.select(this)
+          .attr('x', centerX)
+          .attr('y', centerY);
+      })
+      .each(function() {
+        // Override text-anchor to center all text horizontally
+        const text = d3.select(this);
+        text.style('text-anchor', 'middle');
+        text.selectAll('tspan').style('text-anchor', 'middle');
+      });
 
     // --- 5. Draw the Data Series ---
     

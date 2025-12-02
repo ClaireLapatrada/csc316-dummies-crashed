@@ -12,7 +12,7 @@ class BarChart {
         this.originalData = data; // Keep original unfiltered data
         this.data = data; // Will be filtered based on view mode
         this.displayData = data;
-        this.currentYear = 2007; 
+        this.currentYear = 2006; 
         this.laneDividersCreated = false;
         this.isPlaying = false;
         this.wasPlaying = undefined;
@@ -990,7 +990,7 @@ class BarChart {
             .attr("y", 0)
             .attr("width", vis.width)
             .attr("height", vis.height)
-            .attr("fill", "#2a2a2a") // Dark asphalt road color
+            .attr("fill", "#666666") // Dark asphalt road color
             .attr("opacity", 1);
         
         // Create/update road shoulders (top and bottom) - start where bars start
@@ -1046,20 +1046,20 @@ class BarChart {
         
         // Style x-axis immediately to ensure visibility
         xAxisGroup.selectAll(".tick line")
-            .attr("stroke", "#999")
+            .attr("stroke", "#FFFFFF")
             .attr("stroke-width", 1)
             .attr("y1", 0)
             .attr("y2", vis.height);
         
         xAxisGroup.selectAll(".tick text")
-            .attr("fill", "#333")
+            .attr("fill", "#FFFFFF")
             .attr("font-size", "12px")
             .attr("font-weight", "500")
             .attr("font-family", "Arial, sans-serif")
             .attr("dy", "-5px");
         
         xAxisGroup.selectAll(".domain")
-            .attr("stroke", "#999")
+            .attr("stroke", "#FFFFFF")
             .attr("stroke-width", 1);
         
         // Sort ticks in DOM order by their value (ascending)

@@ -305,9 +305,9 @@ class PedestrianInjuryVisual {
         // Color scheme for each time period
         const periodColors = {
             morning: '#FFD166',    // Warm yellow (sunrise)
-            afternoon: '#FF9F43',  // Medium orange (bright day)
-            evening: '#FF6B6B',    // Coral/red (sunset)
-            night: '#4ECDC4'       // Teal/cyan (night)
+            afternoon: '#FFD166',  // Medium orange (bright day)
+            evening: '#FFD166',    // Purple (evening)
+            night: '#FFD166'       // Dark purple (night)
         };
 
         circle.className = 'injury-circle';
@@ -458,30 +458,30 @@ class PedestrianInjuryVisual {
         
         if (totalIncidents > 0) {
             tooltipHTML += `<div class="tooltip-severity">
-                <div style="font-weight: 600; margin-bottom: 6px; color: #FFD166;">Severity Breakdown:</div>`;
+                <div style="font-weight: 600; margin-bottom: 6px; color: #000000;">Severity Breakdown:</div>`;
             
             if (severityCounts.fatal > 0) {
                 tooltipHTML += `<div class="tooltip-severity-item">
                     <span>Fatal:</span>
-                    <span style="color: #FFD166;">${severityCounts.fatal}</span>
+                    <span style="color: #000000;">${severityCounts.fatal}</span>
                 </div>`;
             }
             if (severityCounts.major > 0) {
                 tooltipHTML += `<div class="tooltip-severity-item">
                     <span>Major:</span>
-                    <span style="color: #FFD166;">${severityCounts.major}</span>
+                    <span style="color: #000000;">${severityCounts.major}</span>
                 </div>`;
             }
             if (severityCounts.minor > 0) {
                 tooltipHTML += `<div class="tooltip-severity-item">
                     <span>Minor:</span>
-                    <span style="color: #FFD166;">${severityCounts.minor}</span>
+                    <span style="color: #000000;">${severityCounts.minor}</span>
                 </div>`;
             }
             if (severityCounts.minimal > 0) {
                 tooltipHTML += `<div class="tooltip-severity-item">
                     <span>Minimal:</span>
-                    <span style="color: #FFD166;">${severityCounts.minimal}</span>
+                    <span style="color: #000000;">${severityCounts.minimal}</span>
                 </div>`;
             }
             
@@ -489,11 +489,11 @@ class PedestrianInjuryVisual {
             
             if (topDistricts.length > 0) {
                 tooltipHTML += `<div class="tooltip-severity" style="margin-top: 10px;">
-                    <div style="font-weight: 600; margin-bottom: 6px; color: #FFD166;">Top Districts:</div>`;
+                    <div style="font-weight: 600; margin-bottom: 6px; color: #000000;">Top Districts:</div>`;
                 topDistricts.forEach(([district, count]) => {
                     tooltipHTML += `<div class="tooltip-severity-item">
                         <span>${district}:</span>
-                        <span style="color: #FFD166;">${count}</span>
+                        <span style="color: #000000;">${count}</span>
                     </div>`;
                 });
                 tooltipHTML += `</div>`;
