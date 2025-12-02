@@ -30,10 +30,9 @@ class MapVis {
         // Get actual container dimensions
         let container = d3.select("#" + vis.parentElement).node();
         if (container) {
-            // Account for padding
-            const padding = 40; // 20px on each side
-            vis.width = Math.max(850, (container.clientWidth || 1170) - padding);
-            vis.height = Math.max(560, (container.clientHeight || 784) - padding);
+            // Use full container dimensions
+            vis.width = container.clientWidth || 1170;
+            vis.height = container.clientHeight || 784;
         } else {
             vis.width = 1170 - vis.margin.left - vis.margin.right;
             vis.height = 784 - vis.margin.top - vis.margin.bottom;
@@ -286,6 +285,58 @@ class MapVis {
             // Apply zoom behavior to the SVG (handles both scroll zoom and drag pan)
             vis.svgElement.call(vis.zoom);
         }
+
+        // Add Legend
+        vis.legend = vis.svgElement.append("g")
+            .attr("transform", `translate(${vis.width - 150}, ${vis.height - 150})`);
+
+        vis.legend.append("rect")
+            .attr("width", 140)
+            .attr("height", 130)
+            .attr("fill", "white")
+            .attr("rx", 17)
+            .attr("ry", 17);
+
+        // Add Legend Title
+        vis.legend.append("text")
+            .attr("x", 70)
+            .attr("y", 25)
+            .attr("text-anchor", "middle")
+            .style("font-size", "14px")
+            .style("font-weight", "bold")
+            .style("fill", "black")
+            .text("Solution");
+
+        // Map colors from ImprovementsVis
+        let solutionColors = {
+            'Rumble Strips': 'rgba(128,128,128,0.8)',
+            'Intersection Safety': 'rgba(237,119,55,0.8)',
+            'Street Lighting': 'rgba(237,225,55,0.8)',
+            'Stop Signs / Signals': 'rgba(226,55,55,0.76)'
+        };
+
+        let legendData = ["Rumble Strips", "Intersection Safety", "Street Lighting", "Stop Signs / Signals"];
+
+        vis.legend.selectAll("mydots")
+            .data(legendData)
+            .enter()
+            .append("circle")
+            .attr("cx", 15)
+            .attr("cy", function(d,i){ return 50 + i*25}) 
+            .attr("r", 7)
+            .style("fill", function(d){ return solutionColors[d]});
+
+        vis.legend.selectAll("mylabels")
+            .data(legendData)
+            .enter()
+            .append("text")
+            .attr("x", 30)
+            .attr("y", function(d,i){ return 50 + i*25}) 
+            .style("fill", "black")
+            .style("font-size", "10px") 
+            .text(function(d){ return d})
+            .attr("text-anchor", "left")
+            .style("alignment-baseline", "middle");
 
         vis.wrangleData();
     }

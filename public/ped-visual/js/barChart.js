@@ -12,7 +12,7 @@ class BarChart {
         this.originalData = data; // Keep original unfiltered data
         this.data = data; // Will be filtered based on view mode
         this.displayData = data;
-        this.currentYear = 2007; 
+        this.currentYear = 2006; 
         this.laneDividersCreated = false;
         this.isPlaying = false;
         this.wasPlaying = undefined;
@@ -23,6 +23,7 @@ class BarChart {
         this.filterState = { severity: 'all', pedAct: 'all', drivAct: 'all', district: 'all', pedAge: 'all', drivAge: 'all' };
         this.lastHighlightYear = null; // Track last year we showed highlight for
         this.yearHighlights = null; // Will store calculated highlights
+        this.colorMapping = {}; // Store persistent color mapping
     }
 
     /*
@@ -43,6 +44,9 @@ class BarChart {
         // Calculate year highlights (use original data)
         vis.calculateYearHighlights();
         
+        // Calculate persistent color mapping based on 2006 data
+        vis.calculateColorMapping();
+
         // Process data and filter by current year
         vis.processData();
 
@@ -76,24 +80,8 @@ class BarChart {
             .range([0, vis.height])
             .padding(0.1);
 
-        // Color scale for pedestrian actions
-        vis.colorScale = d3.scaleOrdinal()
-            .domain(vis.counts.map(d => d.pedAct))
-            .range([
-                // Current colour palette
-                "#003f5c", "#2c4875", "#58508d", "#8a508f", "#bc5090",
-                "#de5a79", "#ff6361", "#ff8531", "#ffac59", "#ffd380",
-
-                // // Alternative colour palette
-                // "#e36040", "#ec8151", "#f4a261", "#8ab17d", "#2a9d8f",
-                //  "#2a9d8f", "#287271", "#264653", "#bc6b85", "#9576c9",
-
-                // Alternative colour palette 2
-                // "#ff595e", "#ff924c", 
-                "#ffca3a"
-                // "#c5ca30", "#8ac926",
-                // "#52a675", "#1982c4", "#4267ac", "#6a4c93", "#b5a6c9"
-            ]);
+        // Color scale uses the persistent mapping
+        vis.colorScale = (d) => vis.colorMapping[d] || "#999999";
 
         vis.updateVis();
         
@@ -106,6 +94,56 @@ class BarChart {
         
         // Responsive resize listener to handle window size changes
         window.addEventListener('resize', debounce(() => vis.handleResize(), 150));
+    }
+
+    /*
+     * Calculate persistent color mapping based on 2006 ranking
+     */
+    calculateColorMapping() {
+        let vis = this;
+        const actionField = vis.viewMode === 'pedestrian' ? 'pedAct' : 'manoeuver';
+        
+        // Filter for 2006 only
+        const data2006 = vis.originalData.filter(d => {
+            const dateStr = d.date;
+            const yearMatch = dateStr.match(/\/(\d{4})\s/);
+            const year = yearMatch ? parseInt(yearMatch[1]) : new Date(dateStr).getFullYear();
+            return year === 2006 && d[actionField];
+        });
+
+        // Group by action and count
+        const counts2006 = Array.from(
+            d3.rollup(
+                data2006,
+                v => v.length,
+                d => d[actionField]
+            ),
+            ([action, count]) => ({ action, count })
+        );
+
+        // Sort descending
+        counts2006.sort((a, b) => b.count - a.count);
+
+        // Get all unique actions in the entire dataset to ensure everything has a color
+        const allActions = Array.from(new Set(vis.originalData.map(d => d[actionField]).filter(d => d)));
+        
+        // Add any actions missing from 2006 to the end of the list
+        allActions.forEach(action => {
+            if (!counts2006.find(d => d.action === action)) {
+                counts2006.push({ action: action, count: 0 });
+            }
+        });
+
+        // Create color gradient from Red to Yellow
+        // We'll interpolate colors based on rank
+        const colorInterpolate = d3.interpolateRgb("#FF0000", "#FFFF00");
+        
+        vis.colorMapping = {};
+        const total = counts2006.length;
+        
+        counts2006.forEach((d, i) => {
+            vis.colorMapping[d.action] = colorInterpolate(i / (total - 1 || 1));
+        });
     }
 
     /*
@@ -688,6 +726,9 @@ class BarChart {
         // Update dropdown filters
         vis.setupDropdownFilters();
         
+        // Recalculate color mapping for new view mode
+        vis.calculateColorMapping();
+
         // Reprocess data and update visualization
         vis.processData();
         vis.updateVis();
@@ -972,7 +1013,7 @@ class BarChart {
             .attr("y", 0)
             .attr("width", vis.width)
             .attr("height", vis.height)
-            .attr("fill", "#7A8D8E") // Muted blue-grey road color
+            .attr("fill", "#666666") // Dark asphalt road color
             .attr("opacity", 1);
         
         // Create/update road shoulders (top and bottom) - start where bars start
@@ -1028,20 +1069,20 @@ class BarChart {
         
         // Style x-axis immediately to ensure visibility
         xAxisGroup.selectAll(".tick line")
-            .attr("stroke", "#999")
+            .attr("stroke", "#FFFFFF")
             .attr("stroke-width", 1)
             .attr("y1", 0)
             .attr("y2", vis.height);
         
         xAxisGroup.selectAll(".tick text")
-            .attr("fill", "#333")
+            .attr("fill", "#FFFFFF")
             .attr("font-size", "12px")
             .attr("font-weight", "500")
             .attr("font-family", "Arial, sans-serif")
             .attr("dy", "-5px");
         
         xAxisGroup.selectAll(".domain")
-            .attr("stroke", "#999")
+            .attr("stroke", "#FFFFFF")
             .attr("stroke-width", 1);
         
         // Sort ticks in DOM order by their value (ascending)
@@ -1218,7 +1259,7 @@ class BarChart {
                 item3.append('span')
                     .attr('class', 'tooltip-value')
                     .text(`${tooltipData.percentage.toFixed(1)}%`);
-
+                
                 
                 // Change from previous year
                 if (tooltipData.previousCount > 0) {
@@ -1283,11 +1324,11 @@ class BarChart {
                 //         .attr('class', 'tooltip-item')
                 //         .style('flex-direction', 'column')
                 //         .style('align-items', 'flex-start');
-                    
+                //     
                 //     itemTop3.append('span')
                 //         .attr('class', 'tooltip-label')
                 //         .text('District Concentration:');
-                    
+                //     
                 //     // Add each top district
                 //     tooltipData.top3Districts.forEach((district, index) => {
                 //         const districtPercentage = ((district[1] / tooltipData.currentCount) * 100).toFixed(1);
@@ -1298,12 +1339,12 @@ class BarChart {
                 //             .style('width', '100%')
                 //             .style('font-size', '11px')
                 //             .style('margin-top', '2px');
-                        
+                //         
                 //         districtItem.append('span')
                 //             .attr('class', 'tooltip-label')
                 //             .style('font-weight', 'normal')
                 //             .text(`${index + 1}. ${district[0]}`);
-                        
+                //         
                 //         districtItem.append('span')
                 //             .attr('class', 'tooltip-value')
                 //             .style('font-weight', 'normal')
@@ -1520,54 +1561,31 @@ class BarChart {
                 return Math.max(barWidth + 15, 50);
             })
             .attr("y", (d, i) => vis.yScale(i) + vis.yScale.bandwidth()/2)
+            .attr("transform", function(d) {
+                // Flip the emoji horizontally
+                // We need to rotate/scale around its own center
+                // Since it's a text element, we can use scale(-1, 1)
+                // But we need to translate it correctly to keep position
+                const x = Math.max(vis.xScale(d.count) + 15, 50);
+                const y = vis.yScale(d.pedAct) + vis.yScale.bandwidth()/2; // This logic might be flawed if y uses index i
+                // Actually y is set via attribute, we should apply transform relative to that position
+                // Better approach: wrap in a g? Or just use transform-origin.
+                // SVG transform origin is tricky.
+                // Let's try scale(-1, 1) and adjust x negative.
+                const bbox = this.getBBox();
+                const centerX = bbox.x + bbox.width / 2;
+                const centerY = bbox.y + bbox.height / 2;
+                // Since bbox is not available during enter, we can try a simple scaleX(-1) and move x
+                // Easier: Flip the emoji char? No.
+                // Let's use css transform-box: fill-box; transform-origin: center; transform: scaleX(-1);
+                return null;
+            })
+            .style("transform-box", "fill-box")
+            .style("transform-origin", "center")
+            .style("transform", "scaleX(-1)")
             .text(emoji);
 
         emojiIcons.exit().remove();
-
-        // Add large faint current-year watermark in the bottom-right of the chart
-        // It should update position and text when the chart updates or resizes
-        const fontSize = Math.max(36, Math.round(vis.height * 0.4));
-        const bigYear = vis.svg.selectAll('.big-year-label').data([vis.currentYear]);
-
-        const bigYearEnter = bigYear.enter().append('text')
-            .attr('class', 'big-year-label')
-            .attr('text-anchor', 'end')
-            .style('font-family', 'Playfair Display, serif')
-            .style('font-weight', '1000')
-            .style('fill', '#bfbfbf')
-            .style('fill-opacity', 0.7)
-            .style('pointer-events', 'none');
-
-        bigYearEnter.merge(bigYear)
-            .text(d => d)
-            .attr('x', vis.width - 8)
-            .attr('y', vis.height - 25)
-            .style('font-size', fontSize + 'px');
-
-        bigYear.exit().remove();
-
-        // // Add total collision count below the year label with same styling but smaller font
-        // NOTE: Temporarily removed 
-        // const totalCount = vis.displayData.length;
-        // const countFontSize = Math.max(18, Math.round(fontSize * 0.45));
-        // const bigCount = vis.svg.selectAll('.big-count-label').data([totalCount]);
-
-        // const bigCountEnter = bigCount.enter().append('text')
-        //     .attr('class', 'big-count-label')
-        //     .attr('text-anchor', 'end')
-        //     .style('font-family', 'Playfair Display, serif')
-        //     .style('font-weight', '1000')
-        //     .style('fill', '#bfbfbf')
-        //     .style('fill-opacity', 0.7)
-        //     .style('pointer-events', 'none');
-
-        // bigCountEnter.merge(bigCount)
-        //     .text(d => d.toLocaleString())
-        //     .attr('x', vis.width - 20)
-        //     .attr('y', vis.height - 156) // Position below year with small gap
-        //     .style('font-size', countFontSize + 'px');
-
-        // bigCount.exit().remove();
     }
 }
 

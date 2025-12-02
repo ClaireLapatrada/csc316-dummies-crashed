@@ -25,7 +25,7 @@
 
 		.title-section {
 			position: absolute;
-			top: 8%;
+			top: 3%;
 			left: 5%;
 			right: 25%;
 			z-index: 10;
@@ -41,22 +41,21 @@
 		}
 
 		.description-section {
-			position: relative;
-			width: 100%;
+			position: absolute;
+			top: 10%;
+			left: 5%;
+			right: 25%;
 			z-index: 10;
 			color: #FFFFFF;
 			font-family: 'Overpass', sans-serif;
 			font-weight: 400;
 			font-size: 1.1rem;
 			line-height: 1.6;
-			margin-bottom: 20px;
-			padding: 0;
-			flex: 0 0 auto;
 		}
 
 		.filter-buttons {
 			position: absolute;
-			top: 8%;
+			top: 3%;
 			right: 2%;
 			z-index: 10;
 			display: flex;
@@ -75,7 +74,6 @@
 			background: #0A6B4A;
 			border: 2px solid #FFFFFF;
 			color: #FFFFFF;
-			padding: 8px 16px;
 			border-radius: 4px;
 			font-family: 'Overpass', sans-serif;
 			font-weight: 400;
@@ -181,80 +179,30 @@
 
 		.main-content-wrapper {
 			position: absolute;
-			top: 20%;
+			top: 22%;
 			left: 5%;
 			right: 3%;
-			bottom: 5%;
-			display: flex;
-			flex-direction: row;
-			padding: 0 !important;
-			margin: 0 !important;
-			gap: 20px;
-		}
-
-		.content-left-section {
-			flex: 1 1 auto;
+			bottom: 14%;
 			display: flex;
 			flex-direction: column;
-			min-width: 0;
-			gap: 20px;
+			padding: 0 !important;
+			margin: 0 !important;
 		}
 
 		.content-top-section {
 			display: flex;
-			flex-direction: column;
-			flex: 1 1 auto;
+			flex-direction: row;
+			flex: 1;
 			min-height: 0;
 			gap: 0;
 			overflow: hidden;
-			margin-top: 0;
-		}
-
-		.description-section {
-			flex: 0 0 450px;
-			display: flex;
-			flex-direction: column;
-			padding: 0 2rem 0 0;
-			color: #FFFFFF;
-			font-family: 'Overpass', sans-serif;
-			font-weight: 400;
-			font-size: 1.1rem;
-			line-height: 1.6;
-			margin: 0;
-			max-width: 450px;
-			overflow-wrap: break-word;
-			word-wrap: break-word;
-			gap: 20px;
-		}
-
-		.description-text {
-			flex: 0 0 auto;
-		}
-
-		#options-panel {
-			flex: 1 1 auto;
-			min-height: 0;
-			background: rgba(255, 255, 255, 0.1);
-			border-radius: 8px;
-			padding: 20px;
-			overflow: hidden;
-			display: flex;
-			flex-direction: column;
-		}
-
-		#options-panel h6 {
-			color: #FFFFFF;
-			font-family: 'Overpass', sans-serif;
-			font-weight: 700;
-			font-size: 1rem;
-			margin-bottom: 15px;
 		}
 
 		#mapDiv {
 			flex: 1 1 auto;
 			min-width: 0;
 			display: block;
-			padding: 20px;
+			padding: 0;
 			height: 100%;
 			background: #FFFFFF;
 			border-radius: 8px;
@@ -285,60 +233,73 @@
 			z-index: 1;
 		}
 
+		#options-panel {
+			flex: 0 0 35%;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			padding: 20px 2rem 20px 1rem;
+			background: transparent;
+			min-width: 0;
+			overflow-wrap: break-word;
+			word-wrap: break-word;
+		}
+
+		#options-panel h6 {
+			color: #FFFFFF;
+			font-family: 'Overpass', sans-serif;
+			font-weight: 400;
+			font-size: 1.1rem;
+			margin-bottom: 20px;
+		}
 
 		#locationChart {
-			flex: 1 1 auto;
-			min-height: 0;
+			height: 300%;
+			min-height: 100px;
 			width: 100%;
-			height: 100%;
-			overflow: hidden;
+			max-height: none;
 		}
 
 		.timeline-section {
-			position: relative;
-			width: 100%;
+			position: absolute;
+			bottom: 1%;
+			left: 3%;
+			right: auto;
+			width: auto;
 			z-index: 10;
 			display: flex;
 			flex-direction: row;
 			align-items: center;
-			gap: 0;
-			padding: 20px 0;
+			justify-content: flex-start;
+			gap: 20px;
+			padding: 0;
 			margin: 0;
 			box-sizing: border-box;
-			flex: 0 0 auto;
 			flex-shrink: 0;
 		}
 
-		.timeline-section svg {
-			flex: 1;
-			min-width: 0;
-			max-width: 836px;
-		}
-
-		.timeline-section .year-label {
-			fill: #FFFFFF !important;
-			font-family: 'Overpass', sans-serif !important;
+		.timeline-section > * {
+			margin-left: 0 !important;
+			margin-right: 0 !important;
 		}
 
 		#yearScrollContainer {
-			flex: 1;
+			flex: 0 0 auto;
 			min-width: 0;
-			padding-right: 0;
-			margin-right: 0;
+			max-width: 836px;
+			margin: 0 !important;
+			padding: 0 !important;
 		}
 
 		#yearScrollContainer svg {
-			margin-right: 0;
-			padding-right: 0;
+			margin: 0 !important;
+			padding: 0 !important;
 		}
 
 		.control-buttons {
 			display: flex;
-			gap: 12px;
-			align-items: center;
-			flex-shrink: 0;
-			margin-left: -20px;
-			padding: 0;
+			gap: 10px;
+			margin-top: -10px;
 		}
 
 		.play-button, .restart-button {
@@ -369,12 +330,15 @@
 			font-size: 1rem;
 		}
 	</style>
-	<link rel="stylesheet" href="../shared/css/play-controls.css">
 </head>
 <body>
 
 <div class="title-section">
 	<h1 class="main-title">Toronto Collisions Map</h1>
+</div>
+
+<div class="description-section">
+	This visualization maps traffic collision patterns across Toronto neighborhoods, revealing where and why accidents occur. The severity map uses color intensity to highlight accident hotspots. In the next page, the improvements view shows factors that could be improved with simple road interventions.
 </div>
 
 <div class="filter-buttons">
@@ -433,6 +397,18 @@
 			<h6>Neighborhoods by Collision Count</h6>
 			<div id="locationChart"></div>
 		</div>
+	</div>
+</div>
+
+<div class="timeline-section">
+	<div id="yearScrollContainer"></div>
+	<div class="control-buttons">
+		<button class="play-button" id="playBtn" type="button">
+			<i class="fas fa-play play-icon"></i>
+		</button>
+		<button class="restart-button" id="restartBtn" type="button">
+			<i class="fas fa-redo restart-icon"></i>
+		</button>
 	</div>
 </div>
 

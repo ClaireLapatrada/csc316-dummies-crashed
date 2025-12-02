@@ -27,6 +27,8 @@ class RoundaboutChart {
     this.numAxes = this.axes.length;
     this.angleSlice = (Math.PI * 2) / this.numAxes;
     this.angleOffset = -Math.PI / 2; // Start at 12 o'clock
+    // Rotation offset for labels only (to prevent overlap)
+    this.labelOffset = 0.4; // Applied only to label positions
 
     // Set default options and merge with user-provided ones
     this.opts = {
@@ -258,7 +260,24 @@ class RoundaboutChart {
       .style('font-size', '14px')
       .style('font-weight', '500')
       .style('fill', '#FFFFFF')
-      .call(this.wrapText, 100); // Wrap long labels
+      .style('dominant-baseline', 'middle') // Center text vertically
+      .each(function(d, i) {
+        // Set initial position before wrapText runs
+        // Apply labelOffset only to labels to prevent overlap
+        const angle = chartInstance.angleSlice * i + chartInstance.angleOffset;
+        const baseRadius = chartInstance.rScale(chartInstance.opts.labelFactor);
+        const centerX = baseRadius * Math.cos(angle);
+        const centerY = baseRadius * Math.sin(angle);
+        d3.select(this)
+          .attr('x', centerX)
+          .attr('y', centerY);
+      })
+      .each(function() {
+        // Override text-anchor to center all text horizontally
+        const text = d3.select(this);
+        text.style('text-anchor', 'middle');
+        text.selectAll('tspan').style('text-anchor', 'middle');
+      });
 
     // --- 5. Draw the Data Series ---
     
@@ -269,16 +288,15 @@ class RoundaboutChart {
 
     // Draw each series
     this.series.forEach(series => {
-      // Color palette for each segment
+      // Color palette for each segment - Shades from Red to Yellow
       const colors = [
-        '#e41a1c', // red
-        '#377eb8', // blue
-        '#4daf4a', // green
-        '#984ea3', // purple
-        '#ff7f00', // orange
-        '#ffff33', // yellow
-        '#a65628', // brown
-        '#f781bf'  // pink
+        '#FF0000', // Red
+        '#FF2A00',
+        '#FF5500',
+        '#FF8000', // Orange
+        '#FFAA00',
+        '#FFD500', // Yellow
+        '#FFFF00'
       ];
       
       // Draw each segment centered on its spoke
