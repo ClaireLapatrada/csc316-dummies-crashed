@@ -155,8 +155,8 @@ function initMatrixChart() {
     if (!containerNode) return;
     
     const containerRect = containerNode.getBoundingClientRect();
-    width = containerRect.width || 800;
-    height = containerRect.height || 600;
+    width = containerRect.width || 720;
+    height = containerRect.height || 520;
     
     margin = { top: 80, right: 50, bottom: 20, left: 100 };
     

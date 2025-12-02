@@ -37,7 +37,8 @@ html {
     position: relative;
     top: 0;
     left: 0;
-    margin: 5px 40px;
+    margin: 5px 40px 5px 80px;
+    padding-left: 0;
     z-index: 10;
 }
 
