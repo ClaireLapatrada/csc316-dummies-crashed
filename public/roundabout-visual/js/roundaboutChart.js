@@ -32,8 +32,8 @@ class RoundaboutChart {
     this.opts = {
       levels: 5,
       islandRadius: 70,
-      labelFactor: 1.15, // How far out to place labels (increased to prevent overlap)
-      margin: { top: 40, right: 40, bottom: 40, left: 40 },
+      labelFactor: 1, // How far out to place labels (increased to prevent overlap)
+      margin: { top: 60, right: 60, bottom: 60, left: 60 },
       curve: d3.curveBasisClosed, // Smoother curve for the data path
       totalCollisions: null, // Total number of collisions for converting percentages
       ...options // User options (from main.js) will override defaults
