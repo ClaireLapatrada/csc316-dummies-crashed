@@ -523,7 +523,21 @@ class BarChart {
         
         // Initialize PlayButton
         if (typeof PlayButton !== 'undefined') {
-            vis.playButton = new PlayButton('#playBtn', vis.yearScroll);
+            vis.playButton = new PlayButton('#playBtn', vis.yearScroll, 1000);
+            
+            // Override PlayButton's start and stop methods to sync with barChart's isPlaying state
+            const originalStart = vis.playButton.start.bind(vis.playButton);
+            const originalStop = vis.playButton.stop.bind(vis.playButton);
+            
+            vis.playButton.start = function() {
+                vis.isPlaying = true;
+                originalStart();
+            };
+            
+            vis.playButton.stop = function() {
+                vis.isPlaying = false;
+                originalStop();
+            };
         }
     }
     
@@ -1116,22 +1130,21 @@ class BarChart {
 
         const barsMerged = barsEnter.merge(bars);
 
-        barsMerged
-            .transition()
-            .duration(1000)
-            .ease(d3.easeCubicInOut)
-            .attr("width", d => vis.xScale(d.count))
-            .attr("y", (d, i) => vis.yScale(i));
-
-        // Add tooltip interactions to bars
+        // Add tooltip interactions to bars (before transition)
         barsMerged
             .on("mouseover", function(event, d) {
                 // Cancel any tooltip fade-out in progress
                 tooltip.interrupt();
 
                 // Pause autoplay if active
+                console.log('Mouseover - isPlaying:', vis.isPlaying);
                 if (vis.isPlaying) {
-                    vis.stopPlay();
+                    console.log('Pausing playback');
+                    if (vis.playButton) {
+                        vis.playButton.stop();
+                    } else {
+                        vis.stopPlay();
+                    }
                     vis.wasPlaying = true;
                 } else if (vis.wasPlaying === undefined) {
                     vis.wasPlaying = false;
@@ -1371,11 +1384,25 @@ class BarChart {
                     .style("opacity", 1);
 
                 // Resume autoplay if it was previously running
+                console.log('Mouseout - wasPlaying:', vis.wasPlaying);
                 if (vis.wasPlaying) {
-                    vis.startPlay();
+                    console.log('Resuming playback');
+                    if (vis.playButton) {
+                        vis.playButton.start();
+                    } else {
+                        vis.startPlay();
+                    }
                 }
                 vis.wasPlaying = undefined;
             });
+
+        // Apply transitions after event handlers are attached
+        barsMerged
+            .transition()
+            .duration(1000)
+            .ease(d3.easeCubicInOut)
+            .attr("width", d => vis.xScale(d.count))
+            .attr("y", (d, i) => vis.yScale(i));
 
         bars.exit().remove();
 
