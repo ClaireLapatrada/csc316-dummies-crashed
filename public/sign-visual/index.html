@@ -75,16 +75,23 @@
             padding-top: 100px;
         }
 
-        /* Left side - rankings (smaller) */
+        /* Left side - matrix chart */
         .rankings-container {
             flex: 0 1 auto;
             max-width: 50%;
             display: flex;
             flex-direction: row;
             justify-content: flex-start;
-            align-items: center;
+            align-items: flex-start;
             gap: 3rem;
-            padding: 120px 40px 40px 10%;
+            padding: 40px 2% 40px 2%;
+            min-height: 500px;
+            max-height: 600px;
+        }
+        
+        #bubbleChart {
+            min-height: 500px;
+            width: 100%;
         }
 
         .rank-item {
@@ -272,6 +279,30 @@
         #cardsRow {
             display: none; /* Hide the old cards */
         }
+        
+        /* Matrix tooltip */
+        .matrix-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: #FFFFFF;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-family: 'Overpass', sans-serif;
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .matrix-tooltip.visible {
+            opacity: 1;
+        }
+        
+        .matrix-tooltip strong {
+            color: #FFFFFF;
+        }
 
         @media (max-width: 1200px) {
             .rankings-container {
@@ -327,50 +358,22 @@
 <div class="infographic-container">
     <div class="title-section">
         <h1 class="main-title">
-            <span class="title-line-1">Fatal Collisions Ranked</span>
-            <span class="title-line-2">By Involvement</span>
+            <span class="title-line-1">Vehicle Type Collision</span>
+            <span class="title-line-2">Matrix</span>
         </h1>
     </div>
 
     <div class="main-content-wrapper">
         <div class="content-top-section">
-            <!-- Left side - rankings (smaller) -->
+            <!-- Left side - matrix chart -->
             <div class="rankings-container">
-                <!-- 1st - Car -->
-                <div class="rank-item">
-                    <div class="rank-label">1st</div>
-                    <div class="rank-sign">
-                        <img src="./svg/car.svg" alt="Car">
-                    </div>
-                    <div class="rank-name">Cars</div>
-                    <div class="rank-count" id="carCount">0</div>
-                </div>
-
-                <!-- 2nd - Pedestrian -->
-                <div class="rank-item">
-                    <div class="rank-label">2nd</div>
-                    <div class="rank-sign">
-                        <img src="./svg/pedestrian.svg" alt="Pedestrian">
-                    </div>
-                    <div class="rank-name">Pedestrian</div>
-                    <div class="rank-count" id="pedestrianCount">0</div>
-                </div>
-
-                <!-- 3rd - Bike -->
-                <div class="rank-item">
-                    <div class="rank-label">3rd</div>
-                    <div class="rank-sign">
-                        <img src="./svg/bike.svg" alt="Bike">
-                    </div>
-                    <div class="rank-name">Bike</div>
-                    <div class="rank-count" id="bikeCount">0</div>
-                </div>
+                <svg id="bubbleChart"></svg>
             </div>
 
             <!-- Right side - description -->
             <div class="description-section">
                 <p>
-                    This chart shows the number of <strong>fatal collisions</strong> for different types of <strong>road users</strong> over the years, including <strong>cyclists</strong>, <strong>car drivers</strong>, and <strong>pedestrians</strong>. <br><br>You can use the <strong>interactive slider</strong> to see how these numbers change each year and compare trends for each category.<br><br> This helps spot which categories are at <strong>higher risk</strong> and understand overall <strong>road safety trends</strong>.
+                    This adjacency matrix visualizes collisions between different vehicle types, including cars, pedestrians, bikes, motorcycles, trucks, and transit vehicles. Each cell shows the number of unique collisions between the corresponding vehicle types, with colors ranging from green (low) to red (high) based on collision frequency. Use the interactive timeline to see how collision patterns change over the years and identify which vehicle type combinations are most dangerous. Hover over any cell to see detailed breakdowns by severity.
                 </p>
             </div>
         </div>
