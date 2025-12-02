@@ -288,18 +288,18 @@ class MapVis {
 
         // Add Legend
         vis.legend = vis.svgElement.append("g")
-            .attr("transform", `translate(${vis.width - 150}, ${vis.height - 170})`);
+            .attr("transform", `translate(${vis.width - 150}, ${vis.height - 150})`);
 
         vis.legend.append("rect")
-            .attr("width", 130)
-            .attr("height", 150)
+            .attr("width", 140)
+            .attr("height", 130)
             .attr("fill", "white")
             .attr("rx", 17)
             .attr("ry", 17);
 
         // Add Legend Title
         vis.legend.append("text")
-            .attr("x", 65)
+            .attr("x", 70)
             .attr("y", 25)
             .attr("text-anchor", "middle")
             .style("font-size", "14px")
@@ -309,13 +309,13 @@ class MapVis {
 
         // Map colors from ImprovementsVis
         let solutionColors = {
-            'Dynamic Speed Signs': 'rgba(237,225,55,0.8)',
-            'Street Lighting': 'rgba(0,0,0,0.64)',
-            'Anti-icing Technology': 'rgba(58,93,220,0.8)',
-            'Rumble Strips': 'rgba(98,228,165,0.8)'
+            'Rumble Strips': 'rgba(128,128,128,0.8)',
+            'Intersection Safety': 'rgba(237,119,55,0.8)',
+            'Street Lighting': 'rgba(237,225,55,0.8)',
+            'Stop Signs / Signals': 'rgba(226,55,55,0.76)'
         };
 
-        let legendData = ["Dynamic Speed Signs", "Street Lighting", "Anti-icing Technology", "Rumble Strips"];
+        let legendData = ["Rumble Strips", "Intersection Safety", "Street Lighting", "Stop Signs / Signals"];
 
         vis.legend.selectAll("mydots")
             .data(legendData)
