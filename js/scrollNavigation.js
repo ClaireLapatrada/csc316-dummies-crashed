@@ -6,7 +6,7 @@ let isScrolling = false;
 let scrollTimeout = null;
 let wheelAccumulator = 0;
 let lastWheelTime = 0;
-const totalPages = 11;
+const totalPages = 12;
 const WHEEL_THRESHOLD = 50; // Minimum accumulated wheel delta to trigger navigation
 const WHEEL_RESET_TIME = 150; // Time in ms to reset wheel accumulator
 
