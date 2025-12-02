@@ -32,8 +32,8 @@ class RoundaboutChart {
     this.opts = {
       levels: 5,
       islandRadius: 70,
-      labelFactor: 1.25, // How far out to place labels (increased to prevent overlap)
-      margin: { top: 60, right: 60, bottom: 60, left: 60 },
+      labelFactor: 1.15, // How far out to place labels (increased to prevent overlap)
+      margin: { top: 40, right: 40, bottom: 40, left: 40 },
       curve: d3.curveBasisClosed, // Smoother curve for the data path
       totalCollisions: null, // Total number of collisions for converting percentages
       ...options // User options (from main.js) will override defaults
@@ -71,8 +71,8 @@ class RoundaboutChart {
    */
   _layout() {
     // Calculate chart dimensions inside margins
-    this.chartWidth = this.width * 0.85 - this.opts.margin.left - this.opts.margin.right + 100;
-    this.chartHeight = this.height * 0.85 - this.opts.margin.top - this.opts.margin.bottom;
+    this.chartWidth = this.width * 0.95 - this.opts.margin.left - this.opts.margin.right + 100;
+    this.chartHeight = this.height * 0.95 - this.opts.margin.top - this.opts.margin.bottom;
     
     // Center of the chart
     this.centerX = this.chartWidth / 2;
@@ -140,9 +140,7 @@ class RoundaboutChart {
     // Function to get label text - use counts if available, otherwise percentages
     const getLabelText = (level) => {
       const proportion = level / this.opts.levels;
-      if (this.opts.totalCollisions) {
-        return formatNumber(Math.round(proportion * this.opts.totalCollisions));
-      }
+      // Always use percentage for axis labels as requested
       return formatPercent(proportion);
     };
     
@@ -242,16 +240,15 @@ class RoundaboutChart {
 
     // Draw each series
     this.series.forEach(series => {
-      // Color palette for each segment
+      // Color palette for each segment - Shades from Red to Yellow
       const colors = [
-        '#e41a1c', // red
-        '#377eb8', // blue
-        '#4daf4a', // green
-        '#984ea3', // purple
-        '#ff7f00', // orange
-        '#ffff33', // yellow
-        '#a65628', // brown
-        '#f781bf'  // pink
+        '#FF0000', // Red
+        '#FF2A00',
+        '#FF5500',
+        '#FF8000', // Orange
+        '#FFAA00',
+        '#FFD500', // Yellow
+        '#FFFF00'
       ];
       
       // Draw each segment centered on its spoke

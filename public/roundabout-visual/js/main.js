@@ -118,22 +118,23 @@ function loadData(){
         const badSurf = /(wet|snow|slush|ice|loose|mud|sand|gravel)/.test(surf);
         return badVis || badSurf;
       });
-      const pedInvolved = prop(rows, d => d.pedInv);
-      const cycInvolved = prop(rows, d => d.cycInv);
+
+      const axes = [
+        { axis: 'At Intersection', value: atIntersection },
+        { axis: 'Speeding Related', value: speeding },
+        { axis: 'Aggressive/Distracted', value: aggdistr },
+        { axis: 'Alcohol Related', value: alcohol },
+        { axis: 'Night-time', value: night },
+        { axis: 'Poor Weather', value: poorWeather }
+      ];
+
+      // Sort axes by value in descending order
+      axes.sort((a, b) => b.value - a.value);
 
       return [{
         name: 'All collisions (2006–2023) — Factors',
         color: '#d95f02',
-        axes: [
-          { axis: 'At Intersection', value: atIntersection },
-          { axis: 'Speeding Related', value: speeding },
-          { axis: 'Aggressive/Distracted', value: aggdistr },
-          { axis: 'Alcohol Related', value: alcohol },
-          { axis: 'Night-time', value: night },
-          { axis: 'Poor Weather', value: poorWeather },
-          { axis: 'Pedestrian Involved', value: pedInvolved },
-          { axis: 'Cyclist Involved', value: cycInvolved }
-        ]
+        axes: axes
       }];
     }
 
@@ -161,7 +162,7 @@ function loadData(){
     const chart = new RoundaboutChart('#roundabout-chart', factorSeries, {
       levels: 5,           // This will create the 5 lanes
       roadWidth: 80,       // Example: width of the road area
-      islandRadius: 70,    // Example: radius of the central island
+      islandRadius: 100,    // Increased island radius
       totalCollisions: rows206_23.length
     });
 
