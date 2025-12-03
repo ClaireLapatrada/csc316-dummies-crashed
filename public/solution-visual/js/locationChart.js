@@ -4,19 +4,18 @@ class LocationChart {
         this.data = crashData;
         this.selectedYear = null;
         this.activeFilters = ["Fatal","Major","Minor","Minimal"];
-        this.globalMaxValue = null; // Constant max value for all speedometers
         this.initVis();
     }
 
     initVis() {
         let vis = this;
 
-        // Get container dimensions
+        // Get container dimensions - make it bigger like conditions-visual
         let container = d3.select("#" + vis.parentElement).node();
-        let containerWidth = container ? container.clientWidth : 400;
-        let containerHeight = container ? container.clientHeight : 400;
+        let containerWidth = container ? container.clientWidth : 850;
+        let containerHeight = container ? container.clientHeight : 560;
 
-        vis.margin = { top: 20, right: 20, bottom: 20, left: 20 };
+        vis.margin = { top: 40, right: 10, bottom: 60, left: 60 };
         vis.width = containerWidth - vis.margin.left - vis.margin.right;
         vis.height = containerHeight - vis.margin.top - vis.margin.bottom;
 
@@ -28,10 +27,43 @@ class LocationChart {
             .append("g")
             .attr("transform", `translate(${vis.margin.left},${vis.margin.top})`);
 
-        // Speedometer settings
-        vis.gaugeRadius = Math.min(vis.width, vis.height) / 5;
-        vis.gaugeCenterX = vis.width / 4;
-        vis.gaugeCenterY = vis.height / 3;
+        // Y-axis label - WHITE
+        vis.svg.append("text")
+            .attr("class", "y-axis-label")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -vis.height / 2)
+            .attr("y", -vis.margin.left + 25)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "12px")
+            .attr("fill", "#FFFFFF")
+            .style("fill", "#FFFFFF")
+            .attr("font-family", "Overpass, sans-serif")
+            .text("Collisions");
+
+        vis.x = d3.scaleBand().range([0, vis.width]).padding(0.3);
+        vis.y = d3.scaleLinear().range([vis.height, 0]);
+
+        vis.xAxis = vis.svg.append("g")
+            .attr("class", "x-axis")
+            .attr("transform", `translate(0,${vis.height})`);
+
+        vis.yAxis = vis.svg.append("g")
+            .attr("class", "y-axis");
+
+        // Style Y axis - WHITE
+        vis.yAxis.selectAll("text")
+            .attr("fill", "#FFFFFF")
+            .style("fill", "#FFFFFF")
+            .attr("font-family", "Overpass, sans-serif")
+            .attr("font-size", "12px");
+
+        vis.yAxis.selectAll(".domain")
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 1);
+        
+        vis.yAxis.selectAll(".tick line")
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 1);
 
         vis.updateVis();
     }
@@ -53,300 +85,142 @@ class LocationChart {
 
         let counts = d3.rollups(filtered, v => v.length, d => d['DISTRICT']);
 
-        // Map district numbers to region names
-        const districtToRegion = {
-            '41': 'Scarborough', '42': 'Scarborough', '43': 'Scarborough', '44': 'Scarborough',
-            '22': 'Etobicoke York', '23': 'Etobicoke York', '31': 'Etobicoke York', '32': 'Etobicoke York', '33': 'Etobicoke York',
-            '12': 'North York', '13': 'North York', '14': 'North York', '32': 'North York', '33': 'North York',
-            '51': 'Toronto and East York', '52': 'Toronto and East York', '53': 'Toronto and East York', '54': 'Toronto and East York', '55': 'Toronto and East York'
-        };
+        let allDistricts = Array.from(new Set(filtered.map(d => d['DISTRICT'])));
+        console.log("All districts:", allDistricts);
 
-        // Aggregate by region
-        let regionCounts = {};
-        counts.forEach(([district, count]) => {
-            let region = districtToRegion[district] || district;
-            if (!regionCounts[region]) {
-                regionCounts[region] = 0;
-            }
-            regionCounts[region] += count;
-        });
+        counts.sort((a, b) => b[1] - a[1]);
+        vis.displayData = counts.slice(0, 8);
 
-        // Convert to array and sort
-        vis.displayData = Object.entries(regionCounts)
-            .map(([region, count]) => [region, count])
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 4); // Top 4 regions
-
-        // Calculate global max across all years and filters for consistent scale
-        // Find the maximum collision count for any region in any single year/filter combination
-        if (vis.globalMaxValue === null) {
-            let allFiltered = vis.data.filter(d => {
-                let classification = (d['Accident Classification'] || '').trim();
-                return classification && classification !== '';
-            });
-            
-            const districtToRegion = {
-                '41': 'Scarborough', '42': 'Scarborough', '43': 'Scarborough', '44': 'Scarborough',
-                '22': 'Etobicoke York', '23': 'Etobicoke York', '31': 'Etobicoke York', '32': 'Etobicoke York', '33': 'Etobicoke York',
-                '12': 'North York', '13': 'North York', '14': 'North York', '32': 'North York', '33': 'North York',
-                '51': 'Toronto and East York', '52': 'Toronto and East York', '53': 'Toronto and East York', '54': 'Toronto and East York', '55': 'Toronto and East York'
-            };
-            
-            // Calculate max for each year and filter combination
-            let maxValue = 0;
-            const allYears = [...new Set(allFiltered.map(d => +d.Year || +d['Year of collision'] || 0))].filter(y => y >= 2006 && y <= 2023);
-            const allClassifications = ['Fatal', 'Major', 'Minor', 'Minimal'];
-            
-            // Check all combinations to find the absolute maximum single region count
-            allYears.forEach(year => {
-                allClassifications.forEach(classification => {
-                    let yearFiltered = allFiltered.filter(d => {
-                        let crashYear = +d.Year || +d['Year of collision'] || 0;
-                        let dClassification = (d['Accident Classification'] || '').trim();
-                        return crashYear === year && dClassification === classification;
-                    });
-                    
-                    let yearCounts = d3.rollups(yearFiltered, v => v.length, d => d['DISTRICT']);
-                    let yearRegionCounts = {};
-                    yearCounts.forEach(([district, count]) => {
-                        let region = districtToRegion[district] || district;
-                        if (!yearRegionCounts[region]) {
-                            yearRegionCounts[region] = 0;
-                        }
-                        yearRegionCounts[region] += count;
-                    });
-                    
-                    // Find max for this year/classification combination
-                    const yearMax = Math.max(...Object.values(yearRegionCounts), 0);
-                    if (yearMax > maxValue) {
-                        maxValue = yearMax;
-                    }
-                });
-            });
-            
-            vis.globalMaxValue = maxValue || 1;
-        }
-        
-        vis.maxCount = vis.globalMaxValue;
-        vis.avgCollisions = d3.mean(vis.displayData, d => d[1]);
+        vis.avgCollisions = d3.mean(counts, d => d[1]);
     }
 
     updateVis() {
         const vis = this;
         vis.wrangleData();
 
-        // Calculate positions for 4 speedometers in a 2x2 grid
-        const gaugeRadius = Math.min(vis.width, vis.height) / 5;
-        const gaugeSpacingX = vis.width / 2;
-        const gaugeSpacingY = vis.height / 2;
-        const positions = [
-            { x: gaugeSpacingX / 2, y: gaugeSpacingY / 2 }, // Top-left
-            { x: gaugeSpacingX * 1.5, y: gaugeSpacingY / 2 }, // Top-right
-            { x: gaugeSpacingX / 2, y: gaugeSpacingY * 1.5 }, // Bottom-left
-            { x: gaugeSpacingX * 1.5, y: gaugeSpacingY * 1.5 } // Bottom-right
-        ];
+        const maxCount = vis.displayData.length ? d3.max(vis.displayData, d => d[1]) : 1;
 
-        // Get existing speedometers or create new ones
-        vis.displayData.slice(0, 4).forEach((d, i) => {
-            if (i >= positions.length) return;
-            
-            const [region, count] = d;
-            const pos = positions[i];
-            const gaugeClass = `gauge-${region.replace(/\s+/g, '-')}`;
-            const existingGauge = vis.svg.select(`g.${gaugeClass}`);
-            
-            if (existingGauge.empty()) {
-                // Create new speedometer
-                vis.createSpeedometer(pos.x, pos.y, gaugeRadius, region, count, vis.maxCount, i);
-            } else {
-                // Update existing speedometer with smooth transition
-                vis.updateSpeedometer(existingGauge, count, vis.maxCount, gaugeRadius);
-            }
-        });
+        vis.x.domain(vis.displayData.map(d => d[0]));
+        vis.y.domain([0, maxCount * 1.2]);
 
-        // Remove speedometers that are no longer in displayData
-        vis.svg.selectAll("g[class^='gauge-']").each(function() {
-            const gaugeLabel = d3.select(this).select(".region-label").text();
-            const stillExists = vis.displayData.some(d => d[0] === gaugeLabel);
-            if (!stillExists) {
-                d3.select(this).remove();
-            }
-        });
-    }
+        vis.xAxis
+            .call(d3.axisBottom(vis.x))
+            .selectAll("text")
+            .attr("transform", "rotate(-45)")
+            .style("text-anchor", "end")
+            .attr("fill", "#FFFFFF")
+            .style("fill", "#FFFFFF")
+            .style("color", "#FFFFFF")
+            .attr("font-family", "Overpass, sans-serif")
+            .attr("font-size", "8.3px")
+            .attr("dx", "1.01em")
+            .attr("dy", "1em")
+            .call(this.wrap, vis.x.bandwidth());
 
-    updateSpeedometer(gaugeGroup, value, maxValue, radius) {
-        const vis = this;
-        
-        // Get the region label to determine color
-        const regionLabel = gaugeGroup.select(".region-label").text();
-        const regionColors = {
-            'Scarborough': '#FF6B6B',      // Red
-            'Etobicoke York': '#4ECDC4',   // Teal
-            'North York': '#FFD93D',       // Yellow
-            'Toronto and East York': '#A78BFA' // Purple
-        };
-        const gaugeColor = regionColors[regionLabel] || '#FFD700';
-        
-        // Calculate new needle angle
-        const normalizedValue = Math.min(value / maxValue, 1);
-        const needleAngle = -Math.PI + (Math.PI * normalizedValue);
-        const needleLength = radius * 0.85;
-        const needleX = Math.cos(needleAngle) * needleLength;
-        const needleY = Math.sin(needleAngle) * needleLength;
-
-        // Update needle with smooth transition
-        gaugeGroup.select(".needle")
-            .transition()
-            .duration(800)
-            .ease(d3.easeCubicOut)
-            .attr("x2", needleX)
-            .attr("y2", needleY)
-            .attr("stroke", gaugeColor);
-
-        // Update center circle color
-        gaugeGroup.select("circle")
-            .attr("fill", gaugeColor);
-
-        // Update value label (no animation, just update directly)
-        gaugeGroup.select(".value-label")
-            .text(value)
-            .attr("fill", gaugeColor);
-    }
-
-    createSpeedometer(centerX, centerY, radius, label, value, maxValue, index) {
-        const vis = this;
-        
-        // Color scheme for different regions
-        const regionColors = {
-            'Scarborough': '#FF6B6B',      // Red
-            'Etobicoke York': '#4ECDC4',   // Teal
-            'North York': '#FFD93D',       // Yellow
-            'Toronto and East York': '#A78BFA' // Purple
-        };
-        
-        const gaugeColor = regionColors[label] || '#FFD700';
-        
-        // Create group for this speedometer
-        const gaugeGroup = vis.svg.append("g")
-            .attr("class", `gauge-${label.replace(/\s+/g, '-')}`)
-            .attr("transform", `translate(${centerX}, ${centerY})`);
-
-        // Draw outer arc (semi-circle from -180 to 0 degrees)
-        const arc = d3.arc()
-            .innerRadius(radius * 0.7)
-            .outerRadius(radius)
-            .startAngle(-Math.PI)
-            .endAngle(0);
-
-        gaugeGroup.append("path")
-            .attr("d", arc)
-            .attr("fill", "rgba(255, 255, 255, 0.2)")
+        // Style X axis lines - WHITE
+        vis.xAxis.selectAll(".domain")
             .attr("stroke", "#FFFFFF")
-            .attr("stroke-width", 2);
+            .attr("stroke-width", 1)
+            .style("stroke", "#FFFFFF");
+        
+        vis.xAxis.selectAll(".tick line")
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 1)
+            .style("stroke", "#FFFFFF");
 
-        // Draw tick marks
-        const numTicks = 5;
-        for (let i = 0; i <= numTicks; i++) {
-            const angle = -Math.PI + (Math.PI * i / numTicks);
-            const tickValue = (maxValue * i / numTicks);
-            
-            // Tick line
-            const tickLength = i % (numTicks / 2) === 0 ? radius * 0.15 : radius * 0.08;
-            const x1 = Math.cos(angle) * (radius - tickLength);
-            const y1 = Math.sin(angle) * (radius - tickLength);
-            const x2 = Math.cos(angle) * radius;
-            const y2 = Math.sin(angle) * radius;
-            
-            gaugeGroup.append("line")
-                .attr("x1", x1)
-                .attr("y1", y1)
-                .attr("x2", x2)
-                .attr("y2", y2)
-                .attr("stroke", "#FFFFFF")
-                .attr("stroke-width", 1.5);
+        vis.yAxis.call(d3.axisLeft(vis.y).ticks(8));
+        
+        // Ensure Y axis is white - force all styles
+        vis.yAxis.selectAll("text")
+            .attr("fill", "#FFFFFF")
+            .style("fill", "#FFFFFF")
+            .attr("font-family", "Overpass, sans-serif")
+            .attr("font-size", "12px");
 
-            // Tick label (only for major ticks)
-            if (i % (numTicks / 2) === 0) {
-                const labelX = Math.cos(angle) * (radius * 0.5);
-                const labelY = Math.sin(angle) * (radius * 0.5);
-                gaugeGroup.append("text")
-                    .attr("x", labelX)
-                    .attr("y", labelY)
-                    .attr("text-anchor", "middle")
-                    .attr("dominant-baseline", "middle")
-                    .attr("fill", "#FFFFFF")
-                    .attr("font-family", "Overpass, sans-serif")
-                    .attr("font-size", "10px")
-                    .text(Math.round(tickValue));
-            }
-        }
+        vis.yAxis.selectAll(".domain")
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 1);
+        
+        vis.yAxis.selectAll(".tick line")
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 1);
 
-        // Calculate needle angle (0 = pointing up, -180 = pointing left, 0 = pointing right)
-        // Map value from 0 to maxValue to angle from -180 to 0 degrees
-        const normalizedValue = Math.min(value / maxValue, 1);
-        const needleAngle = -Math.PI + (Math.PI * normalizedValue);
+        const bars = vis.svg.selectAll(".bar")
+            .data(vis.displayData, d => d[0]);
 
-        // Draw needle with smooth transition
-        const needleLength = radius * 0.85;
-        const needleX = Math.cos(needleAngle) * needleLength;
-        const needleY = Math.sin(needleAngle) * needleLength;
-
-        const needle = gaugeGroup.append("line")
-            .attr("class", "needle")
-            .attr("x1", 0)
-            .attr("y1", 0)
-            .attr("x2", 0)
-            .attr("y2", 0)
-            .attr("stroke", gaugeColor)
-            .attr("stroke-width", 3)
-            .attr("stroke-linecap", "round")
+        bars.enter().append("rect")
+            .attr("class", "bar")
             .style("cursor", "pointer")
-            .on("click", function(event) {
+            .attr("x", d => vis.x(d[0]))
+            .attr("width", vis.x.bandwidth())
+            .attr("y", d => vis.y(d[1]))
+            .attr("height", d => vis.height - vis.y(d[1]))
+            .attr("fill", "#FFD700")
+            .merge(bars)
+            .style("cursor", "pointer")
+            .on("mouseenter", function(event, d) {
+                d3.select(this).attr("fill", "#FFA500").attr("opacity", 0.9);
+            })
+            .on("mouseleave", function(event, d) {
+                d3.select(this).attr("fill", "#FFD700").attr("opacity", 1);
+            })
+            .on("click", function(event, d) {
                 event.stopPropagation();
                 if (vis.mapVis) {
-                    vis.mapVis.zoomToDistrict(label);
+                    vis.mapVis.zoomToDistrict(d[0]);
                 }
-            });
+            })
+            .transition().duration(300)
+            .attr("x", d => vis.x(d[0]))
+            .attr("width", vis.x.bandwidth())
+            .attr("y", d => vis.y(d[1]))
+            .attr("height", d => vis.height - vis.y(d[1]))
+            .attr("fill", "#FFD700");
 
-        // Animate needle to final position
-        needle.transition()
-            .duration(800)
-            .ease(d3.easeCubicOut)
-            .attr("x2", needleX)
-            .attr("y2", needleY);
+        bars.exit().remove();
 
-        // Draw center circle
-        gaugeGroup.append("circle")
-            .attr("cx", 0)
-            .attr("cy", 0)
-            .attr("r", radius * 0.1)
-            .attr("fill", gaugeColor)
-            .attr("stroke", "#FFFFFF")
+        const labels = vis.svg.selectAll(".bar-label")
+            .data(vis.displayData, d => d[0]);
+
+        labels.enter().append("text")
+            .attr("class", "bar-label")
+            .attr("x", d => vis.x(d[0]) + vis.x.bandwidth() / 2)
+            .attr("y", d => vis.y(d[1]) - 5)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "12px")
+            .attr("fill", "#FFFFFF")
+            .style("fill", "#FFFFFF")
+            .attr("font-family", "Overpass, sans-serif")
+            .text(d => d[1])
+            .merge(labels)
+            .transition().duration(300)
+            .attr("x", d => vis.x(d[0]) + vis.x.bandwidth() / 2)
+            .attr("y", d => vis.y(d[1]) - 5)
+            .text(d => d[1]);
+
+        vis.svg.selectAll(".avg-line").remove();
+
+        vis.svg.append("line")
+            .attr("class", "avg-line")
+            .attr("x1", 0)
+            .attr("x2", vis.width)
+            .attr("y1", vis.y(vis.avgCollisions))
+            .attr("y2", vis.y(vis.avgCollisions))
+            .attr("stroke", "white")
+            .attr("stroke-dasharray", "4 2")
             .attr("stroke-width", 2);
 
-        // Region label on top (bigger with more padding)
-        gaugeGroup.append("text")
-            .attr("class", "region-label")
-            .attr("x", 0)
-            .attr("y", -radius * 1.3)
-            .attr("text-anchor", "middle")
-            .attr("fill", "#FFFFFF")
-            .attr("font-family", "Overpass, sans-serif")
-            .attr("font-size", "13px")
-            .attr("font-weight", "bold")
-            .text(label);
+        vis.svg.selectAll(".avg-label").remove();
+        vis.svg.append("text")
+            .attr("class", "avg-label")
+            .attr("x", vis.width - 5)
+            .attr("y", vis.y(vis.avgCollisions) - 5)
+            .attr("text-anchor", "end")
+            .style("font-size", "10px")
+            .style("fill", "white")
+            .text(`Avg: ${Math.round(vis.avgCollisions)}`);
 
-        // Value label below
-        gaugeGroup.append("text")
-            .attr("class", "value-label")
-            .attr("x", 0)
-            .attr("y", radius * 0.5)
-            .attr("text-anchor", "middle")
-            .attr("fill", gaugeColor)
-            .attr("font-family", "Overpass, sans-serif")
-            .attr("font-size", "14px")
-            .attr("font-weight", "bold")
-            .text(value);
+        labels.exit().remove();
     }
 
     setYear(year) {
@@ -391,76 +265,78 @@ class LocationChart {
     highlightDistrict(neighborhoodName) {
         let vis = this;
         
-        // Map neighborhood names to region names
-        const neighborhoodToRegionMap = {
-            "Downtown Toronto": "Toronto and East York",
-            "Etobicoke": "Etobicoke York",
-            "North York": "North York",
-            "East York": "Toronto and East York",
-            "York": "Etobicoke York",
-            "Scarborough": "Scarborough"
+        // Map neighborhood names to possible district names
+        // This is a best-effort mapping since we don't know exact district names
+        const neighborhoodToDistrictMap = {
+            "Downtown Toronto": ["Downtown", "Downtown Toronto", "51", "52", "53"],
+            "Etobicoke": ["Etobicoke", "22", "23", "31", "32", "33"],
+            "North York": ["North York", "32", "33", "41", "42", "43"],
+            "East York": ["East York", "54", "55"],
+            "York": ["York", "12", "13", "14"],
+            "Scarborough": ["Scarborough", "41", "42", "43", "44"]
         };
         
-        let matchingRegion = neighborhoodToRegionMap[neighborhoodName] || neighborhoodName;
+        // Try to find matching district
+        let possibleDistricts = neighborhoodToDistrictMap[neighborhoodName] || [];
+        let matchingDistrict = null;
         
-        // Find matching region in displayData
+        // Check if any of the possible districts exist in displayData
+        for (let district of possibleDistricts) {
             let found = vis.displayData.find(d => 
-            d[0] && d[0].toString().toLowerCase().includes(matchingRegion.toLowerCase())
+                d[0] && (
+                    d[0].toString().includes(district) || 
+                    district.toString().includes(d[0].toString())
+                )
             );
+            if (found) {
+                matchingDistrict = found[0];
+                break;
+            }
+        }
         
-        if (!found && vis.displayData.length > 0) {
-            // Try to find by name similarity
+        // If no exact match, try to find by name similarity
+        if (!matchingDistrict && vis.displayData.length > 0) {
+            // Try to find a district that contains part of the neighborhood name
             let nameParts = neighborhoodName.toLowerCase().split(/\s+/);
             for (let data of vis.displayData) {
-                let regionName = (data[0] || "").toLowerCase();
-                if (nameParts.some(part => regionName.includes(part) || part.includes(regionName))) {
-                    found = data;
+                let districtName = (data[0] || "").toLowerCase();
+                if (nameParts.some(part => districtName.includes(part) || part.includes(districtName))) {
+                    matchingDistrict = data[0];
                     break;
                 }
             }
         }
         
-        // Highlight the matching speedometer
-        vis.svg.selectAll("g[class^='gauge-']")
-            .attr("opacity", function() {
-                if (found) {
-                    const gaugeLabel = d3.select(this).select(".region-label").text();
-                    if (gaugeLabel === found[0]) {
+        // Highlight the matching bar
+        vis.svg.selectAll(".bar")
+            .attr("opacity", d => {
+                if (matchingDistrict && d[0] === matchingDistrict) {
                     return 1;
-                    } else {
-                        return 0.3; // Dim other gauges
-                    }
+                } else if (matchingDistrict) {
+                    return 0.3; // Dim other bars
                 }
-                return 1;
+                return 1; // No highlight, show all normally
             })
-            .select(".needle")
-            .attr("stroke", function() {
-                if (found) {
-                    const gaugeLabel = d3.select(this.parentNode).select(".region-label").text();
-                    if (gaugeLabel === found[0]) {
+            .attr("stroke", d => {
+                if (matchingDistrict && d[0] === matchingDistrict) {
                     return "#0066cc";
-                    }
                 }
-                return "#FFD700";
+                return "none";
             })
-            .attr("stroke-width", function() {
-                if (found) {
-                    const gaugeLabel = d3.select(this.parentNode).select(".region-label").text();
-                    if (gaugeLabel === found[0]) {
-                        return 4;
-                    }
+            .attr("stroke-width", d => {
+                if (matchingDistrict && d[0] === matchingDistrict) {
+                    return 3;
                 }
-                return 3;
+                return 0;
             });
         
         // Reset highlight after 3 seconds
-        if (found) {
+        if (matchingDistrict) {
             setTimeout(() => {
-                vis.svg.selectAll("g[class^='gauge-']")
+                vis.svg.selectAll(".bar")
                     .attr("opacity", 1)
-                    .select(".needle")
-                    .attr("stroke", "#FFD700")
-                    .attr("stroke-width", 3);
+                    .attr("stroke", "none")
+                    .attr("stroke-width", 0);
             }, 3000);
         }
     }

@@ -134,14 +134,7 @@ function loadData(){
       return [{
         name: 'All collisions (2006–2023) — Factors',
         color: '#d95f02',
-        axes: [
-          { axis: 'At Intersection', value: atIntersection },
-          { axis: 'Speeding Related', value: speeding },
-          { axis: 'Aggressive/Distracted', value: aggdistr },
-          { axis: 'Alcohol Related', value: alcohol },
-          { axis: 'Night-time', value: night },
-          { axis: 'Poor Weather', value: poorWeather }
-        ]
+        axes: axes
       }];
     }
 

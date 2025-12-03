@@ -79,11 +79,6 @@ function initMainPage(crashData, geoData) {
         startYear: minYear,
         endYear: maxYear,
         onYearChange: (year) => {
-            // Update year display
-            const yearDisplay = d3.select('#mapYearDisplay');
-            if (!yearDisplay.empty()) {
-                yearDisplay.text(year);
-            }
             if (myMapVis) {
                 myMapVis.setYear(year);
             }
@@ -101,16 +96,6 @@ function initMainPage(crashData, geoData) {
 
     // Initialize play button
     playButton = new PlayButton("#playBtn", yearScroll);
-    
-    // Initialize year display with initial year
-    setTimeout(() => {
-        const yearDisplay = d3.select('#mapYearDisplay');
-        if (!yearDisplay.empty()) {
-            yearDisplay.text(yearScroll.getCurrentYear());
-        } else {
-            console.log('Year display element not found');
-        }
-    }, 100);
 
     // Create and initialize CrashPointsVis with MapVis's SVG and projection
     myCrashPointsVis = new CrashPointsVis(myMapVis.svg, myMapVis.projection, myMapVis.severityColors);
