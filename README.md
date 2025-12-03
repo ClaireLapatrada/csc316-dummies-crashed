@@ -7,7 +7,7 @@ We will also create data visualizations to promote safe driving habits.
 
 ---
 
-## 🎯 What We're Handing In
+## Our Visualizations
 
 This project is a comprehensive interactive data visualization website that presents traffic collision data for Toronto through multiple visualizations. The project consists of:
 
@@ -47,7 +47,7 @@ This project is a comprehensive interactive data visualization website that pres
 
 ---
 
-## 🌐 Project URLs
+## Project URLs
 
 ### Live Website
 **URL:** (https://clairelapatrada.github.io/csc316-dummies-crashed/)
