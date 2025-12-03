@@ -93,6 +93,8 @@ class CollisionMain {
         this.yearController = new YearScroll('#yearScroller', {
             startYear: 2006,
             endYear: 2023,
+            // Reduce margins to minimize empty space and prevent text overlap
+            margin: { left: 15, right: 15, top: 40, bottom: 40 },
             onYearChange: (year) => {
                 console.log('YearScroll changed year to:', year);
                 this.setYear(year, true); // Pass true to indicate it's from YearScroll

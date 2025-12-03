@@ -78,7 +78,7 @@ class BarChart {
         vis.yScale = d3.scaleBand()
             .domain(d3.range(10)) // Always 10 positions: 0, 1, 2, ..., 9
             .range([0, vis.height])
-            .padding(0.1);
+            .padding(0.2);
 
         // Color scale uses the persistent mapping
         vis.colorScale = (d) => vis.colorMapping[d] || "#999999";
@@ -134,15 +134,15 @@ class BarChart {
             }
         });
 
-        // Create color scale using D3's schemeSet3 or similar diverse categorical scale
-        // We want distinct colors for different actions
-        const colorScale = d3.scaleOrdinal(d3.schemeSet3);
+        // Create color scale using custom colors ordered from greatest to least in 2006
+        const customColors = ['#003f5c', '#2b4673', '#58508d', '#8a508f', '#bc5090', 
+                             '#dd5b79', '#ff6461', '#fe8531', '#ffac59', '#ffd380'];
         
         vis.colorMapping = {};
         
         counts2006.forEach((d, i) => {
-            // Use index to pick from categorical scale
-            vis.colorMapping[d.action] = colorScale(i);
+            // Use index to pick from custom colors array (will cycle if more than 10 items)
+            vis.colorMapping[d.action] = customColors[i % customColors.length];
         });
     }
 
@@ -156,9 +156,9 @@ class BarChart {
         const container = document.getElementById(vis.parentElement);
         container.getBoundingClientRect(); // triggers reflow
 
-        // Get updated width and height
+        // Get updated width and height (use same 1.3 multiplier as initVis for consistency)
         vis.width = container.clientWidth - vis.margin.left - vis.margin.right;
-        vis.height = container.clientHeight - vis.margin.top - vis.margin.bottom;
+        vis.height = container.clientHeight * 1.3 - vis.margin.top - vis.margin.bottom;
 
         // Update SVG size
         d3.select(`#${vis.parentElement} svg`)
@@ -191,11 +191,13 @@ class BarChart {
         
         // Create exactly 10 lanes (9 dividers between them)
         const laneCount = 10;
-        const laneHeight = vis.height / laneCount;
         
-        // Create dividers between each lane
+        // Create dividers between each lane, positioned in the gaps between bars
         for (let i = 1; i < laneCount; i++) {
-            const y = i * laneHeight;
+            // Calculate y position as the midpoint between the previous bar's bottom and current bar's top
+            const prevBarBottom = vis.yScale(i-1) + vis.yScale.bandwidth();
+            const currentBarTop = vis.yScale(i);
+            const y = (prevBarBottom + currentBarTop) / 2;
             
             vis.svg.append("line")
                 .attr("class", "lane-divider")
@@ -1469,7 +1471,7 @@ class BarChart {
             .style("font-family", "Arial, sans-serif")
             .style("font-size", "12px")
             .style("font-weight", "700")
-            .style("fill", "#000000")
+            .style("fill", "#FFFFFF")
             .style("opacity", 0)
             .text("0");
 

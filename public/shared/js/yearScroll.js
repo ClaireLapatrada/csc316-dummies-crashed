@@ -40,14 +40,6 @@ class YearScroll {
         this.margin = { ...this.margin, ...margin };
         
         this.isPlaying = false; // State to track if the slider is being animated externally
-
-        // Bind resize handler
-        this.handleResize = this.handleResize.bind(this);
-        window.addEventListener('resize', () => {
-            // Simple debounce
-            if (this.resizeTimeout) clearTimeout(this.resizeTimeout);
-            this.resizeTimeout = setTimeout(this.handleResize, 100);
-        });
     }
 
     /**
@@ -77,6 +69,7 @@ class YearScroll {
             .attr("height", this.height)
             .attr("class", "year-scroller-ped")
             .attr("viewBox", `0 0 ${this.width} ${this.height}`)
+            .attr("preserveAspectRatio", "none")
             .style("display", "block");
 
         // Update width after SVG is created to get actual rendered width
@@ -115,7 +108,6 @@ class YearScroll {
 
         for (let i = 0; i < numSegments; i++) {
             this.svg.append("rect")
-                .attr("class", "track-segment")
                 .attr("x", this.xScale.range()[0] + i * (segmentWidth + segmentGap) - 10) // Align start with track
                 .attr("y", trackY - trackHeight/2 + 19)
                 .attr("width", segmentWidth)
@@ -375,66 +367,6 @@ class YearScroll {
      */
     setPlaying(playing) {
         this.isPlaying = playing;
-    }
-
-    /**
-     * Handles window resize events.
-     * Updates SVG dimensions and scale.
-     */
-    handleResize() {
-        if (!this.svg) return;
-
-        const container = d3.select(this.containerSelector).node();
-        if (!container || !container.offsetWidth) return;
-        
-        const newWidth = container.offsetWidth;
-        // Allow slight tolerance or only update if changed
-        if (Math.abs(newWidth - this.width) < 2) return;
-        
-        this.width = newWidth;
-        
-        // Update SVG dimensions
-        this.svg.attr("viewBox", `0 0 ${this.width} ${this.height}`);
-            
-        // Update scale
-        this.xScale.range([this.margin.left + 20, this.width - this.margin.right - 20]);
-        
-        const trackWidth = this.xScale.range()[1] - this.xScale.range()[0] + 25;
-        const trackY = 30; // Hardcoded in init
-        const trackHeight = 12; // Hardcoded in init
-        
-        // Update track
-        this.track
-            .attr("x", this.xScale.range()[0] - 12)
-            .attr("width", trackWidth);
-            
-        this.trackHitArea
-            .attr("width", trackWidth + 20);
-        
-        // Re-draw segments
-        this.svg.selectAll(".track-segment").remove();
-        
-        const segmentWidth = 4;
-        const segmentGap = 4;
-        const numSegments = Math.floor((trackWidth - 4 + segmentGap) / (segmentWidth + segmentGap));
-
-        for (let i = 0; i < numSegments; i++) {
-            this.svg.insert("rect", "image") // Insert before image (ped icon)
-                .attr("class", "track-segment")
-                .attr("x", this.xScale.range()[0] + i * (segmentWidth + segmentGap) - 10)
-                .attr("y", trackY - trackHeight/2 + 19)
-                .attr("width", segmentWidth)
-                .attr("height", trackHeight - 4)
-                .attr("fill", "#0A6B4A")
-                .style("pointer-events", "none");
-        }
-        
-        // Update labels
-        this.yearLabels
-            .attr("x", d => this.xScale(d));
-            
-        // Update icon position
-        this._updatePedPosition();
     }
 }
 

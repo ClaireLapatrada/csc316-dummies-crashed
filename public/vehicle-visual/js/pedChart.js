@@ -304,10 +304,10 @@ class PedestrianInjuryVisual {
 
         // Color scheme for each time period
         const periodColors = {
-            morning: '#FFD166',    // Warm yellow (sunrise)
+            morning: '#ffac59',    // Warm yellow (sunrise)
             afternoon: '#FFD166',  // Medium orange (bright day)
-            evening: '#FFD166',    // Purple (evening)
-            night: '#FFD166'       // Dark purple (night)
+            evening: '#db5e7b',    // Purple (evening)
+            night: '#005279'       // Dark purple (night)
         };
 
         circle.className = 'injury-circle';
