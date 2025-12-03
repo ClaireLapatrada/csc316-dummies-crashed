@@ -145,7 +145,7 @@ csc316-dummies-crashed/
 | **Janna** | Project Manager | janna.lim@mail.utoronto.ca |
 | **Claire** | UI/UX Design, Front-End Development | claire.jaroonjetjumnong@mail.utoronto.ca |
 | **Dechen** | UI/UX Design | de.zangmo@mail.utoronto.ca |
-| **Viktoriia** | TBD | viktoriia.dyrda@mail.utoronto.ca |
+| **Viktoriia** | Front-End Development | viktoriia.dyrda@mail.utoronto.ca |
 | **Mitchell** | Data Engineer | mitchell.whitten@mail.utoronto.ca |
 | **Sark** | UI/UX Design, Idea Generator | sark.asadourian@mail.utoronto.ca |
 
