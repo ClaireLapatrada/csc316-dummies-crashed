@@ -222,6 +222,7 @@ function updateMatrixChart(year) {
     if (!svg) initMatrixChart();
     if (!svg) return;
     
+    // Filter by year only - includes ALL crashes regardless of severity
     const yearData = rawData.filter(d => +d['Year of collision'] === year);
     const matrixData = buildMatrixData(yearData, year);
     
@@ -345,14 +346,11 @@ function updateMatrixChart(year) {
         .attr('font-family', 'Overpass, sans-serif')
         .attr('font-size', '14px')
         .attr('font-weight', '500')
-        .attr('text-anchor', 'end')
+        .attr('text-anchor', 'middle')
         .attr('transform', d => {
-            // Add extra spacing between labels
-            const baseX = colScale(d.id) + colScale.bandwidth() / 2;
-            const index = vehicleTypes.findIndex(vt => vt.id === d.id);
-            const extraSpacing = index * 8; // Add 15px spacing between each label
-            const x = baseX + extraSpacing;
-            const y = -60;
+            // Position at center of each cell, shifted to align properly
+            const x = colScale(d.id) + colScale.bandwidth() / 2 + 15;
+            const y = -30;
             // Translate to position, then rotate around that point
             return `translate(${x},${y}) rotate(-45)`;
         })
