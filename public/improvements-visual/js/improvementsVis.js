@@ -14,34 +14,34 @@ class ImprovementsVis {
         
         // Improvement types configuration
         vis.improvementTypes = {
-            'speeding': {
-                label: 'Speeding',
-                improvement: 'Dynamic Speed Signs',
-                color: 'rgba(237,225,55,0.8)',
-                url: 'https://roadsafetystrategy.ca/en/listing-directory/roadsafetystrategy/changeable_%28variable%2C_dynamic%2C_active%29_message_signs'
+            'inattentive': {
+                label: 'Aggressive/Distracted',
+                improvement: 'Rumble Strips',
+                color: 'rgba(128,128,128,0.8)',
+                url: 'https://roadsafetystrategy.ca/en/listing-directory/roadsafetystrategy/rumble_strips'
+            },
+            'intersection': {
+                label: 'At Intersection',
+                improvement: 'Intersection Safety',
+                color: 'rgba(237,119,55,0.8)',
+                url: 'https://roadsafetystrategy.ca/en/listing-directory/roadsafetystrategy/intersection_safety'
             },
             'dark': {
-                label: 'Dark',
+                label: 'Night Time',
                 improvement: 'Street Lighting',
-                color: 'rgba(0,0,0,0.64)',
+                color: 'rgba(237,225,55,0.8)',
                 url: 'https://roadsafetystrategy.ca/en/listing-directory/roadsafetystrategy/street_lighting_and_illumination'
             },
-            'ice': {
-                label: 'Ice',
-                improvement: 'Anti-icing Technology',
-                color: 'rgba(58,93,220,0.8)',
-                url: 'https://roadsafetystrategy.ca/en/listing-directory/roadsafetystrategy/anti-icing_technology'
-            },
-            'inattentive': {
-                label: 'Inattentive Driver',
-                improvement: 'Rumble Strips',
-                color: 'rgba(98,228,165,0.8)',
-                url: 'https://roadsafetystrategy.ca/en/listing-directory/roadsafetystrategy/rumble_strips'
+            'no_control': {
+                label: 'No Traffic Control',
+                improvement: 'Stop Signs / Signals',
+                color: 'rgba(226,55,55,0.76)',
+                url: 'https://roadsafetystrategy.ca/en/listing-directory/roadsafetystrategy/stop_signs'
             }
         };
         
         vis.selectedYear = null;
-        vis.activeFactors = ['speeding', 'dark', 'ice', 'inattentive'];
+        vis.activeFactors = ['inattentive', 'intersection', 'dark', 'no_control'];
         vis.displayData = [];
         vis.factorMaxNeeds = {}; // Store max needs per factor for consistent sizing
     }
@@ -73,7 +73,7 @@ class ImprovementsVis {
         
         // Calculate max needs for all factors first (before filtering by activeFactors)
         // This ensures consistent sizing regardless of filter selection
-        ['speeding', 'dark', 'ice', 'inattentive'].forEach(factorKey => {
+        ['inattentive', 'intersection', 'dark', 'no_control'].forEach(factorKey => {
             let factorData = vis.filterByFactor(crashData, year, factorKey);
             let factorCounts = vis.countByLocation(factorData, factorKey);
             vis.factorMaxNeeds[factorKey] = factorCounts.length > 0 ? 
@@ -111,28 +111,26 @@ class ImprovementsVis {
             
             // Check if crash matches the factor
             switch(factorKey) {
-                case 'speeding':
-                    // Check "Speeding Related" column
-                    let speeding = (d['Speeding Related'] || '').toString().trim().toLowerCase();
-                    return speeding === 'yes' || speeding === '1' || speeding === 'true';
+                case 'inattentive':
+                    // Check "Aggressive and Distracted Driving Related" (AG_DRIV in CSV)
+                    let aggressive = (d['Aggressive and Distracted Driving Related'] || d['AG_DRIV'] || '').toString().trim().toLowerCase();
+                    return aggressive === 'yes' || aggressive === '1' || aggressive === 'true';
+
+                case 'intersection':
+                    // Check "Accident Location" (ACCLOC)
+                    let loc = (d['Accident Location'] || d['ACCLOC'] || '').toString().trim().toLowerCase();
+                    return loc.includes('intersection');
                 
                 case 'dark':
                     // Check "LIGHT" column for dark conditions
-                    let light = (d.LIGHT || '').toString().trim();
-                    return light === 'Dark' || light === 'Dusk' || light === 'Dawn';
+                    let light = (d.LIGHT || '').toString().trim().toLowerCase();
+                    return light.includes('dark') || light.includes('dusk') || light.includes('dawn');
                 
-                case 'ice':
-                    // Check "Road Surface Condition" for ice
-                    let roadSurface = (d['Road Surface Condition'] || '').toString().trim();
-                    return roadSurface.toLowerCase().includes('ice') || 
-                           roadSurface.toLowerCase().includes('icy') ||
-                           roadSurface.toLowerCase().includes('snow');
-                
-                case 'inattentive':
-                    // Check "Aggressive and Distracted Driving Related"
-                    let aggressive = (d['Aggressive and Distracted Driving Related'] || '').toString().trim().toLowerCase();
-                    return aggressive === 'yes' || aggressive === '1' || aggressive === 'true';
-                
+                case 'no_control':
+                    // Check "Traffic Control" (TRAFFCTL)
+                    let control = (d['Traffic Control'] || d['TRAFFCTL'] || '').toString().trim().toLowerCase();
+                    return control === 'no control' || control.includes('no control');
+
                 default:
                     return false;
             }
@@ -196,7 +194,7 @@ class ImprovementsVis {
         let minRadius = 3; // Smaller circles
         let maxRadius = 15; // Smaller circles
         
-        ['speeding', 'dark', 'ice', 'inattentive'].forEach(factorKey => {
+        ['inattentive', 'intersection', 'dark', 'no_control'].forEach(factorKey => {
             let maxNeed = vis.factorMaxNeeds[factorKey] || 1; // Use stored max needs
             radiusScales[factorKey] = d3.scaleSqrt()
                 .domain([1, maxNeed])
@@ -316,8 +314,8 @@ class ImprovementsVis {
                 vis.updateActiveFactors();
             });
         
-        d3.select("#factor-filter-ice")
-            .property("checked", vis.activeFactors.includes('ice'))
+        d3.select("#factor-filter-intersection")
+            .property("checked", vis.activeFactors.includes('intersection'))
             .on("change", function() {
                 vis.updateActiveFactors();
             });
@@ -328,8 +326,8 @@ class ImprovementsVis {
                 vis.updateActiveFactors();
             });
         
-        d3.select("#factor-filter-speeding")
-            .property("checked", vis.activeFactors.includes('speeding'))
+        d3.select("#factor-filter-no_control")
+            .property("checked", vis.activeFactors.includes('no_control'))
             .on("change", function() {
                 vis.updateActiveFactors();
             });
@@ -435,10 +433,10 @@ class ImprovementsVis {
         
         // Improvements data
         let improvementsData = [
-            { factor: 'speeding', text: 'Dynamic Speed Signs' },
+            { factor: 'inattentive', text: 'Rumble Strips' },
+            { factor: 'intersection', text: 'Intersection Safety' },
             { factor: 'dark', text: 'Street Lighting' },
-            { factor: 'ice', text: 'Anti-icing Technology' },
-            { factor: 'inattentive', text: 'Rumble Strips' }
+            { factor: 'no_control', text: 'Stop Signs / Signals' }
         ];
         
         improvementsData.forEach(improvement => {
@@ -500,7 +498,7 @@ class ImprovementsVis {
         let vis = this;
         vis.activeFactors = [];
         
-        ['speeding', 'dark', 'ice', 'inattentive'].forEach(factorKey => {
+        ['inattentive', 'intersection', 'dark', 'no_control'].forEach(factorKey => {
             let checkbox = d3.select("#factor-filter-" + factorKey).node();
             if (checkbox && checkbox.checked) {
                 vis.activeFactors.push(factorKey);
