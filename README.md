@@ -16,7 +16,7 @@ This project is a comprehensive interactive data visualization website that pres
 - **All Visualization Components** - Custom D3.js implementations for:
   - Time's Effect on Accidents for Pedestrian (`public/vehicle-visual/`)
   - Fatal Collisions Ranked By Involvement (`public/sign-visual/`)
-  - Cumulative Pedestrian Collisions by Action (`public/ped-visual/`)
+  - Pedestrian Collisions by Action (`public/ped-visual/`)
   - Toronto Collisions Map (`public/solution-visual/`)
   - Improvements Visualization (`public/improvements-visual/`)
   - Roundabout Visualization (`public/roundabout-visual/`)
