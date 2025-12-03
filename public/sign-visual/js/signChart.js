@@ -32,10 +32,20 @@ function getVehicleTypesInvolved(entry) {
 
 // Get severity level
 function getSeverity(entry) {
+    // Try to use the explicit Injury column first
+    const injury = (entry['Injury'] || '').toLowerCase();
+    if (injury.includes('fatal')) return 'Fatal';
+    if (injury.includes('major')) return 'Major';
+    if (injury.includes('minor')) return 'Minor';
+    if (injury.includes('minimal')) return 'Minimal';
+
+    // Fallback to Accident Classification
     const classification = (entry['Accident Classification'] || '').toLowerCase();
-    if (classification.includes('fatal')) return 'Fatal';
+    // Be careful not to match "non-fatal" as "fatal"
+    if (classification.includes('fatal') && !classification.includes('non-fatal')) return 'Fatal';
     if (classification.includes('major')) return 'Major';
     if (classification.includes('minor')) return 'Minor';
+    
     return 'Minimal';
 }
 

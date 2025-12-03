@@ -367,12 +367,16 @@ p {
 
 /* Add right gutter for visuals that sit under the navigation dots */
 #page-1 .viz-container-full,
-#page-2 .viz-container-full,
 #page-3 .viz-container-full,
 #page-5 .viz-container-full {
     box-sizing: border-box;
     padding-right: clamp(80px, 8vw, 140px);
     padding-left: clamp(60px, 7vw, 120px);
+}
+
+/* Move sign-visual iframe 100px to the left */
+#page-2 .viz-iframe {
+    transform: translateX(150px);
 }
 
 .viz-iframe {
