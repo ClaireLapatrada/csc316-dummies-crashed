@@ -134,15 +134,15 @@ class BarChart {
             }
         });
 
-        // Create color gradient from Red to Yellow
-        // We'll interpolate colors based on rank
-        const colorInterpolate = d3.interpolateRgb("#FF0000", "#FFFF00");
+        // Create color scale using D3's schemeSet3 or similar diverse categorical scale
+        // We want distinct colors for different actions
+        const colorScale = d3.scaleOrdinal(d3.schemeSet3);
         
         vis.colorMapping = {};
-        const total = counts2006.length;
         
         counts2006.forEach((d, i) => {
-            vis.colorMapping[d.action] = colorInterpolate(i / (total - 1 || 1));
+            // Use index to pick from categorical scale
+            vis.colorMapping[d.action] = colorScale(i);
         });
     }
 
@@ -1469,7 +1469,7 @@ class BarChart {
             .style("font-family", "Arial, sans-serif")
             .style("font-size", "12px")
             .style("font-weight", "700")
-            .style("fill", "#FFFFFF")
+            .style("fill", "#000000")
             .style("opacity", 0)
             .text("0");
 
