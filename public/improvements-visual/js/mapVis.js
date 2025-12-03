@@ -331,7 +331,7 @@ class MapVis {
             .enter()
             .append("text")
             .attr("x", 30)
-            .attr("y", function(d,i){ return 50 + i*25}) 
+            .attr("y", function(d,i){ return 48 + i*25}) 
             .style("fill", "black")
             .style("font-size", "10px") 
             .text(function(d){ return d})
