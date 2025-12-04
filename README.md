@@ -53,9 +53,7 @@ This project is a comprehensive interactive data visualization website that pres
 **URL:** (https://clairelapatrada.github.io/csc316-dummies-crashed/)
 
 ### Screencast Videos
-**Main Demo Video:** [Add link to your main screencast video here]
-
-**Additional Videos (if any):** [Add links to any supplementary videos]
+**Demo Video:** [https://drive.google.com/file/d/1BBoXno1WkM8mUEsrOpmt9bkkvGoQx9Sa/view?usp=sharing]
 
 ---
 
