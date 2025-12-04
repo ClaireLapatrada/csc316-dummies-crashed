@@ -70,6 +70,7 @@ function initMainPage(crashData, geoData) {
         startYear: minYear,
         endYear: maxYear,
         onYearChange: (year) => {
+            // Update year display
             if (myMapVis) {
                 myMapVis.setYear(year);
             }
@@ -92,7 +93,7 @@ function initMainPage(crashData, geoData) {
 
     // Initialize play button
     playButton = new PlayButton("#playBtn", yearScroll);
-
+    
     // Create and initialize CrashPointsVis with MapVis's SVG and projection
     myCrashPointsVis = new CrashPointsVis(myMapVis.svg, myMapVis.projection, myMapVis.severityColors);
     myMapVis.crashPointsVis = myCrashPointsVis; // Store reference in MapVis

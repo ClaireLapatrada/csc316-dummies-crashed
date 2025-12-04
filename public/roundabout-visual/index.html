@@ -79,14 +79,15 @@
             align-items: center;
             gap: 2rem;
             max-width: 1200px;
-            margin: 2rem auto;
+            margin: -2rem auto 2rem;
             flex-wrap: wrap;
             background-color: transparent;
+            transform: translateY(-60px);
         }
         
         .chart-container {
             flex: 1 1 0;
-            max-width: 600px;
+            max-width: 750px;
             background-color: transparent;
         }
         .filter-buttons {
@@ -207,7 +208,7 @@
         
         /* Roundabout Chart Styling */
         .roundabout-road {
-            fill: #666666;
+            fill: #2a2a2a;
             stroke: none;
         }
         
@@ -218,7 +219,7 @@
         
         .lane-divider {
             fill: none;
-            stroke: #f7ef06;
+            stroke: #FFFFFF;
             stroke-width: 2;
             stroke-dasharray: 5, 5;
             opacity: 0.6;
@@ -227,12 +228,12 @@
         /* Tooltip Styling */
         .tooltip {
             position: absolute;
-            text-align: left;
+            text-align: center;
             padding: 8px 12px;
             font-family: 'Overpass', sans-serif;
             font-size: 13px;
-            background: white;
-            color: black;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
             border-radius: 4px;
             pointer-events: none;
             opacity: 0;
@@ -254,7 +255,7 @@
     <span class="tile-label">Views</span>
     <div class="tile-group" data-group="dataset" >
         <button class="tile active" data-value="factors">Collision factors</button>
-        <button class="tile" data-value="ages">Age ranges (INVAGE)</button>
+        <button class="tile" data-value="ages">Age Ranges</button>
     </div>
 </div>
 
@@ -266,7 +267,7 @@
 
     <div class="container-description">
         <p class="description">
-            To better understand why these fatal and injurious incidents occur, the Roundabout Radar visual breaks down the key contributing factors. Speeding, intersection conflicts, and other high-impact elements emerge clearly, offering direction for targeted enforcement and design interventions.
+            To better understand why these fatal and injurious incidents occur, this visualization breaks down the key contributing factors.<br><br> Aggressive driving, intersection conflicts, and other high-impact elements emerge clearly, offering direction for targeted enforcement and design interventions.
         </p>
     </div>
 </div>

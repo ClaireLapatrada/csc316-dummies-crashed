@@ -78,7 +78,7 @@ class BarChart {
         vis.yScale = d3.scaleBand()
             .domain(d3.range(10)) // Always 10 positions: 0, 1, 2, ..., 9
             .range([0, vis.height])
-            .padding(0.1);
+            .padding(0.2);
 
         // Color scale uses the persistent mapping
         vis.colorScale = (d) => vis.colorMapping[d] || "#999999";
@@ -134,15 +134,15 @@ class BarChart {
             }
         });
 
-        // Create color gradient from Red to Yellow
-        // We'll interpolate colors based on rank
-        const colorInterpolate = d3.interpolateRgb("#FF0000", "#FFFF00");
+        // Create color scale using custom colors ordered from greatest to least in 2006
+        const customColors = ['#003f5c', '#2b4673', '#58508d', '#8a508f', '#bc5090', 
+                             '#dd5b79', '#ff6461', '#fe8531', '#ffac59', '#ffd380'];
         
         vis.colorMapping = {};
-        const total = counts2006.length;
         
         counts2006.forEach((d, i) => {
-            vis.colorMapping[d.action] = colorInterpolate(i / (total - 1 || 1));
+            // Use index to pick from custom colors array (will cycle if more than 10 items)
+            vis.colorMapping[d.action] = customColors[i % customColors.length];
         });
     }
 
@@ -156,9 +156,9 @@ class BarChart {
         const container = document.getElementById(vis.parentElement);
         container.getBoundingClientRect(); // triggers reflow
 
-        // Get updated width and height
+        // Get updated width and height (use same 1.3 multiplier as initVis for consistency)
         vis.width = container.clientWidth - vis.margin.left - vis.margin.right;
-        vis.height = container.clientHeight - vis.margin.top - vis.margin.bottom;
+        vis.height = container.clientHeight * 1.3 - vis.margin.top - vis.margin.bottom;
 
         // Update SVG size
         d3.select(`#${vis.parentElement} svg`)
@@ -191,11 +191,13 @@ class BarChart {
         
         // Create exactly 10 lanes (9 dividers between them)
         const laneCount = 10;
-        const laneHeight = vis.height / laneCount;
         
-        // Create dividers between each lane
+        // Create dividers between each lane, positioned in the gaps between bars
         for (let i = 1; i < laneCount; i++) {
-            const y = i * laneHeight;
+            // Calculate y position as the midpoint between the previous bar's bottom and current bar's top
+            const prevBarBottom = vis.yScale(i-1) + vis.yScale.bandwidth();
+            const currentBarTop = vis.yScale(i);
+            const y = (prevBarBottom + currentBarTop) / 2;
             
             vis.svg.append("line")
                 .attr("class", "lane-divider")
@@ -561,7 +563,30 @@ class BarChart {
         
         // Initialize PlayButton
         if (typeof PlayButton !== 'undefined') {
-            vis.playButton = new PlayButton('#playBtn', vis.yearScroll);
+            vis.playButton = new PlayButton('#playBtn', vis.yearScroll, 1000);
+            
+            // Override PlayButton's start and stop methods to sync with barChart's isPlaying state
+            const originalStart = vis.playButton.start.bind(vis.playButton);
+            const originalStop = vis.playButton.stop.bind(vis.playButton);
+            const originalRestart = vis.playButton.restart.bind(vis.playButton);
+            
+            vis.playButton.start = function() {
+                vis.isPlaying = true;
+                originalStart();
+            };
+            
+            vis.playButton.stop = function() {
+                vis.isPlaying = false;
+                originalStop();
+            };
+            
+            vis.playButton.restart = function() {
+                originalRestart();
+                // Start playing after restart
+                setTimeout(() => {
+                    vis.playButton.start();
+                }, 100);
+            };
         }
     }
     
@@ -1157,22 +1182,21 @@ class BarChart {
 
         const barsMerged = barsEnter.merge(bars);
 
-        barsMerged
-            .transition()
-            .duration(1000)
-            .ease(d3.easeCubicInOut)
-            .attr("width", d => vis.xScale(d.count))
-            .attr("y", (d, i) => vis.yScale(i));
-
-        // Add tooltip interactions to bars
+        // Add tooltip interactions to bars (before transition)
         barsMerged
             .on("mouseover", function(event, d) {
                 // Cancel any tooltip fade-out in progress
                 tooltip.interrupt();
 
                 // Pause autoplay if active
+                console.log('Mouseover - isPlaying:', vis.isPlaying);
                 if (vis.isPlaying) {
-                    vis.stopPlay();
+                    console.log('Pausing playback');
+                    if (vis.playButton) {
+                        vis.playButton.stop();
+                    } else {
+                        vis.stopPlay();
+                    }
                     vis.wasPlaying = true;
                 } else if (vis.wasPlaying === undefined) {
                     vis.wasPlaying = false;
@@ -1412,11 +1436,25 @@ class BarChart {
                     .style("opacity", 1);
 
                 // Resume autoplay if it was previously running
+                console.log('Mouseout - wasPlaying:', vis.wasPlaying);
                 if (vis.wasPlaying) {
-                    vis.startPlay();
+                    console.log('Resuming playback');
+                    if (vis.playButton) {
+                        vis.playButton.start();
+                    } else {
+                        vis.startPlay();
+                    }
                 }
                 vis.wasPlaying = undefined;
             });
+
+        // Apply transitions after event handlers are attached
+        barsMerged
+            .transition()
+            .duration(1000)
+            .ease(d3.easeCubicInOut)
+            .attr("width", d => vis.xScale(d.count))
+            .attr("y", (d, i) => vis.yScale(i));
 
         bars.exit().remove();
 

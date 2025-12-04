@@ -30,12 +30,6 @@
         <div class="dot" data-page="6"></div>
         <div class="dot" data-page="7"></div>
         <div class="dot" data-page="8"></div>
-        <div class="dot" data-page="9"></div>
-        <div class="dot" data-page="10"></div>
-        <div class="dot" data-page="11"></div>
-
-
-
     </div>
 
     <!-- Page 1: Introduction -->
@@ -55,30 +49,29 @@
         </div>
     </section>
 
-    <!-- Page 1: Sign Visualization -->
+    <!-- Page 2: Introduction Insights -->
     <section class="page" id="page-1" data-page="1">
         <div class="page-content viz-page">
-            <!-- Foreground element (trees) -->
+            <div class="viz-container-full">
+                <iframe src="public/introduction/index.html" class="viz-iframe" title="Introduction Insights" loading="lazy" importance="high"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 3: Sign Visualization -->
+    <section class="page" id="page-2" data-page="2">
+        <div class="page-content viz-page">
             <div class="viz-container-full">
                 <iframe src="public/sign-visual/index.html" class="viz-iframe" title="Sign Visualization" loading="lazy" importance="high"></iframe>
             </div>
         </div>
     </section>
 
-    <!-- Page 2: Vehicle Injury Visualization -->
-    <section class="page" id="page-2" data-page="2">
-        <div class="page-content viz-page" >
-            <div class="viz-container-full" style="position: absolute; width: 100%; left: 50%; transform: translateX(-50%); height: 100%;">
-                <iframe src="public/vehicle-visual/index.html" class="viz-iframe" title="Vehicle Injury Analysis Visualization" loading="lazy" importance="high"></iframe>
-            </div>
-        </div>
-    </section>
-
-    <!-- Page 3: Vehicle Injury Insights -->
+    <!-- Page 4: Vehicle Injury Visualization -->
     <section class="page" id="page-3" data-page="3">
         <div class="page-content viz-page">
             <div class="viz-container-full">
-                <iframe src="public/vehicle-insights/index.html" class="viz-iframe" title="Vehicle Injury Insights" loading="lazy" importance="high"></iframe>
+                <iframe src="public/vehicle-visual/index.html" class="viz-iframe" title="Vehicle Injury Analysis Visualization" loading="lazy" importance="high"></iframe>
             </div>
         </div>
     </section>
@@ -92,17 +85,8 @@
         </div>
     </section>
 
-    <!-- Page 5: 3 Big Factor Insights -->
-    <section class="page" id="page-5" data-page="5">
-        <div class="page-content viz-page">
-            <div class="viz-container-full">
-                <iframe src="public/roundabout-factors-insights/index.html" class="viz-iframe" title="3 Big Factor Insights" loading="lazy" importance="high"></iframe>
-            </div>
-        </div>
-    </section>
-
     <!-- Page 6: Pedestrian Visualization -->
-    <section class="page" id="page-6" data-page="6">
+    <section class="page" id="page-5" data-page="5">
         <div class="page-content viz-page">
             <div class="viz-container-full">
                 <iframe src="public/ped-visual/index.html" class="viz-iframe" title="Pedestrian Collisions Visualization" loading="lazy" importance="high"></iframe>
@@ -110,17 +94,8 @@
         </div>
     </section>
 
-    <!-- Page 7: Crossing is Dangerous Insights -->
-    <section class="page" id="page-7" data-page="7">
-        <div class="page-content viz-page">
-            <div class="viz-container-full">
-                <iframe src="public/ped-crossing-insights/index.html" class="viz-iframe" title="Crossing is Dangerous Insights" loading="lazy" importance="high"></iframe>
-            </div>
-        </div>
-    </section>
-
-    <!-- Page 8: Solution Visualization -->
-    <section class="page" id="page-8" data-page="8">
+    <!-- Page 7: Solution Visualization -->
+    <section class="page" id="page-6" data-page="6">
         <div class="page-content viz-page">
             <div class="viz-container-full">
                 <iframe src="public/solution-visual/index.html" class="viz-iframe" title="Solution Visualization" loading="lazy" importance="high"></iframe>
@@ -128,19 +103,8 @@
         </div>
     </section>
 
-    <!-- Page 9: Collision Map Insights -->
-
-    <section class="page" id="page-9" data-page="9">
-        <div class="page-content viz-page">
-            <!-- Foreground element (trees) -->
-            <div class="viz-container-full">
-                <iframe src="public/map-collisions-insights/index.html" class="viz-iframe" title="Map Insights" loading="lazy" importance="high"></iframe>
-            </div>
-        </div>
-    </section>
-
-    <!-- Page 10: Improvements Visualization -->
-    <section class="page" id="page-10" data-page="10">
+    <!-- Page 8: Improvements Visualization -->
+    <section class="page" id="page-7" data-page="7">
         <div class="page-content viz-page">
             <div class="viz-container-full">
                 <iframe src="public/improvements-visual/index.html" class="viz-iframe" title="Improvements Visualization" loading="lazy" importance="high"></iframe>
@@ -148,19 +112,8 @@
         </div>
     </section>
 
-    <!-- Page 11: Solutions Map Insights -->
-
-    <section class="page" id="page-11" data-page="11">
-        <div class="page-content viz-page">
-            <!-- Foreground element (trees) -->
-            <div class="viz-container-full">
-                <iframe src="public/map-solutions-insights/index.html" class="viz-iframe" title="Map Insights" loading="lazy" importance="high"></iframe>
-            </div>
-        </div>
-    </section>
-
-    <!-- Page 10: Conclusion and Thank You Page - Combined into Page 9 -->
-    <!-- <section class="page" id="page-10" data-page="10">
+    <!-- Page 9: Conclusion and Thank You Page -->
+    <section class="page" id="page-8" data-page="8">
         <div class="page-content viz-page">
             <div class="viz-container-full">
                 <iframe src="public/conclusion/index.html" class="viz-iframe" title="Thank You" loading="lazy" importance="high"></iframe>
@@ -258,7 +211,7 @@
 <script src="js/timeSlider.js"></script>
 <script src="js/visual.js"></script>
 <script src="public/shared/js/yearScroll.js"></script>
-<script src="js/nextPage.js"></script>
+t src="js/nextPage.js"></script>
 <script src="js/main.js"></script>
 <script src="js/yearQuestion.js"></script>
 

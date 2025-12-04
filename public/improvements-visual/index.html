@@ -223,11 +223,13 @@
 			position: relative;
 
 		}
-
+		
 		#mapDiv svg {
 			width: 100%;
 			height: 100%;
 			display: block;
+			position: relative;
+			z-index: 1;
 		}
 
 		#options-panel {
@@ -401,7 +403,8 @@
 
 <div class="main-content-wrapper">
 	<div class="content-top-section">
-		<div id="mapDiv"></div>
+			<div id="mapDiv">
+			</div>
 		<div id="options-panel">
 			<h6>Improvements</h6>
 			<div id="improvements-list">
@@ -426,7 +429,7 @@
 						<span class="improvement-label">3. Night Time → Street Lighting</span>
 					</div>
 					<div class="improvement-description">
-						<strong>How it works:</strong> Increases visibility at intersections and highways, critical for spotting pedestrians who are disproportionately killed in dim light (59% of cases).
+						<strong>How it works:</strong> Increases visibility at intersections and highways, critical for spotting pedestrians who are disproportionately killed in dim light.
 					</div>
 				</div>
 				<div class="improvement-item">

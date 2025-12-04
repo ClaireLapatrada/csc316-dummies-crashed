@@ -1,13 +1,13 @@
 # 🚗 Dummies Crashed
 
-## 📊 Project Overview
+## Project Overview
 **Dummies Crashed** is a data-driven analysis of fatal traffic collisions in Toronto.  
 Our goal is to identify key factors behind these crashes and provide actionable insights to help the city reduce future incidents—such as prioritizing road construction, fixing potholes, or installing speeding cameras.  
 We will also create data visualizations to promote safe driving habits.
 
 ---
 
-## 🎯 What We're Handing In
+## Our Visualizations
 
 This project is a comprehensive interactive data visualization website that presents traffic collision data for Toronto through multiple visualizations. The project consists of:
 
@@ -16,7 +16,7 @@ This project is a comprehensive interactive data visualization website that pres
 - **All Visualization Components** - Custom D3.js implementations for:
   - Time's Effect on Accidents for Pedestrian (`public/vehicle-visual/`)
   - Fatal Collisions Ranked By Involvement (`public/sign-visual/`)
-  - Cumulative Pedestrian Collisions by Action (`public/ped-visual/`)
+  - Pedestrian Collisions by Action (`public/ped-visual/`)
   - Toronto Collisions Map (`public/solution-visual/`)
   - Improvements Visualization (`public/improvements-visual/`)
   - Roundabout Visualization (`public/roundabout-visual/`)
@@ -47,19 +47,17 @@ This project is a comprehensive interactive data visualization website that pres
 
 ---
 
-## 🌐 Project URLs
+## Project URLs
 
 ### Live Website
 **URL:** (https://clairelapatrada.github.io/csc316-dummies-crashed/)
 
 ### Screencast Videos
-**Main Demo Video:** [Add link to your main screencast video here]
-
-**Additional Videos (if any):** [Add links to any supplementary videos]
+**Demo Video:** [https://drive.google.com/file/d/1BBoXno1WkM8mUEsrOpmt9bkkvGoQx9Sa/view?usp=sharing]
 
 ---
 
-## 🎨 Non-Obvious Features
+## Non-Obvious Features
 
 ### 1. **Scroll-Based Navigation System**
 - The main page uses a custom scroll navigation system that snaps to full-page sections
@@ -110,7 +108,7 @@ This project is a comprehensive interactive data visualization website that pres
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 csc316-dummies-crashed/
@@ -140,26 +138,26 @@ csc316-dummies-crashed/
 
 ---
 
-## 👥 Team Members
+## Team Members
 | Name | Role | Email |
 |------|------|-------|
 | **Janna** | Project Manager | janna.lim@mail.utoronto.ca |
 | **Claire** | UI/UX Design, Front-End Development | claire.jaroonjetjumnong@mail.utoronto.ca |
 | **Dechen** | UI/UX Design | de.zangmo@mail.utoronto.ca |
-| **Viktoriia** | TBD | viktoriia.dyrda@mail.utoronto.ca |
+| **Viktoriia** | Front-End Development | viktoriia.dyrda@mail.utoronto.ca |
 | **Mitchell** | Data Engineer | mitchell.whitten@mail.utoronto.ca |
 | **Sark** | UI/UX Design, Idea Generator | sark.asadourian@mail.utoronto.ca |
 
 ---
 
-## 📂 Data Sources
+## Data Sources
 We use publicly available traffic collision datasets from the [Toronto Police Service Public Safety Data Portal](https://data.torontopolice.on.ca/), primarily:
 - **Killed and Seriously Injured (KSI) Collisions Dataset** – includes geographical information, road conditions, crash time/date, and demographic details.
 - Other supporting datasets as needed.
 
 ---
 
-## 🤝 Team Agreement
+## Team Agreement
 
 ### Communication
 - **Channels:** Discord & Instagram  
@@ -172,7 +170,7 @@ We use publicly available traffic collision datasets from the [Toronto Police Se
 
 ---
 
-## 💻 Code Guidelines
+## Code Guidelines
 - Follow the **Google JavaScript/HTML/CSS Style Guide**.  
 - **Branch naming convention:** `[name]/[feature]`  
   - Example: `janna/home-page`
@@ -182,7 +180,7 @@ We use publicly available traffic collision datasets from the [Toronto Police Se
 
 ---
 
-## 🔀 Version Control Workflow
+## Version Control Workflow
 
 ### Main Rules
 - `main` branch is **protected** – no direct commits.
@@ -227,7 +225,7 @@ git push origin name/feature
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - A modern web browser (Chrome, Firefox, Safari, Edge)
@@ -237,18 +235,3 @@ git push origin name/feature
 1. Clone the repository
 2. Start a local web server (e.g., `python -m http.server 8000` or `npx serve`)
 3. Open `http://localhost:8000` in your browser
-
-### Note
-Some features require a web server due to CORS restrictions when loading data files.
-
----
-
-## 📝 License
-[Add your license information here if applicable]
-
----
-
-## 🙏 Acknowledgments
-- Toronto Police Service for providing open data
-- D3.js community for excellent documentation
-- All team members for their contributions
